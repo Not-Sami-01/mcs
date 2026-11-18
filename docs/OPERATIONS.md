@@ -12,13 +12,13 @@
 | `staging` | `TODO(client)` staging domain | Separate database | `-staging` buckets | **noindex** | UAT, redirect tests. Sample or copied non-personal content only |
 | `production` | `TODO(client)` main domain | Production database | production buckets | **indexable** | Live |
 
-`SITE_ENV` (`development`, `staging`, `production`) drives noindex, robots, seed permission and emails (non-production never emails real customers). Secrets differ per environment. Production data (leads, photos) never goes to development or staging.
+`SITE_ENV` (`development`, `staging`, `production`) drives noindex, robots, seed permission and emails (non-production never emails real customers). Missing or invalid values fail closed to `development` indexing behaviour. Since Next.js emits metadata and `robots.txt` from the build, set `SITE_ENV` correctly during the build as well as at runtime; build production with `SITE_ENV=production`, and staging with `SITE_ENV=staging`. Secrets differ per environment. Production data (leads, photos) never goes to development or staging.
 
 ---
 
 ## 2. Environment variables (names only)
 
-Copy `.env.example` to `.env`. Never commit `.env`. The app validates required variables at startup and fails with a message that does not print values.
+Copy `.env.example` to `.env`. Never commit `.env`. The app validates required variables at startup and fails with a message that does not print values. The scaffold's `.env.example` intentionally contains names only; set local `DATABASE_URL` and `PAYLOAD_SECRET` values in ignored `.env` before starting the app. Docker Compose currently configures PostgreSQL as `postgres:16-alpine` with local-only development credentials; do not reuse those credentials outside development.
 
 ### Core
 | Name | Purpose |

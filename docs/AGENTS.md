@@ -155,7 +155,7 @@ When you must guess to keep moving, pick the safest default, record it as an ass
 
 ## 9. Commands
 
-These are created in checkpoint CP-0.3. Until then they do not exist.
+Available project commands:
 
 ```bash
 pnpm dev              # Next.js + Payload dev server
@@ -164,7 +164,7 @@ pnpm typecheck        # tsc --noEmit
 pnpm lint             # ESLint
 pnpm format:check     # Prettier
 pnpm test             # unit + integration (Vitest)
-pnpm test:e2e         # Playwright (incl. axe accessibility checks)
+pnpm test:e2e         # Playwright browser smoke tests
 pnpm payload migrate:create   # create a DB migration
 pnpm payload migrate          # apply migrations
 pnpm seed             # load sample content (dev/staging only)

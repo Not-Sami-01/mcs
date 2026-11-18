@@ -200,3 +200,5 @@ Verified while planning, 2026-11-17. Re-verify against installed versions.
 | 12 | Payload serves media through its own route unless direct bucket URLs are configured. | Pick the delivery path in CP-1.1 (`docs/STORAGE.md`). |
 | 13 | Dates: store UTC, display and apply discount windows in `Asia/Karachi`. | One helper; tests around boundaries. |
 | 14 | The reference site shows lorem ipsum prices in dollars, counters starting at zero, typos ("Rodant", "Faislabad") and near-duplicate city pages. | Do not repeat these. |
+| 15 | Payload logs emails to the console when no email adapter is configured (observed on first local admin request, 2026-11-19). | This is only suitable for local development. Configure a real adapter before invites, password resets or production email; provider is still open under ADR-010 / Q10. |
+| 16 | Next.js `metadata` and `robots.ts` are generated at build time; the `SITE_ENV` used for `next build` controls their indexing directives. | Set `SITE_ENV` correctly during builds and runtime. Missing or invalid values must fail closed to noindex. |

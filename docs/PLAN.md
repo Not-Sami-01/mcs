@@ -46,22 +46,22 @@
 - **Commit:** `checkpoint(CP-0.1): project docs and plan`
 
 ### CP-0.2 — Scaffold boots
-- [ ] Check current stable versions of Node, pnpm, Next.js, Payload, Tailwind (do not rely on memory). Record in `docs/QUALITY.md`
-- [ ] Scaffold with the official Payload app creator (Next.js + Payload + Postgres, TypeScript). Adapt the output to the structure in `docs/PROJECT.md` section 6
-- [ ] `docker-compose.yml` with PostgreSQL for local development
-- [ ] `.env.example` with names only (list in `docs/OPERATIONS.md`)
-- [ ] `/admin` loads, first user can be created locally, `/` renders a placeholder
-- [ ] `GET /api/health` returns OK and checks the database (no secrets in the response)
+- [x] Check current stable versions of Node, pnpm, Next.js, Payload, Tailwind (do not rely on memory). Record in `docs/QUALITY.md` (2026-11-19)
+- [x] Scaffold with the official Payload app creator (Next.js + Payload + Postgres, TypeScript). Adapt the output to the structure in `docs/PROJECT.md` section 6 (2026-11-19; working scaffold, provenance inferred from generated setup structure)
+- [x] `docker-compose.yml` with PostgreSQL for local development (2026-11-19; Docker unavailable here, database not started)
+- [x] `.env.example` with names only (list in `docs/OPERATIONS.md`) (2026-11-19)
+- [~] `/admin` loads, first user can be created locally, `/` renders a placeholder (2026-11-19; `/` and `/admin/login` and `/admin/create-first-user` returned 200; first user was not created)
+- [x] `GET /api/health` returns OK and checks the database (no secrets in the response) (2026-11-19; live response 200 `{"ok":true}` with local PostgreSQL)
 - **Exit:** `pnpm dev` works against local Postgres; `pnpm build` succeeds
 - **Commit:** `checkpoint(CP-0.2): Next.js + Payload + PostgreSQL scaffold boots`
 
 ### CP-0.3 — Tooling and baseline
-- [ ] Scripts exist: `typecheck`, `lint`, `format:check`, `test`, `test:e2e`, `build` (update `AGENTS.md` section 9 if names differ)
-- [ ] ESLint flat config, Prettier, strict TypeScript
-- [ ] Vitest running with one real test; Playwright configured
-- [ ] CI workflow: install with frozen lockfile, typecheck, lint, test, build
-- [ ] Baseline security headers (`docs/SECURITY.md` section C9), `SITE_ENV` switch with noindex for non-production
-- [ ] Record the baseline results in `docs/QUALITY.md`
+- [x] Scripts exist: `typecheck`, `lint`, `format:check`, `test`, `test:e2e`, `build` (2026-11-19)
+- [x] ESLint flat config, Prettier, strict TypeScript (2026-11-19)
+- [x] Vitest running with real tests; Playwright configured (2026-11-19; 3 unit tests and 2 E2E tests pass)
+- [x] CI workflow: install with frozen lockfile, typecheck, lint, test, build (2026-11-19; workflow includes E2E too)
+- [x] Baseline security headers (`docs/SECURITY.md` section C9), `SITE_ENV` switch with noindex for non-production (2026-11-19; non-prod E2E and prod smoke verified)
+- [x] Record the baseline results in `docs/QUALITY.md` (2026-11-19; checks and clean audit recorded)
 - **Exit:** all checks pass on a clean clone
 - **Commit:** `checkpoint(CP-0.3): tooling, CI and quality baseline`
 

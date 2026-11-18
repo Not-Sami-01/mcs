@@ -30,6 +30,7 @@ Generated with the framework's metadata API from the document's `seo` group, wit
   - **Production:** allow all; disallow `/admin`, `/api`, `/edit`; include the sitemap URL.
   - **Staging and development:** `Disallow: /` and every response also sends `X-Robots-Tag: noindex, nofollow`.
 - The switch is `SITE_ENV` (`docs/OPERATIONS.md`).
+- Next.js generates metadata and `robots.txt` from the build environment: set `SITE_ENV` correctly at build time and runtime. Missing or invalid values use non-indexable development behaviour.
 
 ### Indexing gate (launch gate)
 

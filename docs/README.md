@@ -2,7 +2,7 @@
 
 Custom Next.js website and admin panel for **Malaysian Care System (MCS)**, pest control in Lahore, Pakistan.
 
-> **Status:** planning complete, code not yet scaffolded. See [docs/PROGRESS.md](docs/PROGRESS.md) for the exact current state and [docs/PLAN.md](docs/PLAN.md) for what comes next.
+> **Status:** CP-0.3 tooling and quality baseline implemented. The scaffold, CI workflow, unit/E2E tests, security headers, and non-production indexing gate are in place. The first admin user is not yet created. See [docs/PROGRESS.md](docs/PROGRESS.md) for the exact current state and [docs/PLAN.md](docs/PLAN.md) for what comes next.
 
 ---
 

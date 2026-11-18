@@ -1,25 +1,25 @@
 # QUALITY — Checks, Targets and Baseline
 
-> Records **observed** results, not hopes. Re-run commands after dependency or source changes, and write the result here with the date. Nothing has been run yet.
+> Records **observed** results, not hopes. Re-run commands after dependency or source changes, and write the result here with the date.
 
 ---
 
-## 1. Environment and versions (fill in at CP-0.2)
+## 1. Environment and versions
 
 Do not rely on memory for versions. Query the registry or docs, then record.
 
 | Item | Observed value | Date |
 |---|---|---|
-| Node.js | TBD | |
-| pnpm | TBD | |
-| Next.js | TBD | |
-| React | TBD | |
-| Payload and `@payloadcms/*` packages (all the same version) | TBD | |
-| Tailwind CSS | TBD | |
-| TypeScript | TBD | |
-| PostgreSQL (local and production) | TBD | |
-| ESLint, Prettier, Vitest, Playwright | TBD | |
-| Starting commit | TBD | |
+| Node.js | 22.23.1 (runtime) | 2026-11-19 |
+| pnpm | 12.18.0 | 2026-11-19 |
+| Next.js | 16.4.6 (registry latest stable; installed) | 2026-11-19 |
+| React / React DOM | 19.3.1 (installed) | 2026-11-19 |
+| Payload and `@payloadcms/*` packages (all the same version) | 3.94.0 (registry latest stable; declared) | 2026-11-19 |
+| Tailwind CSS | 4.3.5 (registry latest stable; installed) | 2026-11-19 |
+| TypeScript | 5.9.3 (installed) | 2026-11-19 |
+| PostgreSQL (local and production) | Local image configured as `postgres:16-alpine`; not started. Production TBD | 2026-11-19 |
+| ESLint, Prettier, Vitest, Playwright | ESLint 9.39.5, Prettier 3.10.1, Vitest 4.1.12, Playwright 1.65.1 | 2026-11-19 |
+| Starting commit | `b8a54bd` (repository history also contains `6660603`) | 2026-11-19 |
 | Install command | `pnpm install --frozen-lockfile` | |
 
 `.env` is gitignored. Do not copy values into any doc.
@@ -30,14 +30,16 @@ Do not rely on memory for versions. Query the registry or docs, then record.
 
 | Check | Command | Result | Date | Notes |
 |---|---|---|---|---|
-| Install | `pnpm install --frozen-lockfile` | Not run | | |
-| Typecheck | `pnpm typecheck` | Not run | | |
-| Lint | `pnpm lint` | Not run | | |
-| Format | `pnpm format:check` | Not run | | |
-| Unit and integration | `pnpm test` | Not run | | |
-| E2E | `pnpm test:e2e` | Not run | | |
-| Build | `pnpm build` | Not run | | |
-| Dependency audit | `pnpm audit` | Not run | | |
+| Install | `pnpm install --frozen-lockfile` | Pass after approving required native builds; final frozen install passes | 2026-11-19 | Initial attempt blocked by pnpm 12 approval policy |
+| Typecheck | `pnpm typecheck` | Pass | 2026-11-19 | |
+| Lint | `pnpm lint` | Pass | 2026-11-19 | Migrated to Next 16 native flat configs; no warnings |
+| Format | `pnpm format:check` | Pass | 2026-11-19 | Configured source/config/test files; existing Markdown docs are not reformatted |
+| Unit and integration | `pnpm test` | Pass (1 file, 3 tests) | 2026-11-19 | Site environment indexing gate; Vitest 4.1.12 |
+| E2E | `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome pnpm test:e2e` | Pass (2 tests) | 2026-11-19 | Uses installed system Chrome; Playwright browser download timed out |
+| Build | `SITE_ENV=production pnpm build` | Pass | 2026-11-19 | Next 16.4.6; includes `/robots.txt` |
+| Runtime smoke | `curl /`, `/admin/login`, `/admin/create-first-user`, `/api/health` | Pass (200 for all; health body `{"ok":true}`) | 2026-11-19 | Existing local PostgreSQL reachable. First-user submission not performed |
+| Dependency audit | `pnpm audit` | Pass; no known vulnerabilities | 2026-11-19 | Vitest 4.1.12; pnpm overrides pin patched DOMPurify, Happy DOM, esbuild and Tinypool |
+| Peer dependencies | `pnpm peers check` | Pass; no peer dependency issues | 2026-11-19 | |
 
 CI runs the same commands with the same Node and pnpm versions.
 

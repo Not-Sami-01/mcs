@@ -1,0 +1,15 @@
+allowBuilds:
+  '@parcel/watcher': true
+  '@tailwindcss/oxide': true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+overrides:
+  dompurify: 3.4.18
+  esbuild: 0.28.2
+  happy-dom: 21.0.4
+  tinypool: 2.2.0
+minimumReleaseAgeExclude:
+  - '@vitest/mocker@4.1.12'
+  - '@vitest/spy@4.1.12'
+  - vitest@4.1.12

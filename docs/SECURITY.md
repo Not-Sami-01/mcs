@@ -128,13 +128,11 @@ Follow `docs/STORAGE.md`: separate buckets, validate by content, re-encode, stri
 
 ### C9. Browser and headers
 Set in `next.config` and verify at the edge:
-- `Strict-Transport-Security` (preload only when ready)
-- `Content-Security-Policy` (start in report-only, then enforce; allow only our origins, Turnstile, GA4, the chat provider, the media host)
-- `X-Content-Type-Options: nosniff`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Permissions-Policy` minimal
-- `frame-ancestors 'none'` (clickjacking), except where Payload live preview needs a framing exception limited to our origin
-- Admin and edit routes: `noindex`, `no-store`.
+- `Strict-Transport-Security` is emitted only for production (`max-age=31536000`, no preload).
+- `Content-Security-Policy-Report-Only` starts with a restrictive same-origin baseline. Inventory Payload and third-party requirements and review reports before enforcing or adding origins.
+- `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and minimal `Permissions-Policy` are set.
+- `frame-ancestors 'none'` and `X-Frame-Options: DENY` prevent framing; add an explicit same-origin preview exception only if live preview is implemented.
+- Non-production sends `X-Robots-Tag: noindex, nofollow`; admin and edit routes send `Cache-Control: no-store`. Verify these at the deployed edge.
 
 ### C10. Email
 - Authenticated sending domain (SPF, DKIM, DMARC) on the MCS domain.

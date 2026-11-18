@@ -42,7 +42,7 @@ Decide in CP-0.3 whether to keep GraphQL at all. Default: off.
 
 | Route | Method | Purpose | Notes |
 |---|---|---|---|
-| `/api/health` | GET | Liveness and database ping | Returns `{ "ok": true }` only. No versions, no env |
+| `/api/health` | GET | Liveness and database ping | Returns `{ "ok": true }` with 200 when PostgreSQL responds to `select 1`; otherwise `{ "ok": false }` with 503. `Cache-Control: no-store`. No versions, errors or env |
 | `/api/public/leads` | POST | Create a lead (`contact`, `quote`, `inspection`) | Zod, Turnstile token, honeypot, rate limit, payload cap |
 | `/api/public/leads/photos` | POST | Upload up to 3 photos for a pending lead | See section 5 |
 

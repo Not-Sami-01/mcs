@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Production build
+build/
+dist/
+
+# Environment files (names only may be committed in .env.example)
+.env
+.env.*
+!.env.example
+
+# Local uploads and database dumps
+media/
+uploads/
+*.dump
+*.sql.gz
+*.sqlite
+
+# Logs and OS/editor noise
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+
+# Payload generated pieces that are environment-specific
+.pnpm-store/
