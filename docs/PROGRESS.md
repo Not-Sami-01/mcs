@@ -9,12 +9,12 @@
 > Keep this block short and accurate. Rewrite it before starting each task and after finishing each step.
 
 - **Last updated:** 2026-11-19
-- **Current phase / checkpoint:** CP-0.3 committed and tagged; next is Phase 1, CP-1.1. CP-0.2 first-user creation remains unverified.
-- **State of the repo:** branch `development`; latest checkpoint commit is `0d073dd` (`cp-0.3`). No remote is configured.
-- **What I was doing:** CP-0.3 tooling, tests, CI, headers/indexing gate; audit findings remediated with patched versions and verified.
-- **Next step:** begin CP-1.1 (users/roles, Filebase media); first resolve the human-owned Filebase account/endpoint decision as documented.
-- **Blockers:** none for CP-0.3. CP-0.2 first-user creation remains unverified (not an exit criterion for CP-0.3); Docker unavailable though local PostgreSQL was reachable earlier. Business inputs remain open.
-- **Uncommitted or half-done work:** none from CP-0.3. Next.js-generated root `AGENTS.md` is committed as required to keep the working tree clean.
+- **Current phase / checkpoint:** Phase 1, CP-1.1 in progress — users/roles half done (implemented and tested), Filebase media not started. CP-0.2 first-user creation remains unverified.
+- **State of the repo:** branch `development`; latest checkpoint commit is `45563c5` (`cp-0.3`). Uncommitted: role-based users work + doc updates (see below).
+- **What I was doing:** implemented `roles` on `users` + `src/access/roles.ts` helpers and tests; fixed three findings (type error, `access.admin` whole-panel lockout, bad `hasMany` `defaultValue`); regenerated Payload types and import map; ADR-012 recorded as Vercel.
+- **Next step:** stage-review for secrets and commit this chunk (`feat(users): …`), then start Filebase media once the env details below are resolved.
+- **Blockers:** **Filebase (CP-1.1 media):** `.env.local` has `FILEBASE_ENDPOINT=https://s3.filebase.io` but `FILEBASE_REGION` is empty and public/private buckets are both named `vaultifier` — need correct region and two distinct bucket names from the human. `@payloadcms/storage-s3@3.94.0` requires Node `^22.23.5` (installed 22.23.1) — resolve before adding it. Docker unavailable; CP-0.2 first-user unverified.
+- **Uncommitted or half-done work:** `src/access/roles.ts(+test)`, `src/collections/Users.ts`, `src/payload.config.ts`, regenerated `src/payload-types.ts` + `src/app/(payload)/admin/importMap.js`, docs (PROGRESS/PLAN/DATABASE/DECISIONS/PROJECT/QUALITY). Checks at last run: `pnpm format:check && pnpm typecheck && pnpm lint && pnpm test` pass (8 tests); `SITE_ENV=production pnpm build` passes.
 
 ---
 
@@ -22,10 +22,10 @@
 
 | Area | Status |
 |---|---|
-| Docs | Written; CP-0.2 status and evidence refreshed (uncommitted) |
+| Docs | CP-1.1 updates in progress (uncommitted): ADR-012 Vercel, users implemented, new gotchas |
 | Repo scaffold | Implemented; frozen install, typecheck, lint, build, home/admin route and live DB health check verified; first user not created |
-| Data model | Not started |
-| Admin and roles | Not started |
+| Data model | `users` implemented (roles, access); other collections not started |
+| Admin and roles | Roles + access helpers implemented with 8 unit tests; invite/2FA (CP-2.x) not started; media/Filebase not started |
 | Public site | Not started |
 | Inline editing | Not started |
 | Services, locations, products, blog | Not started |

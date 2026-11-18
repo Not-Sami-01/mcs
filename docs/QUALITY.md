@@ -40,6 +40,9 @@ Do not rely on memory for versions. Query the registry or docs, then record.
 | Runtime smoke | `curl /`, `/admin/login`, `/admin/create-first-user`, `/api/health` | Pass (200 for all; health body `{"ok":true}`) | 2026-11-19 | Existing local PostgreSQL reachable. First-user submission not performed |
 | Dependency audit | `pnpm audit` | Pass; no known vulnerabilities | 2026-11-19 | Vitest 4.1.12; pnpm overrides pin patched DOMPurify, Happy DOM, esbuild and Tinypool |
 | Peer dependencies | `pnpm peers check` | Pass; no peer dependency issues | 2026-11-19 | |
+| Users/roles chunk (CP-1.1 part 1) | `pnpm format:check && pnpm typecheck && pnpm lint && pnpm test` | Pass (2 files, 8 tests) | 2026-11-19 | Added `src/access/roles.test.ts`; Payload types and import map regenerated |
+| Build re-run after users/roles + import map | `SITE_ENV=production pnpm build` | Pass (6 static pages; `/admin` dynamic) | 2026-11-19 | First attempt failed: empty `DATABASE_URL=`/`PAYLOAD_SECRET=` lines in `.env.local` clobbered `.env` (gotcha 17); removed the empty lines |
+| E2E re-run for the users/roles chunk | `SITE_ENV=staging pnpm build` then `pnpm test:e2e` | Pass (2 tests) | 2026-11-19 | First attempt failed against a production-flavoured `.next` (build-time metadata; ordering note in section 4) |
 
 CI runs the same commands with the same Node and pnpm versions.
 
@@ -90,6 +93,8 @@ Budgets (proposed starting points, tune with evidence):
 | Visual | Manual at 360, 768, 1280 px | Max-content cases for each block |
 
 Rules: deterministic data, cleanup after each test, no real customer data, no network calls to real third parties in tests (mock Turnstile, email, Filebase unless the test is explicitly an integration test with dev credentials).
+
+**E2E build ordering (learned 2026-11-19):** `pnpm test:e2e` starts `pnpm start`, which serves metadata baked into `.next` at build time, while the webServer env sets `SITE_ENV=staging`. Run `SITE_ENV=staging pnpm build` before `pnpm test:e2e` locally (CI does this automatically — it builds with `SITE_ENV=staging` first). A preceding `SITE_ENV=production pnpm build` makes the noindex E2E test fail even though the code is correct.
 
 Mandatory tests that must never be deleted: limits parity, role matrix, pricing, public data exposure, edit isolation, photo encryption.
 

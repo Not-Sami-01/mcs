@@ -66,20 +66,19 @@
 - **Decision:** Store rates as whole rupees. Percentage discounts round to the nearest rupee in one function. Display as `Rs 1,500`.
 - **Revisit if:** MCS needs paisa precision.
 
-### ADR-012 — Hosting: Vercel or VPS
-- **Status:** Open
-- **Constraints to weigh:**
+### ADR-012 — Hosting: Vercel
+- **Status:** Accepted (human decision, 2026-11-19: "it'll be hosted on Vercel"; Payload 3 works on Vercel)
+- **Decision:** Deploy on Vercel. Write code within these constraints:
 
-| Topic | Vercel | VPS |
+| Topic | Constraint on Vercel | How this project handles it |
 |---|---|---|
-| Postgres connections | Use a pooler; serverless connection limits | Direct pool |
-| Upload size | About 4.5 MB request limit | Configurable |
-| Scheduled publish | Needs a cron calling the jobs endpoint | autoRun works |
-| Image optimization cost | Metered | Free (CPU) |
-| Ops burden | Low | You patch, back up and monitor |
-| Cost | Grows with traffic | Flat |
+| Postgres connections | Serverless connection limits; use a pooler | Pooled `DATABASE_URL` (pooler) at deploy time; `pg` pool only |
+| Upload size | About 4.5 MB request limit | Filebase/S3 for stored objects; check presigned direct upload if bigger files are needed |
+| Scheduled publish | Needs a cron calling the jobs endpoint | Vercel Cron with `CRON_SECRET` (see `docs/OPERATIONS.md`, CP-4.x) |
+| Image optimization cost | Metered | Keep `sharp` variants small; revisit per-image budgets in `docs/QUALITY.md` |
 
-- **Default until decided:** write code that works on both (no filesystem writes, pooled DB URL, resized uploads).
+- **Consequences:** no long-running job process (job runner must be cron-triggered), no local filesystem writes, ops burden stays low but cost grows with traffic.
+- **Revisit if:** upload sizes exceed the body limit, or traffic/optimization costs outgrow VPS pricing.
 
 ### ADR-013 — Product discounts at product level
 - **Status:** Proposed
@@ -105,7 +104,7 @@ Until answered, the **default assumption** is used and every affected page shows
 | Q5 | Service list, starting prices, inspection fee, warranty terms | CP-5.1 | Candidate list in `docs/CONTENT.md` section 11; no prices published | |
 | Q6 | Brand files, phone and WhatsApp numbers, addresses, working hours | CP-3.1 | Neutral placeholder palette; settings left empty | |
 | Q7 | Who answers live chat, and when? | CP-6.4 | Chat hidden; WhatsApp only | |
-| Q8 | Hosting budget; who maintains after launch? | CP-0.2 | See ADR-012 | |
+| Q8 | Hosting budget; who maintains after launch? | CP-0.2 | Vercel accepted (ADR-012); maintenance owner still unknown | Vercel (2026-11-19) |
 | Q9 | Domain name and who owns the registrar account | CP-0.2 | Local and staging URLs | |
 | Q10 | Email provider (Resend, Postmark, Amazon SES) and sender address | CP-2.1 | Console mail adapter in development | |
 | Q11 | Live chat provider (Tawk.to, Crisp, Chatwoot) | CP-6.4 | Provider-agnostic loader | |
@@ -115,3 +114,4 @@ Until answered, the **default assumption** is used and every affected page shows
 | Q15 | Customer consent for before and after photos and reviews | CP-5.5 | Blocks stay unpublished | |
 | Q16 | Old WordPress domain and any backups | CP-7.2 | Recovery via Search Console and Internet Archive | |
 | Q17 | Who may publish legal pages? | CP-3.3 | Super Admin only | |
+| Q18 | Should non–super-admin staff change their own name/password (Account screen)? Matrix gives `R self` only | CP-2.1 | No self-service edits; super-admin resets passwords | |

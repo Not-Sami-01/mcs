@@ -1,6 +1,6 @@
 # DATABASE — Collections, Access and Migrations
 
-> **Status:** designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
+> **Status:** `users` is implemented (CP-1.1, 2026-11-19); all other collections are designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
 > Payload defines the schema from collection configs and generates the PostgreSQL tables (Drizzle). Field shapes below are the intended design. Verify exact option names against the installed Payload version.
 
 ---
@@ -137,6 +137,8 @@ Blocks are defined once and used by `pages`, `services`, `locations`, `products`
 | navigation | U | U | – | – |
 
 Public (no login): read **published** documents of `pages`, `categories`, `services`, `locations`, `products`, `posts`, `reviews` (verified only), `media`. Everything else is denied. Access functions live in `src/access/` and are reused, never re-written per collection.
+
+**Panel entry vs collection access (implemented 2026-11-19):** every role signs in to `/admin`. Payload gates whole-panel entry through `users.access.admin` (`canAccessAdmin`), so it is deliberately left unrestricted; the matrix above governs what each role may do inside. **Open (Q18):** non–super-admins get `R self` only, so they cannot change their own name/password from the Account screen (Payload implements that as an `update`). If staff should self-serve password changes, the matrix and `src/access/roles.ts` change together.
 
 ---
 

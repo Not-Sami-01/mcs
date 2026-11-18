@@ -29,11 +29,11 @@ export default buildConfig({
     },
   },
   collections: [Users],
-  editor: lexicalEditor(),
-  secret,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  editor: lexicalEditor(),
+  secret,
   db: postgresAdapter({
     pool: {
       connectionString: databaseURL,

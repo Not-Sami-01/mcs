@@ -72,7 +72,7 @@
 **Goal:** the content model exists, files go to Filebase, limits are enforced from one registry.
 
 ### CP-1.1 — Users, access helpers, Filebase media
-- [ ] `users` collection with `roles` (`super-admin`, `editor`, `product-manager`, `sales-support`) and access helper functions (`docs/DATABASE.md`)
+- [x] `users` collection with `roles` (`super-admin`, `editor`, `product-manager`, `sales-support`) and access helper functions (`docs/DATABASE.md`) (2026-11-19; 8 unit tests pass, typecheck/lint/build pass)
 - [ ] Filebase account checked: endpoint and region confirmed against current Filebase docs; public and private buckets created (the human creates accounts; see `docs/STORAGE.md`)
 - [ ] `media` collection using the S3 storage adapter pointed at Filebase. No object ACLs (Filebase does not support them)
 - [ ] Spike: choose the media delivery path (Next image optimizer, Filebase gateway, or Cloudflare in front). Record in `docs/STORAGE.md` and `DECISIONS.md`
