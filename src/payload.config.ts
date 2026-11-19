@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
-import { Media } from './collections/Media';
+import { COLLECTIONS } from './collections';
 import { Users } from './collections/Users';
 import { publicFileUrl } from './cms/media-urls';
 
@@ -45,7 +45,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Media, Users],
+  collections: COLLECTIONS,
   plugins: [
     s3Storage({
       bucket: filebaseBucket,

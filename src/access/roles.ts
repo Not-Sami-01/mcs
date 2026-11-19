@@ -42,6 +42,19 @@ export const readPublic: Access = () => true;
 
 export const isSuperAdmin: Access = ({ req }) => hasRole(req.user, 'super-admin');
 
+/** Super Admin + Editor may write content (docs/DATABASE.md §4: categories/pages CRUD). */
+export const writeContent: Access = ({ req }) => hasAnyRole(req.user, ['super-admin', 'editor']);
+
+/**
+ * Public reads published pages only; any signed-in staff role reads everything
+ * (matrix R for Product Manager and Sales and Support). `categories` have no
+ * drafts — they use `readPublic` and rely on trash filtering.
+ */
+export const readPublished: Access = ({ req }) => {
+  if (req.user) return true;
+  return { _status: { equals: 'published' } };
+};
+
 export const readUsers: Access = ({ req }) => {
   if (hasRole(req.user, 'super-admin')) return true;
   if (!isRoleBearingUser(req.user)) return false;

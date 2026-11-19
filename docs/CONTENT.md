@@ -95,13 +95,15 @@ Canonical values live in `src/cms/limits.ts`. They are starting points. Tune the
 | `reviewText` | 300 | |
 | `reviewerName` | 60 | |
 | `caption` | 100 | Image captions |
-| `altText` | 125 | Required on every image |
+| `altText` | 160 | Required on every image |
 | `menuLabel` | 24 | |
 | `metaTitle` | 60 | SEO title |
 | `metaDescription` | 160 | SEO description |
 | `slug` | 80 | |
+| `path` | 320 | Computed full URL path for categories and pages |
 | `localNotes` | 1,500 | Location unique content (minimum 400, see 7.4) |
 | `postBody` | 20,000 | Blog and legal pages, rich text |
+| `url` | 200 | External link targets |
 
 ### Count limits (items)
 
@@ -126,6 +128,9 @@ Canonical values live in `src/cms/limits.ts`. They are starting points. Tune the
 | Service treatment steps | 3 | 8 |
 | Product images | 1 | 6 |
 | Product pack sizes | 1 | 8 |
+| Text block paragraphs | 1 | 8 |
+| Difference points | 1 | 4 |
+| Warranty highlights | 1 | 4 |
 
 ### Rendering safety
 

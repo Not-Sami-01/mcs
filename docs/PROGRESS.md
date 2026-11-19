@@ -9,10 +9,10 @@
 > Keep this block short and accurate. Rewrite it before starting each task and after finishing each step.
 
 - **Last updated:** 2026-11-19
-- **Current phase / checkpoint:** Phase 1, **CP-1.1 COMPLETE** — committed `8c18807`, tagged `cp-1.1`. All exit criteria verified: image on `/media-test` ✓ (E2E polls `naturalWidth > 0`, 3/3), alt enforced ✓ (integration test rejects upload without alt), delivery path decided ✓ (ADR-015). Checks: format ✓ typecheck ✓ lint ✓ **19/19 tests** ✓ staging build + E2E 3/3 ✓ production build + smoke ✓ CI sequence simulated on an empty DB ✓.
-- **State of the repo:** branch `development`; commits `45563c5` (`cp-0.3`), `40953fe` (users), `5e5a1a0` (media), `8c18807` (`cp-1.1` — spike docs, ADR-015, `generateFileURL` flip, `/media-test` + e2e, first migration `src/migrations/20261119_101405_initial`, CI `payload migrate` step, `.prettierignore`/eslint generated-file exclusions). Working tree clean apart from this row's commit.
-- **What I was doing:** closed out CP-1.1: recorded evidence in QUALITY/STORAGE/DATABASE/OPERATIONS, committed and tagged.
-- **Next step:** CP-1.2 per `docs/PLAN.md` — `src/cms/limits.ts` presets + field factories, `categories` and `pages` collections, the limits test. First though, two human decisions below (bucket public flip; CP-0.2 first-user role).
+- **Current phase / checkpoint:** Phase 1, **CP-1.2 COMPLETE**. All exit criteria verified: category hierarchy + path calculation ✓, page with blocks + path calculation ✓, server-side `maxLength` rejection ✓, slug validation rejection ✓, legal page publish guard ✓ (`src/collections/categories-pages.integration.test.ts`, 5/5 pass). Checks: format ✓ typecheck ✓ lint ✓ **51/51 Vitest tests across 7 suites** ✓, Next 16 production build (7/7 routes) ✓, Playwright E2E 3/3 ✓, second migration generated (`20261119_171018_add_categories_and_pages.ts`).
+- **State of the repo:** branch `development`; working tree clean apart from CP-1.2 checkpoint commit.
+- **What I was doing:** completed and verified CP-1.2: limits registry, field factories, categories collection, pages collection, first 14 blocks, slug utilities & tests, integration tests, migration creation.
+- **Next step:** CP-1.3 per `docs/PLAN.md` — `site-settings` global, `navigation` global, and seed script (`pnpm seed`).
 - **CP-0.2 first-user status (checked 2026-11-19):** the single user row (`admin@admin.admin`, created 2026-11-18) predates the roles system (shipped 2026-11-19) and has **no rows in `users_roles`** — it can sign in to the panel (entry is unrestricted by design, `docs/DATABASE.md` §4) but `hasAnyRole` fails, so it cannot write media or manage users. The bootstrap hook (`applyBootstrapRole`, unit-tested) only assigns `super-admin` on an unauthenticated create, which cannot happen while this user exists. **Open:** backfill this row's role or reset and recreate the first user (`pnpm seed:admin` / `/admin/create-first-user`) — destructive, human's call.
 - **Environment incident (2026-11-19, resolved):** machine rebooted mid-session; system PostgreSQL 18 (human's install from earlier that day) took port 5432 and the rootless podman container `mcs-db` (our dev DB) could not start. The human disabled the system service; `podman start mcs-db` restored everything — verified media doc 12, 1 user, all 10 tables. If it recurs: free 5432, then `podman start mcs-db`.
 - **Blockers:** `@payloadcms/storage-s3@3.94.0` declares Node `^22.23.5` (installed 22.23.1) — installs and runs, but upgrade Node before deploy (gotcha 21). Filebase endpoint times out intermittently from this network (S3 clients retry `maxAttempts: 5`; gotcha 22 — Playwright's browser download also stalls here, use `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome` locally). Docker unavailable (podman used instead). CP-0.2 first-user role backfill open (above). Bucket still private — anonymous media URL 403/DNS, so `FILEBASE_PUBLIC_BASE_URL` stays empty (ADR-015 flip pending the human's Q13 action). No remote → CI has never actually run.
@@ -23,17 +23,17 @@
 
 | Area | Status |
 |---|---|
-| Docs | CP-1.1 complete and committed (`8c18807`): ADR-012 Vercel, ADR-015 delivery path, `.env.example` guidance, single-bucket decision, gotchas 12/23 |
+| Docs | CP-1.2 updated; ADR-012 Vercel, ADR-015 delivery path, `.env.example` guidance, single-bucket decision, gotchas 12/23 |
 | Repo scaffold | Implemented; frozen install, typecheck, lint, build, home/admin route and live DB health check verified; first user row exists but has **no roles** (see Resume here) |
-| Data model | `users` (roles, access) and `media` implemented + first migration `20261119_101405_initial` (CI/production); other collections not started |
-| Admin and roles | Roles + access helpers (unit tested); media access enforced (anon create 403 in smoke); invite/2FA (CP-2.x) not started |
+| Data model | `users`, `media`, `categories`, `pages` implemented + 14 blocks + migrations (`20261119_101405_initial`, `20261119_171018_add_categories_and_pages`); other collections not started |
+| Admin and roles | Roles + access helpers (unit tested); media access enforced (anon create 403 in smoke); legal page publish gate (super-admin only); invite/2FA (CP-2.x) not started |
 | Media and storage | Filebase S3 adapter live (upload/variants/alt/size-cap/round trip green); delivery path **decided** (ADR-015: Payload route now, direct Filebase URLs via `FILEBASE_PUBLIC_BASE_URL` when the bucket goes public); `/media-test` page + E2E 3/3 |
 | Public site | Not started |
 | Inline editing | Not started |
 | Services, locations, products, blog | Not started |
 | Leads and forms | Not started |
 | SEO and analytics | Not started |
-| QA, performance, security | CP-0.3 baseline implemented; dependency audit clean |
+| QA, performance, security | CP-0.3 baseline implemented; 51 Vitest tests, 3 Playwright E2E tests, dependency audit clean |
 | Launch | Not started |
 
 Phase progress lives in `docs/PLAN.md`. This table is a quick view only.
@@ -46,6 +46,7 @@ Newest first. One row per checkpoint commit.
 
 | Checkpoint | Date | Commit | Tag | Evidence (commands and results) | Notes |
 |---|---|---|---|---|---|
+| CP-1.2 | 2026-11-19 | (pending) | `cp-1.2` | format ✓ typecheck ✓ lint ✓ **51/51 Vitest across 7 suites** ✓; `pnpm build` (7 static routes) ✓; **E2E 3/3** ✓; integration test (`categories-pages.integration.test.ts`, 5/5) verifies categories hierarchy, blocks page, maxLength server rejection, slug validation, legal publish guard; migration `20261119_171018_add_categories_and_pages` generated | Categories and Pages collections, limits registry, field factories, 14 blocks, slug utilities and tests |
 | CP-1.1 | 2026-11-19 | `8c18807` | `cp-1.1` | format ✓ typecheck ✓ lint ✓ **19/19 Vitest** ✓; `SITE_ENV=staging pnpm build` (7 static routes incl. `/media-test`, built HTML has the image URL, 3-variant `srcSet`, alt) + **E2E 3/3** (image `naturalWidth > 0` poll); `pnpm build` + production smoke (health/media-test/list/file 200, anon `POST` **403**); CI sequence simulated on an empty scratch DB (migrate 10 tables → build → empty-state HTML); initial migration verified twice on empty DBs | Committed on `development`; no remote configured. Users (`40953fe`) and media (`5e5a1a0`) landed as separate feature commits; this commit is the spike decision (ADR-015), the `generateFileURL` flip, `/media-test` + e2e, the first migration and the CI migrate step. This row was added in the immediately following `docs(progress)` commit because it needed the hash |
 | CP-0.3 | 2026-11-19 | `45563c5` | `cp-0.3` | Frozen install, peers, format, typecheck, lint, 3 Vitest tests, 2 Playwright tests, production build and indexing/header smoke pass; audit reports 0 vulnerabilities | Committed on `development`; no remote configured. Hash is the amended commit (docs previously recorded the pre-amend `0d073dd`) |
 
@@ -77,6 +78,20 @@ Tracked in detail in `docs/DECISIONS.md` (section "Open questions"). Headlines:
 ## Session log
 
 Newest first. Add an entry at the end of each session, even a short one.
+
+### 2026-11-19 — CP-1.2 limits registry, categories, pages and blocks
+
+- **Limits & field factories:** `src/cms/limits.ts` text and count presets aligned with `docs/CONTENT.md` §5; `src/cms/fields.ts` factories (`textField`, `textareaField`, `rows`, `seoGroup`, `slugField`, `actionFields`) enforce caps.
+- **Slug validation:** `src/cms/slugs.ts` rejects unnormalized slugs (uppercase, spaces, slashes, dots), reserved slugs (`admin`, `api`, `edit`, `_next`, etc.), and caps length at 80 characters.
+- **Collections & blocks:** `categories` collection with hierarchical parent path calculation and loop detection; `pages` collection with block-based layout (14 blocks in catalogue), versions, drafts, trash, and legal page publish guard (super-admin only).
+- **Testing & Verification:**
+  - `src/cms/config.test.ts` (22 tests) walks every collection and block ensuring text fields have `maxLength` and lists have bounded rows.
+  - `src/collections/categories-pages.integration.test.ts` (5 tests) verifies parent-child category path calculation, page with blocks path resolution, server-side `maxLength` rejection, slug validation rejection, and legal page publish security.
+  - All 51/51 Vitest tests across 7 suites pass (including Filebase S3 round-trip).
+  - Next.js 16 production build compiles cleanly (7/7 static routes).
+  - Playwright E2E 3/3 pass (`tests/e2e/security.spec.ts` and `tests/e2e/media-test.spec.ts`).
+  - Migration created: `src/migrations/20261119_171018_add_categories_and_pages.ts`.
+  - Typecheck (`tsc --noEmit`), lint (`eslint .`), and Prettier check (`format:check`) all 100% clean.
 
 ### 2026-11-17 — Planning session
 

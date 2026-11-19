@@ -82,13 +82,13 @@
 - **Commit:** `checkpoint(CP-1.1): delivery path decision, media test page and initial migration` (the users/roles and media chunks were committed earlier as `40953fe` and `5e5a1a0`)
 
 ### CP-1.2 — Limits registry, categories, pages
-- [ ] `src/cms/limits.ts` with text and count presets (`docs/CONTENT.md` section 5)
-- [ ] Field factories that apply limits (`textField`, `textareaField`, `listField`, ...)
-- [ ] Test: every text field in every collection and block has `maxLength`; every array and blocks field has `maxRows`
-- [ ] `categories` collection (nested, parent/child) and `pages` collection (blocks layout, drafts, versions, scheduled publish, trash, SEO group)
-- [ ] Slug rules and reserved slugs (`admin`, `api`, `edit`, `_next`, ...), unique path per page
-- [ ] First set of blocks defined as data (full catalogue in `docs/CONTENT.md` section 6)
-- **Exit:** admin can create a category and a page with blocks; saving a too-long field is rejected on the server
+- [x] `src/cms/limits.ts` with text and count presets (`docs/CONTENT.md` section 5) (2026-11-19)
+- [x] Field factories that apply limits (`textField`, `textareaField`, `listField`, ...) (2026-11-19)
+- [x] Test: every text field in every collection and block has `maxLength`; every array and blocks field has `maxRows` (2026-11-19; 22 tests in `src/cms/config.test.ts`)
+- [x] `categories` collection (nested, parent/child) and `pages` collection (blocks layout, drafts, versions, scheduled publish, trash, SEO group) (2026-11-19)
+- [x] Slug rules and reserved slugs (`admin`, `api`, `edit`, `_next`, ...), unique path per page (2026-11-19; 5 unit tests in `src/cms/slugs.test.ts`)
+- [x] First set of blocks defined as data (full catalogue in `docs/CONTENT.md` section 6) (2026-11-19; 14 blocks implemented)
+- **Exit:** admin can create a category and a page with blocks; saving a too-long field is rejected on the server (2026-11-19; verified in `src/collections/categories-pages.integration.test.ts`, 5/5 pass)
 - **Commit:** `checkpoint(CP-1.2): limits registry, categories and pages`
 
 ### CP-1.3 — Globals and seed

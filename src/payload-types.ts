@@ -67,18 +67,24 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    media: Media;
     users: User;
+    media: Media;
+    categories: Category;
+    pages: Page;
     'payload-kv': PayloadKv;
+    'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
-    media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -95,7 +101,13 @@ export interface Config {
   };
   user: User;
   jobs: {
-    tasks: unknown;
+    tasks: {
+      schedulePublish: TaskSchedulePublish;
+      inline: {
+        input: unknown;
+        output: unknown;
+      };
+    };
     workflows: unknown;
   };
 }
@@ -116,6 +128,33 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  roles: ('super-admin' | 'editor' | 'product-manager' | 'sales-support')[];
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -185,30 +224,436 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "categories".
  */
-export interface User {
+export interface Category {
   id: number;
-  roles: ('super-admin' | 'editor' | 'product-manager' | 'sales-support')[];
+  /**
+   * Max 80 characters.
+   */
+  title: string;
+  /**
+   * Lowercase letters, numbers and hyphens. Used in the URL.
+   */
+  slug: string;
+  /**
+   * Leave empty for a top-level category.
+   */
+  parent?: (number | null) | Category;
+  /**
+   * Computed from the parent chain and slug. Used in the URL.
+   */
+  path?: string | null;
+  kind: 'services' | 'industries' | 'locations' | 'blog' | 'products' | 'general';
+  /**
+   * Max 400 characters.
+   */
+  intro?: string | null;
+  showInNav?: boolean | null;
+  navOrder?: number | null;
+  seo?: {
+    /**
+     * Max 60 characters.
+     */
+    metaTitle?: string | null;
+    /**
+     * Max 160 characters.
+     */
+    metaDescription?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
+  deletedAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  /**
+   * Max 80 characters.
+   */
+  title: string;
+  /**
+   * Lowercase letters, numbers and hyphens. Used in the URL.
+   */
+  slug: string;
+  /**
+   * Optional. The page URL is prefixed with the category path.
+   */
+  category?: (number | null) | Category;
+  /**
+   * Computed from the category path and slug. Unique per page.
+   */
+  path?: string | null;
+  template: 'standard' | 'landing' | 'legal' | 'form';
+  /**
+   * Legal pages can only be published by a Super Admin.
+   */
+  isLegal?: boolean | null;
+  layout?:
+    | (
+        | {
+            /**
+             * Max 40 characters.
+             */
+            eyebrow?: string | null;
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Max 200 characters.
+             */
+            subheadline?: string | null;
+            primaryAction: {
+              /**
+               * Max 24 characters.
+               */
+              label: string;
+              kind: 'call' | 'whatsapp' | 'inspection' | 'link';
+              /**
+               * Max 200 characters.
+               */
+              href: string;
+            };
+            secondaryActions?:
+              | {
+                  /**
+                   * Max 24 characters.
+                   */
+                  label: string;
+                  kind: 'call' | 'whatsapp' | 'inspection' | 'link';
+                  /**
+                   * Max 200 characters.
+                   */
+                  href: string;
+                  id?: string | null;
+                }[]
+              | null;
+            image?: (number | null) | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            items?:
+              | {
+                  /**
+                   * Max 12 characters.
+                   */
+                  statValue: string;
+                  /**
+                   * Max 40 characters.
+                   */
+                  statLabel: string;
+                  /**
+                   * Internal note: where this number comes from. Never rendered.
+                   */
+                  proofNote: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'trustStrip';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            items?:
+              | {
+                  /**
+                   * Max 80 characters.
+                   */
+                  icon: string;
+                  /**
+                   * Max 60 characters.
+                   */
+                  cardTitle: string;
+                  /**
+                   * Max 160 characters.
+                   */
+                  cardBody: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whyChoose';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Max 400 characters.
+             */
+            shortParagraph: string;
+            points?:
+              | {
+                  /**
+                   * Max 100 characters.
+                   */
+                  point: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Internal note: what proves this. Never rendered.
+             */
+            proofNote: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourDifference';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            steps?:
+              | {
+                  /**
+                   * Max 60 characters.
+                   */
+                  cardTitle: string;
+                  /**
+                   * Max 160 characters.
+                   */
+                  cardBody: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorks';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Max 400 characters.
+             */
+            shortParagraph: string;
+            highlights?:
+              | {
+                  /**
+                   * Max 100 characters.
+                   */
+                  highlight: string;
+                  id?: string | null;
+                }[]
+              | null;
+            link: {
+              /**
+               * Max 24 characters.
+               */
+              label: string;
+              kind: 'call' | 'whatsapp' | 'inspection' | 'link';
+              /**
+               * Max 200 characters.
+               */
+              href: string;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'warrantyPromise';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            items?:
+              | {
+                  /**
+                   * Max 60 characters.
+                   */
+                  title: string;
+                  /**
+                   * Max 160 characters.
+                   */
+                  cardBody: string;
+                  link: {
+                    /**
+                     * Max 24 characters.
+                     */
+                    label: string;
+                    kind: 'call' | 'whatsapp' | 'inspection' | 'link';
+                    /**
+                     * Max 200 characters.
+                     */
+                    href: string;
+                  };
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whoWeServe';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            pairs?:
+              | {
+                  before: number | Media;
+                  after: number | Media;
+                  /**
+                   * Max 100 characters.
+                   */
+                  caption?: string | null;
+                  /**
+                   * Max 100 characters.
+                   */
+                  area?: string | null;
+                  consentConfirmed: boolean;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'beforeAfter';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            items?:
+              | {
+                  image: number | Media;
+                  /**
+                   * Max 60 characters.
+                   */
+                  title: string;
+                  /**
+                   * Max 60 characters.
+                   */
+                  issuer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'certificates';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Form fields themselves are fixed (docs/CONTENT.md §6).
+             */
+            shortParagraph: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'inspectionForm';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            items?:
+              | {
+                  /**
+                   * Max 120 characters.
+                   */
+                  question: string;
+                  /**
+                   * Max 600 characters.
+                   */
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faq';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Max 160 characters.
+             */
+            cardBody: string;
+            buttons?:
+              | {
+                  /**
+                   * Max 24 characters.
+                   */
+                  label: string;
+                  kind: 'call' | 'whatsapp' | 'inspection' | 'link';
+                  /**
+                   * Max 200 characters.
+                   */
+                  href: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            paragraphs?:
+              | {
+                  /**
+                   * Max 600 characters.
+                   */
+                  paragraph: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'textBlocks';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactDetails';
+          }
+      )[]
     | null;
-  password?: string | null;
-  collection: 'users';
+  seo?: {
+    /**
+     * Max 60 characters.
+     */
+    metaTitle?: string | null;
+    /**
+     * Max 160 characters.
+     */
+    metaDescription?: string | null;
+  };
+  noindex?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -229,18 +674,118 @@ export interface PayloadKv {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: number;
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  taskStatus?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  completedAt?: string | null;
+  totalTried?: number | null;
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null;
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string;
+        completedAt: string;
+        taskSlug: 'inline' | 'schedulePublish';
+        taskID: string;
+        input?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        output?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        state: 'failed' | 'succeeded';
+        error?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  taskSlug?: ('inline' | 'schedulePublish') | null;
+  queue?: string | null;
+  waitUntil?: string | null;
+  processing?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -283,6 +828,30 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  roles?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  resetPasswordRequestedAt?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -360,27 +929,269 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "categories_select".
  */
-export interface UsersSelect<T extends boolean = true> {
-  roles?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  resetPasswordRequestedAt?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+export interface CategoriesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  parent?: T;
+  path?: T;
+  kind?: T;
+  intro?: T;
+  showInNav?: T;
+  navOrder?: T;
+  seo?:
     | T
     | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
+        metaTitle?: T;
+        metaDescription?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  category?: T;
+  path?: T;
+  template?: T;
+  isLegal?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              eyebrow?: T;
+              headline?: T;
+              subheadline?: T;
+              primaryAction?:
+                | T
+                | {
+                    label?: T;
+                    kind?: T;
+                    href?: T;
+                  };
+              secondaryActions?:
+                | T
+                | {
+                    label?: T;
+                    kind?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              image?: T;
+              id?: T;
+              blockName?: T;
+            };
+        trustStrip?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    statValue?: T;
+                    statLabel?: T;
+                    proofNote?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        whyChoose?:
+          | T
+          | {
+              headline?: T;
+              items?:
+                | T
+                | {
+                    icon?: T;
+                    cardTitle?: T;
+                    cardBody?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        ourDifference?:
+          | T
+          | {
+              headline?: T;
+              shortParagraph?: T;
+              points?:
+                | T
+                | {
+                    point?: T;
+                    id?: T;
+                  };
+              proofNote?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              headline?: T;
+              steps?:
+                | T
+                | {
+                    cardTitle?: T;
+                    cardBody?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        warrantyPromise?:
+          | T
+          | {
+              headline?: T;
+              shortParagraph?: T;
+              highlights?:
+                | T
+                | {
+                    highlight?: T;
+                    id?: T;
+                  };
+              link?:
+                | T
+                | {
+                    label?: T;
+                    kind?: T;
+                    href?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        whoWeServe?:
+          | T
+          | {
+              headline?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    cardBody?: T;
+                    link?:
+                      | T
+                      | {
+                          label?: T;
+                          kind?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        beforeAfter?:
+          | T
+          | {
+              headline?: T;
+              pairs?:
+                | T
+                | {
+                    before?: T;
+                    after?: T;
+                    caption?: T;
+                    area?: T;
+                    consentConfirmed?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        certificates?:
+          | T
+          | {
+              headline?: T;
+              items?:
+                | T
+                | {
+                    image?: T;
+                    title?: T;
+                    issuer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        inspectionForm?:
+          | T
+          | {
+              headline?: T;
+              shortParagraph?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faq?:
+          | T
+          | {
+              headline?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              headline?: T;
+              cardBody?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    kind?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        textBlocks?:
+          | T
+          | {
+              headline?: T;
+              paragraphs?:
+                | T
+                | {
+                    paragraph?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        contactDetails?:
+          | T
+          | {
+              headline?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
+  noindex?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -389,6 +1200,37 @@ export interface UsersSelect<T extends boolean = true> {
 export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T;
+  taskStatus?: T;
+  completedAt?: T;
+  totalTried?: T;
+  hasError?: T;
+  error?: T;
+  log?:
+    | T
+    | {
+        executedAt?: T;
+        completedAt?: T;
+        taskSlug?: T;
+        taskID?: T;
+        input?: T;
+        output?: T;
+        state?: T;
+        error?: T;
+        id?: T;
+      };
+  taskSlug?: T;
+  queue?: T;
+  waitUntil?: T;
+  processing?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -431,6 +1273,26 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSchedulePublish".
+ */
+export interface TaskSchedulePublish {
+  input: {
+    type?: ('publish' | 'unpublish') | null;
+    locale?: string | null;
+    doc?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    global?: string | null;
+    user?: {
+      relationTo: 'users';
+      value: number | User;
+    } | null;
+  };
+  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
