@@ -75,11 +75,11 @@
 - [x] `users` collection with `roles` (`super-admin`, `editor`, `product-manager`, `sales-support`) and access helper functions (`docs/DATABASE.md`) (2026-11-19; 8 unit tests pass, typecheck/lint/build pass)
 - [x] Filebase account checked: endpoint and region confirmed against current Filebase docs; public and private buckets created (the human creates accounts; see `docs/STORAGE.md`) (2026-11-19; `https://s3.filebase.io` + region `auto` confirmed in current Filebase docs; one **public** bucket `vaultifier`, human confirmed — two-bucket plan dropped, see `docs/STORAGE.md` §3)
 - [x] `media` collection using the S3 storage adapter pointed at Filebase. No object ACLs (Filebase does not support them) (2026-11-19; `@payloadcms/storage-s3`, prefix `media/`, no `acl` option set)
-- [ ] Spike: choose the media delivery path (Next image optimizer, Filebase gateway, or Cloudflare in front). Record in `docs/STORAGE.md` and `DECISIONS.md`
+- [x] Spike: choose the media delivery path (Next image optimizer, Filebase gateway, or Cloudflare in front). Record in `docs/STORAGE.md` and `DECISIONS.md` (2026-11-19; all five candidates probed live: Filebase direct chosen for launch with the Payload route as interim — ADR-015, `docs/STORAGE.md` §4. Evidence: signed GET 200 / anonymous 403 (bucket flip pending), Payload route 200 but no `Cache-Control`, optimizer 400 on `?prefix=media` under Next 16's default `localPatterns`, gateway hostnames do not resolve, Cloudflare deferred until a domain exists)
 - [x] Image processing on upload (resized variants, WebP/AVIF), required alt text (2026-11-19; thumb/card/hero in WebP + card/hero in AVIF, `withoutEnlargement`; `alt` required with `maxLength` from `src/cms/limits.ts`; server-side size caps)
 - [x] Integration test: upload, read back, delete (2026-11-19; `src/collections/media.integration.test.ts`, 5 tests against the real bucket + local PostgreSQL, skipped in CI)
 - **Exit:** an uploaded image appears on a test page with the right URL; alt text is enforced
-- **Commit:** `checkpoint(CP-1.1): users with roles and Filebase-backed media`
+- **Commit:** `checkpoint(CP-1.1): delivery path decision, media test page and initial migration` (the users/roles and media chunks were committed earlier as `40953fe` and `5e5a1a0`)
 
 ### CP-1.2 — Limits registry, categories, pages
 - [ ] `src/cms/limits.ts` with text and count presets (`docs/CONTENT.md` section 5)

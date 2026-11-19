@@ -89,6 +89,12 @@
 - **Status:** Accepted
 - **Decision:** Lexical rich text for blog posts and legal pages only, with a restricted feature set and a character cap. All marketing content uses structured fields with limits.
 
+### ADR-015 — Media delivery: Filebase direct at launch, Payload route until the bucket is public
+- **Status:** Accepted (CP-1.1 spike, 2026-11-19; probe evidence in `docs/STORAGE.md` §4)
+- **Decision:** Serve public media straight from Filebase at `https://<bucket>.s3.filebase.io/<object-key>` once the bucket is public. Until that flip lands, Payload's media route (`/api/media/file/…`) serves every image. Do **not** put the Next image optimizer or Cloudflare in the launch path.
+- **Why:** Filebase direct is edge-cached, has no egress fee and needs no server of ours (probe: signed GET 200; anonymous 403 only because the bucket is still private — Q13). The Payload route works today with a private bucket but streams every hit through a serverless function and sends no `Cache-Control`. The Next optimizer rejects Payload's `?prefix=` URLs under Next 16's default `localPatterns` (400; gotcha 23) and would be metered on Vercel (ADR-012). Cloudflare has no domain to sit in front of yet (Q9), and Filebase already caches public buckets.
+- **Consequences:** `FILEBASE_PUBLIC_BASE_URL` stays empty until the bucket is public; when set to `https://vaultifier.s3.filebase.io`, the per-collection `generateFileURL` in `src/payload.config.ts` rewrites media and size URLs on read — an env-only flip, no re-upload. Upload keeps generating fixed variants (WebP + AVIF), so responsive images work without an optimizer. Revisit if on-demand widths, observed Filebase latency, or an actual domain change the picture.
+
 ---
 
 ## Part B. Open questions for management

@@ -8,7 +8,7 @@ const config = [
       'node_modules/**',
       'next-env.d.ts',
       'src/payload-types.ts',
-      'migrations/**',
+      '**/migrations/**',
     ],
   },
   ...nextCoreWebVitals,

@@ -1,6 +1,8 @@
-.next/
-coverage/
-node_modules/
-playwright-report/
-test-results/
+# Generated files — excluded from formatting the same way ESLint ignores them.
+# Regenerating these (pnpm generate:types / generate:importmap / payload migrate:create)
+# must not break `pnpm format:check`.
+src/payload-types.ts
+src/app/(payload)/admin/importMap.js
+src/migrations/
+# Rewritten by every `pnpm install`; the tool owns its format.
 pnpm-lock.yaml

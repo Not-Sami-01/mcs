@@ -8,7 +8,7 @@
 
 | Environment | URL | Database | Buckets | Indexing | Purpose |
 |---|---|---|---|---|---|
-| `development` | `http://localhost:3000` | Docker PostgreSQL | dev buckets | noindex | Local work. Sample seed allowed |
+| `development` | `http://localhost:3000` | podman PostgreSQL (`mcs-db` on 5432; `docker-compose.yml` is the canonical config) | dev buckets | noindex | Local work. Sample seed allowed |
 | `staging` | `TODO(client)` staging domain | Separate database | `-staging` buckets | **noindex** | UAT, redirect tests. Sample or copied non-personal content only |
 | `production` | `TODO(client)` main domain | Production database | production buckets | **indexable** | Live |
 

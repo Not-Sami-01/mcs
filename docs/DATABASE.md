@@ -7,7 +7,7 @@
 
 ## 1. Conventions
 
-- **Engine:** PostgreSQL through the Payload Postgres adapter. Local dev uses Docker (`docker-compose.yml`).
+- **Engine:** PostgreSQL through the Payload Postgres adapter. Local dev runs PostgreSQL in a rootless **podman** container `mcs-db` on 5432 (`docker-compose.yml` is the canonical config; Docker is unavailable on this machine, so podman runs the equivalent container). If port 5432 is taken (e.g. a system PostgreSQL service starts first), free the port and `podman start mcs-db`.
 - **Schema changes:** dev may use schema push. **Staging and production use migrations only** (`pnpm payload migrate:create`, review the SQL, commit it, `pnpm payload migrate`). Never edit an applied migration.
 - **Forbidden field name:** do not name a custom field `status` on any collection with drafts. Use `leadStatus`, `stockStatus`, and so on. Payload manages `_status` itself.
 - **Time:** all timestamps are UTC (`timestamptz`). Display and apply business rules in `Asia/Karachi`.
@@ -148,7 +148,7 @@ Add one entry per applied migration. Include how to roll back and what to check.
 
 | Date | Migration | What and why | Rollback / notes |
 |---|---|---|---|
-| — | — | No migrations yet | — |
+| 2026-11-19 | `20261119_101405_initial` | Initial schema for CI/production: `users` (+ `users_roles`, `users_sessions`), `media`, Payload system tables — 10 `CREATE TABLE`, identical to the dev database. Needed because CI/production build pages that query Payload and `payload.config.ts` never pushes schema outside development. | Created with `payload migrate:create`; verified end-to-end on an empty scratch database 2026-11-19 (10 tables + `payload_migrations` row, then dropped). CI runs `pnpm payload migrate` before `pnpm build`. Local dev still runs on schema push, so it has no `payload_migrations` row — expected. Down drops all 10 tables; never run it where data matters. |
 
 ### Rules
 

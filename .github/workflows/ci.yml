@@ -50,6 +50,9 @@ jobs:
       - run: pnpm lint
       - run: pnpm format:check
       - run: pnpm test
+      # Schema for the build: CI's Postgres is empty and `next build` prerenders pages
+      # that query Payload (payload.config never pushes schema outside development).
+      - run: pnpm payload migrate
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e

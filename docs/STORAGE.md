@@ -1,6 +1,6 @@
 # STORAGE — Filebase
 
-> **Status:** `media` pipeline implemented (CP-1.1, 2026-11-19): S3 adapter → single public bucket `vaultifier`, prefix `media/`, WebP/AVIF variants, required alt, size caps, integration round trip passing. Delivery path spike and customer photo pipeline (section 5) are still open. Update when buckets, env vars or the upload pipeline change.
+> **Status:** `media` pipeline implemented (CP-1.1, 2026-11-19): S3 adapter → single public bucket `vaultifier`, prefix `media/`, WebP/AVIF variants, required alt, size caps, integration round trip passing. **Delivery path decided** (CP-1.1 spike, 2026-11-19, §4 / ADR-015): direct Filebase URLs once the bucket is public, Payload's media route until then. Customer photo pipeline (section 5) is still open. Update when buckets, env vars or the upload pipeline change.
 > Facts about Filebase below were checked against its documentation on 2026-11-17 and re-checked 2026-11-19 (endpoint/region). Re-check plan limits in the Filebase console when buckets change.
 
 ---
@@ -67,16 +67,23 @@ Never put names, phone numbers or other personal data in keys.
 4. Files upload through the Payload S3 storage adapter configured with the Filebase endpoint and the `vaultifier` bucket (`FILEBASE_BUCKET`).
 5. `alt` text is required. No alt, no save.
 
-### Delivery path (decide in CP-1.1 spike)
+### Delivery path (spike run 2026-11-19; decided — ADR-015)
 
-| Option | How | Pros | Cons |
-|---|---|---|---|
-| A. Next.js image optimizer | `next/image` with `remotePatterns` for the Filebase public URL | Resizing and formats for free on a VPS; simple | Metered on Vercel; origin latency on first hit |
-| B. Payload media route | Payload streams from the bucket through `/api/media/file/...` | Access control applies | Every image hits our server; slower |
-| C. Cloudflare in front | Custom media domain proxied or cached by Cloudflare | Fast, cheap, offloads Filebase's request limit | Needs the right origin or Worker setup; test with Filebase's public URL format |
-| D. Filebase dedicated gateway | Paid gateway domain | Built for serving | Extra cost; vendor tie |
+**Chosen: Filebase direct at launch (`https://<bucket>.s3.filebase.io/<object-key>`), Payload's media route (`/api/media/file/…`) until the bucket is public. No Next image optimizer in the hot path, no Cloudflare at launch.**
 
-**Default until the spike:** A with Cloudflare caching in front (A + C). Record the outcome in `DECISIONS.md`. Whatever is chosen: set long `Cache-Control` on versioned keys, and set `images.remotePatterns` narrowly (exact host, path prefix).
+Every candidate was probed live on 2026-11-19 against the real bucket and a production build:
+
+| Path | What the probe showed | Verdict |
+|---|---|---|
+| **Filebase direct** `https://vaultifier.s3.filebase.io/media/…` | This is the URL form Filebase documents for public buckets; served from their edge CDN, no egress fees, honours the `Cache-Control` set at upload. Signed GET = 200 (12 953 bytes); anonymous GET = **403** — the bucket is still private (Q13 flip pending) | **Launch path.** Blocked only on the human making the bucket public; the switch is env-only |
+| **Payload media route** `/api/media/file/…?prefix=media` | 200 + ETag + correct content-type, with and without `?prefix=`. **No `Cache-Control` header**, and every hit streams through our serverless function | **Interim path.** Works with a private bucket; this is what the CP-1.1 test page uses |
+| **Next image optimizer** `/_next/image` | 200 on query-less URLs (resized 828×466, 923 bytes, `Cache-Control: public, max-age=0, must-revalidate`), but **400 `"url" parameter is not allowed`** for `?prefix=media`: Next 16's default `images.localPatterns` is `{pathname: '**', search: ''}` and `search` matches as an exact string (gotcha 23) | **Not used.** Upload already generates thumb/card/hero variants in WebP + AVIF, and Vercel image optimization is metered (ADR-012). Revisit only if on-demand widths become necessary |
+| **Cloudflare in front** | Not testable yet — no domain exists (Q9). Filebase already caches public buckets at the edge | **Deferred** until the domain exists |
+| **IPFS gateway URLs** | No CID in object headers (checked a signed GET); `vaultifier.ipfs.filebase.io` and `ipfs.filebase.io` do not resolve | **Rejected** |
+
+**The flip (one env var, no re-upload):** after the human makes the bucket public, verify with an anonymous `curl` of the public URL, then set `FILEBASE_PUBLIC_BASE_URL=https://vaultifier.s3.filebase.io`. `src/payload.config.ts` passes a per-collection `generateFileURL` to the storage plugin only when that var is set, so every `url` and size URL is rewritten to the direct form on read. Empty value = Payload route, nothing else changes.
+
+Whatever path serves the bytes: versioned keys should carry a long `Cache-Control` at upload time (Filebase honours it), and if `next/image` is ever pointed at Payload media URLs, set `images.localPatterns` narrowly (exact pathname **and** exact `search`, gotcha 23) or `remotePatterns` for the Filebase host.
 
 ---
 
@@ -126,6 +133,9 @@ Use different keys per environment. Rotate on suspected exposure. Values never a
 - Public bucket listing is not exposed; the app never lists buckets per request.
 - A request without role gets `401` or `403` on the photo route; a staff user of the wrong role gets `403`.
 - Media without alt text cannot be saved.
+- ✅ **Delivery-path spike (CP-1.1, 2026-11-19):** all five candidate paths probed with real requests (signed GET 200 12 953 B, anonymous 403/000 while the bucket is private, Payload media route 200 but no `Cache-Control`, Next optimizer 400 on `?prefix=media`, IPFS gateway unreachable) — decision recorded in ADR-015 §4 above.
+- ✅ **Direct-URL flip:** `src/cms/media-urls.ts` `publicFileUrl` + 3 unit tests; `payload.config.ts` wires `generateFileURL` only when `FILEBASE_PUBLIC_BASE_URL` is set (currently empty — bucket still private; anonymous `curl` returns 000/403).
+- ✅ **Test page (exit criterion):** `/media-test` (`src/app/(frontend)/media-test/page.tsx`, static, `noindex`) renders real uploads with alt + 3-variant WebP srcset and a delivery-path indicator; empty-library notice when no docs. E2E `tests/e2e/media-test.spec.ts` asserts `naturalWidth > 0` — **3/3 pass** with the staging build; production smoke: page 200 and image `src` present.
 
 ---
 

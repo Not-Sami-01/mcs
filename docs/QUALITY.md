@@ -47,8 +47,14 @@ Do not rely on memory for versions. Query the registry or docs, then record.
 | Staging build + E2E for the media chunk | `SITE_ENV=staging pnpm build` then `pnpm test:e2e` | Pass (2 tests) | 2026-11-19 | |
 | Production build for the media chunk | `SITE_ENV=production pnpm build` | Pass | 2026-11-19 | Config now fail-fast requires `FILEBASE_*` env; CI placeholders added to `ci.yml` |
 | Runtime smoke for media access | `curl /api/health`, `GET /api/media`, anon `POST /api/media` | Pass (200 / 200 / **403**) | 2026-11-19 | Public read works; anonymous upload correctly denied. Leftover test PDF from an intermediate run deleted and verified (0 media docs) |
+| CP-1.1 delivery-path chunk (spike, flip, migration, test page) | `pnpm format:check && pnpm typecheck && pnpm lint && pnpm test` | Pass (4 files, **19 tests**) | 2026-11-19 | Adds `src/cms/media-urls.test.ts` (3 tests, ADR-015 URL construction); generated files (`payload-types.ts`, `importMap.js`, `src/migrations/`, `pnpm-lock.yaml`) excluded from format/lint the same way |
+| Staging build + E2E for CP-1.1 | `SITE_ENV=staging pnpm build` then `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome pnpm test:e2e` | Pass (build: 7 static routes incl. `○ /media-test`; E2E **3/3**) | 2026-11-19 | Built HTML for `/media-test` contains `src="/api/media/file/cp11-test-image.png?prefix=media"`, 3-variant WebP `srcSet`, alt, width/height; e2e polls `naturalWidth > 0` (30 s) so delivery is proven end to end. First full-suite run failed on a cold Playwright cache (browser binaries wiped by the reboot; download stalls on this network — gotcha 22) and passed once the system Chrome path was used |
+| Production build + smoke for CP-1.1 | `pnpm build` then `SITE_ENV=production pnpm start` + curl | Pass | 2026-11-19 | `/api/health` 200, `/media-test` 200 (image `src` present), `GET /api/media` 200, anon `POST` **403**, `GET /api/media/file/…?prefix=media` 200 |
+| CI sequence simulated (no remote yet) | scratch DB → `pnpm payload migrate` → `SITE_ENV=staging DATABASE_URL=<scratch> pnpm build` | Pass | 2026-11-19 | Empty DB migrated (10 tables + `payload_migrations` row), build rendered `/media-test` empty-state notice with 0 `<img>`; scratch DB dropped, normal staging build restored afterwards. Proves the new CI migrate step + the page's empty-library branch |
+| Initial migration verified | `pnpm payload migrate` against an empty scratch DB | Pass (10 tables, migration row recorded) | 2026-11-19 | `20261119_101405_initial` — 10 `CREATE TABLE` matching the dev schema, down = 10 `DROP TABLE`; run twice (standalone and as the CI sequence) |
+| DB recovery after machine reboot | `podman start mcs-db` + row counts | Pass | 2026-11-19 | System PostgreSQL 18 took port 5432; after the human disabled it, container data verified intact (media doc 12, 1 user, 10 tables), baseline test run 16/16 at that point |
 
-CI runs the same commands with the same Node and pnpm versions.
+CI runs the same commands with the same Node and pnpm versions. Note: CI has never actually run (no remote configured yet), so the "CI sequence simulated" row above is the local proof of that path.
 
 ---
 

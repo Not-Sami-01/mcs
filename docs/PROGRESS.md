@@ -9,12 +9,13 @@
 > Keep this block short and accurate. Rewrite it before starting each task and after finishing each step.
 
 - **Last updated:** 2026-11-19
-- **Current phase / checkpoint:** Phase 1, CP-1.1 — users ✓, Filebase media ✓ implemented and verified; **remaining: delivery-path spike + image on a test page** (exit criteria). CP-0.2 first-user creation remains unverified.
-- **State of the repo:** branch `development`; latest checkpoint commit `45563c5` (`cp-0.3`). Uncommitted: the media/Filebase chunk below.
-- **What I was doing:** added the `media` collection (S3 adapter → bucket `vaultifier`, prefix `media/`), `src/cms/limits.ts`, size/alt enforcement, a 5-test Filebase integration round trip (upload → byte-identical read → delete), ADR-012 = Vercel, commented `.env.example`.
-- **Next step:** stage-review for secrets and commit (`feat(media): …`), then the delivery-path spike (CP-1.1 item 4) and a test page showing an uploaded image.
-- **Blockers:** `@payloadcms/storage-s3@3.94.0` declares Node `^22.23.5` (installed 22.23.1) — installs and runs, but upgrade Node before deploy (gotcha 21). Filebase endpoint times out intermittently from this network (S3 clients retry `maxAttempts: 5`; gotcha 22). Docker unavailable; CP-0.2 first-user unverified.
-- **Uncommitted or half-done work:** this media chunk — `src/cms/limits.ts`, `src/collections/Media.ts`, `src/collections/media.integration.test.ts`, access helpers, `payload.config.ts`, `.env.example`, `ci.yml` placeholders, lockfile (`@payloadcms/storage-s3` + `@aws-sdk/client-s3` devDep), regenerated types/importMap, docs. Last full run: format ✓ typecheck ✓ lint ✓ **16/16 tests** (incl. live Filebase round trip ×2) staging build ✓ E2E 2/2 ✓ production build ✓ smoke: `GET /api/media` 200, anon `POST` 403.
+- **Current phase / checkpoint:** Phase 1, CP-1.1 — all exit criteria **verified**: image on `/media-test` ✓ (E2E polls `naturalWidth > 0`, 3/3 pass), alt enforced ✓ (integration test rejects upload without alt), delivery path decided ✓ (ADR-015). Checks green: format ✓ typecheck ✓ lint ✓ **19/19 tests** ✓ staging build + E2E 3/3 ✓ production build + smoke ✓ CI sequence simulated on an empty DB ✓. **Only remaining: commit `checkpoint(CP-1.1): …` and tag `cp-1.1`.**
+- **State of the repo:** branch `development`; commits `45563c5` (`cp-0.3`), `40953fe` (users), `5e5a1a0` (media). Everything CP-1.1-chunk-3 is uncommitted: spike docs + gotcha 23, `generateFileURL` flip (`src/payload.config.ts`, `src/cms/media-urls.*`), `/media-test` page + `tests/e2e/media-test.spec.ts`, first migration `src/migrations/20261119_101405_initial` + CI `payload migrate` step, `.prettierignore`/eslint generated-file exclusions, `.env.example`/`.env.local` (`FILEBASE_PUBLIC_BASE_URL` corrected to empty — it held the S3 API endpoint, not a delivery origin).
+- **What I was doing:** finished CP-1.1 verification end to end (checks, staging build + E2E 3/3, production build + smoke, CI sequence simulated on an empty DB) and recorded the evidence in QUALITY/STORAGE/DATABASE/OPERATIONS.
+- **Next step:** `git add -A`, read `git diff --staged` for secrets, commit `checkpoint(CP-1.1): delivery path decision, media test page and initial migration`, add the checkpoint-log row with the hash (amend), tag `cp-1.1`, report to the human. Then CP-1.2 per PLAN.
+- **CP-0.2 first-user status (checked 2026-11-19):** the single user row (`admin@admin.admin`, created 2026-11-18) predates the roles system (shipped 2026-11-19) and has **no rows in `users_roles`** — it can sign in to the panel (entry is unrestricted by design, `docs/DATABASE.md` §4) but `hasAnyRole` fails, so it cannot write media or manage users. The bootstrap hook (`applyBootstrapRole`, unit-tested) only assigns `super-admin` on an unauthenticated create, which cannot happen while this user exists. **Open:** backfill this row's role or reset and recreate the first user (`pnpm seed:admin` / `/admin/create-first-user`) — destructive, human's call.
+- **Environment incident (2026-11-19, resolved):** machine rebooted mid-session; system PostgreSQL 18 (human's install from earlier that day) took port 5432 and the rootless podman container `mcs-db` (our dev DB) could not start. The human disabled the system service; `podman start mcs-db` restored everything — verified media doc 12, 1 user, all 10 tables. If it recurs: free 5432, then `podman start mcs-db`.
+- **Blockers:** `@payloadcms/storage-s3@3.94.0` declares Node `^22.23.5` (installed 22.23.1) — installs and runs, but upgrade Node before deploy (gotcha 21). Filebase endpoint times out intermittently from this network (S3 clients retry `maxAttempts: 5`; gotcha 22 — Playwright's browser download also stalls here, use `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome` locally). Docker unavailable (podman used instead). CP-0.2 first-user role backfill open (above). Bucket still private — anonymous media URL 403/DNS, so `FILEBASE_PUBLIC_BASE_URL` stays empty (ADR-015 flip pending the human's Q13 action). No remote → CI has never actually run.
 
 ---
 
@@ -22,11 +23,11 @@
 
 | Area | Status |
 |---|---|
-| Docs | CP-1.1 updates in progress (uncommitted): ADR-012 Vercel, `.env.example` guidance, single-bucket decision, new gotchas |
-| Repo scaffold | Implemented; frozen install, typecheck, lint, build, home/admin route and live DB health check verified; first user not created |
-| Data model | `users` (roles, access) and `media` implemented; other collections not started |
-| Admin and roles | Roles + access helpers (11 unit tests); media access enforced (anon create 403 in smoke); invite/2FA (CP-2.x) not started |
-| Media and storage | Filebase S3 adapter live: upload/variants/alt/size-cap/round-trip test green; delivery-path spike and test page pending |
+| Docs | CP-1.1 updates uncommitted: ADR-012 Vercel, ADR-015 delivery path, `.env.example` guidance, single-bucket decision, gotchas 12/23 |
+| Repo scaffold | Implemented; frozen install, typecheck, lint, build, home/admin route and live DB health check verified; first user row exists but has **no roles** (see Resume here) |
+| Data model | `users` (roles, access) and `media` implemented + first migration `20261119_101405_initial` (CI/production); other collections not started |
+| Admin and roles | Roles + access helpers (unit tested); media access enforced (anon create 403 in smoke); invite/2FA (CP-2.x) not started |
+| Media and storage | Filebase S3 adapter live (upload/variants/alt/size-cap/round trip green); delivery path **decided** (ADR-015: Payload route now, direct Filebase URLs via `FILEBASE_PUBLIC_BASE_URL` when the bucket goes public); `/media-test` page + E2E 3/3 |
 | Public site | Not started |
 | Inline editing | Not started |
 | Services, locations, products, blog | Not started |
@@ -111,6 +112,16 @@ Newest first. Add an entry at the end of each session, even a short one.
 - **Media** (this chunk): `@payloadcms/storage-s3` added (engines say Node ≥22.23.5, installed 22.23.1 — known issue 1), `media` collection with `media/` prefix, WebP + AVIF variants, required `alt`, `src/cms/limits.ts` registry started, server-side size cap. Payload quirks found: `req.file.size` becomes `undefined` for non-images (measure `file.data.length`); `ValidationError` surfaces as "field is invalid" with details in `error.data.errors`.
 - **Evidence:** format/typecheck/lint pass; `pnpm test` 16/16 (Filebase round trip 5/5 twice — upload, byte-identical S3 read-back, delete, alt enforcement, 11 MB PDF rejected); staging build + E2E 2/2; production build pass; smoke: `GET /api/media` 200 (public read), anon `POST` 403. One leftover test PDF from a pre-fix run was deleted and verified gone (0 media docs).
 - **Still open for CP-1.1:** delivery-path spike (PLAN item 4) and an uploaded image on a test page (exit criterion). Next: commit, then the spike.
+
+### 2026-11-19 — CP-1.1 delivery path, test page, first migration
+
+- **Delivery-path spike:** probed all five paths (`docs/STORAGE.md` §4, ADR-015): signed Filebase GET **200** (12 953 B), anonymous 403/DNS-000 (bucket still private), Payload media route 200 but no `Cache-Control`, Next optimizer 400 on `?prefix=media` (default `localPatterns` exact-`search` match — gotcha 23), IPFS gateway unreachable (no CID in headers). Decision: launch via direct `https://<bucket>.s3.filebase.io/<key>` once public (env-only flip), Payload route until then, no Next optimizer.
+- **Flip implemented:** `src/cms/media-urls.ts` `publicFileUrl` + 3 unit tests; `payload.config.ts` passes `generateFileURL` only when `FILEBASE_PUBLIC_BASE_URL` is set. `.env.local` had the wrong value (`https://s3.filebase.io`, the API endpoint) — corrected to empty; `.env.example` documents the flip + verification curl.
+- **First migration:** `src/migrations/20261119_101405_initial` (10 CREATE TABLE / 10 DROP, `index.ts`), created with `payload migrate:create --force-accept-warning`, verified on two empty scratch DBs; CI now runs `pnpm payload migrate` before `pnpm build` (schema push never happens in production, and the integration suite is `skipIf`-gated in CI, so nothing else creates the schema there).
+- **Exit criterion:** `src/app/(frontend)/media-test/page.tsx` (static, noindex) renders doc 12 with alt, 3-variant WebP srcset, variant table and delivery-path indicator; empty-library notice for CI. E2E `tests/e2e/media-test.spec.ts` asserts `naturalWidth > 0`.
+- **Evidence:** format ✓ typecheck ✓ lint ✓ **19/19 tests** ✓ staging build (built HTML has `src="/api/media/file/cp11-test-image.png?prefix=media"` + srcSet) + **E2E 3/3** ✓ production build + smoke (health/media-test/list/file 200, anon POST **403**) ✓ CI sequence simulated on an empty scratch DB (migrate → build → empty-state HTML, 0 `<img>`) ✓. Gotcha: generated files (`payload-types.ts`, `importMap.js`, `src/migrations/`, `pnpm-lock.yaml`) excluded from format/lint so regeneration can't break the gate.
+- **Incident:** machine reboot wiped Playwright's browser cache and system PostgreSQL took 5432; human disabled it, `podman start mcs-db` restored the DB (data verified: doc 12, 1 user, 10 tables), and local E2E runs on `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome`.
+- **CP-0.2 honesty check:** user 1 (`admin@admin.admin`) has **no role rows** — it predates the roles system, and the bootstrap hook can't run while it exists. Recorded in the Resume block as an open decision for the human.
 
 ---
 

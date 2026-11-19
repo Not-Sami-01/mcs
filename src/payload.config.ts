@@ -8,6 +8,7 @@ import sharp from 'sharp';
 
 import { Media } from './collections/Media';
 import { Users } from './collections/Users';
+import { publicFileUrl } from './cms/media-urls';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -30,6 +31,13 @@ const filebaseBucket = requireEnv('FILEBASE_BUCKET');
 const filebaseAccessKeyId = requireEnv('FILEBASE_ACCESS_KEY_ID');
 const filebaseSecretAccessKey = requireEnv('FILEBASE_SECRET_ACCESS_KEY');
 
+// Optional (ADR-015): while the bucket is private this stays empty and Payload's
+// media route serves every file. Once the bucket is public, set it to the bucket's
+// public origin (e.g. https://vaultifier.s3.filebase.io) and every media URL is
+// rewritten to point straight at Filebase's edge CDN — an env-only flip, no re-upload.
+// Verify the bucket is actually public first (anonymous curl must return 200).
+const filebasePublicBaseUrl = process.env.FILEBASE_PUBLIC_BASE_URL?.trim() ?? '';
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -42,7 +50,16 @@ export default buildConfig({
     s3Storage({
       bucket: filebaseBucket,
       collections: {
-        media: { prefix: 'media' },
+        media: {
+          prefix: 'media',
+          // ADR-015: direct Filebase URLs only when the bucket is public.
+          ...(filebasePublicBaseUrl
+            ? {
+                generateFileURL: ({ filename, prefix }: { filename: string; prefix?: string }) =>
+                  publicFileUrl({ baseUrl: filebasePublicBaseUrl, prefix, filename }),
+              }
+            : {}),
+        },
       },
       config: {
         endpoint: filebaseEndpoint,
