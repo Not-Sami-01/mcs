@@ -1,6 +1,6 @@
 # DATABASE — Collections, Access and Migrations
 
-> **Status:** `users` is implemented (CP-1.1, 2026-11-19); all other collections are designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
+> **Status:** `users` and `media` are implemented (CP-1.1, 2026-11-19); all other collections are designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
 > Payload defines the schema from collection configs and generates the PostgreSQL tables (Drizzle). Field shapes below are the intended design. Verify exact option names against the installed Payload version.
 
 ---

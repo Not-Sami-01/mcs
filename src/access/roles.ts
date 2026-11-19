@@ -32,6 +32,14 @@ export function hasAnyRole(user: unknown, roles: readonly UserRole[]): boolean {
   return roles.some((role) => hasRole(user, role));
 }
 
+/** Roles that may create, update and delete media (docs/DATABASE.md §4). */
+const MEDIA_WRITERS = ['super-admin', 'editor', 'product-manager'] as const;
+
+export const writeMedia: Access = ({ req }) => hasAnyRole(req.user, MEDIA_WRITERS);
+
+/** Public read: published/site assets anyone may fetch without login. */
+export const readPublic: Access = () => true;
+
 export const isSuperAdmin: Access = ({ req }) => hasRole(req.user, 'super-admin');
 
 export const readUsers: Access = ({ req }) => {

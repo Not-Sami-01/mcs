@@ -109,7 +109,7 @@ Until answered, the **default assumption** is used and every affected page shows
 | Q10 | Email provider (Resend, Postmark, Amazon SES) and sender address | CP-2.1 | Console mail adapter in development | |
 | Q11 | Live chat provider (Tawk.to, Crisp, Chatwoot) | CP-6.4 | Provider-agnostic loader | |
 | Q12 | Lead and photo retention period; applicable privacy law | CP-6.3 | 24 months, configurable | |
-| Q13 | Filebase plan (public buckets need a paid plan) | CP-1.1 | Free tier for development only | |
+| Q13 | Filebase plan (public buckets need a paid plan) | CP-1.1 | One bucket `vaultifier`, human makes it public | Solved 2026-11-19: single bucket `vaultifier`, human confirms public access is covered |
 | Q14 | Real numbers for the trust strip (years, rating, team size) and proof | CP-3.3 | Strip stays unpublished | |
 | Q15 | Customer consent for before and after photos and reviews | CP-5.5 | Blocks stay unpublished | |
 | Q16 | Old WordPress domain and any backups | CP-7.2 | Recovery via Search Console and Internet Archive | |

@@ -29,6 +29,13 @@ jobs:
       SITE_ENV: staging
       DATABASE_URL: postgresql://mcs:mcs_dev_password@localhost:5432/mcs
       PAYLOAD_SECRET: ci-only-placeholder-secret-not-used-in-production
+      # Placeholder Filebase config: payload.config.ts requires these names to exist.
+      # No upload tests run in CI, so the values are never used to reach Filebase.
+      FILEBASE_ENDPOINT: https://s3.filebase.io
+      FILEBASE_REGION: auto
+      FILEBASE_BUCKET: ci-placeholder
+      FILEBASE_ACCESS_KEY_ID: ci-placeholder
+      FILEBASE_SECRET_ACCESS_KEY: ci-placeholder
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

@@ -187,8 +187,8 @@ Verified while planning, 2026-11-17. Re-verify against installed versions.
 | # | Gotcha | Consequence |
 |---|---|---|
 | 1 | **Filebase IPFS buckets expose every object through its CID, even in private buckets.** | Never store customer photos unencrypted. See `docs/STORAGE.md`. |
-| 2 | Filebase has no object-level ACLs. Public buckets need a paid plan. | Do not set ACLs in the S3 adapter. Use two buckets. |
-| 3 | Filebase docs show two endpoints (`s3.filebase.com` with region `us-east-1`, and `s3.filebase.io` with region `auto`). | Make endpoint and region env vars. Confirm in the Filebase console before CP-1.1. |
+| 2 | Filebase has no object-level ACLs. | Do not set ACLs in the S3 adapter. One bucket (`vaultifier`) with `media/` and `leads/` prefixes (2026-11-19); customer photos are protected by encryption, not bucket privacy. |
+| 3 | Filebase docs show two endpoints (`s3.filebase.com` with region `us-east-1`, and `s3.filebase.io` with region `auto`). | Confirmed 2026-11-19 against current Filebase docs: `s3.filebase.io` + `auto`. Still env vars, never hard-coded. |
 | 4 | Filebase S3 API effective limit is about 100 requests per second. | Cache media in front. Avoid per-request bucket listing. |
 | 5 | Payload has no built-in two-factor login. | Spike in CP-2.2. |
 | 6 | With the Postgres adapter and drafts enabled, `status` is a forbidden custom field name. | Use `leadStatus`, `stockStatus`, etc. Payload manages `_status`. |
@@ -205,3 +205,6 @@ Verified while planning, 2026-11-17. Re-verify against installed versions.
 | 17 | The `payload` CLI does **not** load `.env` files; `payload.config.ts` throws `DATABASE_URL is required` when run bare (observed 2026-11-19). Empty placeholder lines in a later-loaded env file (`.env.local` before `.env`) also clobber real values in Next builds. | Run CLI tasks with env sourced: `set -a; . ./.env.local; . ./.env; set +a; pnpm payload …`. Keep empty `KEY=` lines out of env files. |
 | 18 | `users.access.admin` gates entry to the **whole** admin panel for every staff role (`canAccessAdmin`), not just the Users collection. | Never restrict it to super-admins or editors lose the panel. Per-collection access controls what each role does inside. |
 | 19 | The Payload import map is generated, not automatic: a stale one logs `PayloadComponent not found … run the payload generate:importmap command` at runtime (seen on the admin dashboard, 2026-11-19). | Re-run `pnpm generate:importmap` after collection/component changes and commit `src/app/(payload)/admin/importMap.js`. |
+| 20 | In collection hooks, `req.file.size` is `undefined` for non-image uploads after `generateFileData` rewrites `req.file` (observed 2026-11-19), although the type says `size: number`. | Measure `req.file.data.length` (fall back to `size`) in `beforeValidate` hooks; see `src/collections/Media.ts`. |
+| 21 | `@payloadcms/storage-s3@3.94.0` declares Node engines `^22.23.5 \|\| ^24.22.3 \|\| >=26.13.1`; this machine and CI run 22.23.1. pnpm does not enforce it and everything passes. | Upgrade Node to ≥22.23.5 before the first production/Vercel deploy (tracked in `docs/PROGRESS.md` known issues). |
+| 22 | The Filebase endpoint (`s3.filebase.io:443`) times out intermittently from this network (IPv4 `ETIMEDOUT`, IPv6 `ENETUNREACH`); only the Filebase integration test and live uploads are affected. | S3 clients are configured with `maxAttempts: 5`. Re-run `pnpm test` before treating a Filebase test failure as a regression. |

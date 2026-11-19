@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { applyBootstrapRole, hasAnyRole, hasRole, readUsers, USER_ROLES } from './roles';
+import {
+  applyBootstrapRole,
+  hasAnyRole,
+  hasRole,
+  readPublic,
+  readUsers,
+  USER_ROLES,
+  writeMedia,
+} from './roles';
 
 describe('role access helpers', () => {
   const superAdmin = { id: 1, roles: ['super-admin'] };
@@ -42,5 +50,28 @@ describe('role access helpers', () => {
     expect(applyBootstrapRole({ data, operation: 'update', hasAuthenticatedUser: false })).toBe(
       data,
     );
+  });
+});
+
+describe('media access (docs/DATABASE.md §4)', () => {
+  const superAdmin = { id: 1, roles: ['super-admin'] };
+  const editor = { id: 2, roles: ['editor'] };
+  const productManager = { id: 3, roles: ['product-manager'] };
+  const salesSupport = { id: 4, roles: ['sales-support'] };
+
+  it('lets super-admin, editor and product-manager write media', () => {
+    expect(writeMedia({ req: { user: superAdmin } } as never)).toBe(true);
+    expect(writeMedia({ req: { user: editor } } as never)).toBe(true);
+    expect(writeMedia({ req: { user: productManager } } as never)).toBe(true);
+  });
+
+  it('denies media writes to sales-support and anonymous users', () => {
+    expect(writeMedia({ req: { user: salesSupport } } as never)).toBe(false);
+    expect(writeMedia({ req: { user: null } } as never)).toBe(false);
+  });
+
+  it('reads media publicly, with or without a session', () => {
+    expect(readPublic({ req: { user: null } } as never)).toBe(true);
+    expect(readPublic({ req: { user: salesSupport } } as never)).toBe(true);
   });
 });

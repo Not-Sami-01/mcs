@@ -9,12 +9,12 @@
 > Keep this block short and accurate. Rewrite it before starting each task and after finishing each step.
 
 - **Last updated:** 2026-11-19
-- **Current phase / checkpoint:** Phase 1, CP-1.1 in progress — users/roles half done (implemented and tested), Filebase media not started. CP-0.2 first-user creation remains unverified.
-- **State of the repo:** branch `development`; latest checkpoint commit is `45563c5` (`cp-0.3`). Uncommitted: role-based users work + doc updates (see below).
-- **What I was doing:** implemented `roles` on `users` + `src/access/roles.ts` helpers and tests; fixed three findings (type error, `access.admin` whole-panel lockout, bad `hasMany` `defaultValue`); regenerated Payload types and import map; ADR-012 recorded as Vercel.
-- **Next step:** stage-review for secrets and commit this chunk (`feat(users): …`), then start Filebase media once the env details below are resolved.
-- **Blockers:** **Filebase (CP-1.1 media):** `.env.local` has `FILEBASE_ENDPOINT=https://s3.filebase.io` but `FILEBASE_REGION` is empty and public/private buckets are both named `vaultifier` — need correct region and two distinct bucket names from the human. `@payloadcms/storage-s3@3.94.0` requires Node `^22.23.5` (installed 22.23.1) — resolve before adding it. Docker unavailable; CP-0.2 first-user unverified.
-- **Uncommitted or half-done work:** `src/access/roles.ts(+test)`, `src/collections/Users.ts`, `src/payload.config.ts`, regenerated `src/payload-types.ts` + `src/app/(payload)/admin/importMap.js`, docs (PROGRESS/PLAN/DATABASE/DECISIONS/PROJECT/QUALITY). Checks at last run: `pnpm format:check && pnpm typecheck && pnpm lint && pnpm test` pass (8 tests); `SITE_ENV=production pnpm build` passes.
+- **Current phase / checkpoint:** Phase 1, CP-1.1 — users ✓, Filebase media ✓ implemented and verified; **remaining: delivery-path spike + image on a test page** (exit criteria). CP-0.2 first-user creation remains unverified.
+- **State of the repo:** branch `development`; latest checkpoint commit `45563c5` (`cp-0.3`). Uncommitted: the media/Filebase chunk below.
+- **What I was doing:** added the `media` collection (S3 adapter → bucket `vaultifier`, prefix `media/`), `src/cms/limits.ts`, size/alt enforcement, a 5-test Filebase integration round trip (upload → byte-identical read → delete), ADR-012 = Vercel, commented `.env.example`.
+- **Next step:** stage-review for secrets and commit (`feat(media): …`), then the delivery-path spike (CP-1.1 item 4) and a test page showing an uploaded image.
+- **Blockers:** `@payloadcms/storage-s3@3.94.0` declares Node `^22.23.5` (installed 22.23.1) — installs and runs, but upgrade Node before deploy (gotcha 21). Filebase endpoint times out intermittently from this network (S3 clients retry `maxAttempts: 5`; gotcha 22). Docker unavailable; CP-0.2 first-user unverified.
+- **Uncommitted or half-done work:** this media chunk — `src/cms/limits.ts`, `src/collections/Media.ts`, `src/collections/media.integration.test.ts`, access helpers, `payload.config.ts`, `.env.example`, `ci.yml` placeholders, lockfile (`@payloadcms/storage-s3` + `@aws-sdk/client-s3` devDep), regenerated types/importMap, docs. Last full run: format ✓ typecheck ✓ lint ✓ **16/16 tests** (incl. live Filebase round trip ×2) staging build ✓ E2E 2/2 ✓ production build ✓ smoke: `GET /api/media` 200, anon `POST` 403.
 
 ---
 
@@ -22,10 +22,11 @@
 
 | Area | Status |
 |---|---|
-| Docs | CP-1.1 updates in progress (uncommitted): ADR-012 Vercel, users implemented, new gotchas |
+| Docs | CP-1.1 updates in progress (uncommitted): ADR-012 Vercel, `.env.example` guidance, single-bucket decision, new gotchas |
 | Repo scaffold | Implemented; frozen install, typecheck, lint, build, home/admin route and live DB health check verified; first user not created |
-| Data model | `users` implemented (roles, access); other collections not started |
-| Admin and roles | Roles + access helpers implemented with 8 unit tests; invite/2FA (CP-2.x) not started; media/Filebase not started |
+| Data model | `users` (roles, access) and `media` implemented; other collections not started |
+| Admin and roles | Roles + access helpers (11 unit tests); media access enforced (anon create 403 in smoke); invite/2FA (CP-2.x) not started |
+| Media and storage | Filebase S3 adapter live: upload/variants/alt/size-cap/round-trip test green; delivery-path spike and test page pending |
 | Public site | Not started |
 | Inline editing | Not started |
 | Services, locations, products, blog | Not started |
@@ -44,7 +45,7 @@ Newest first. One row per checkpoint commit.
 
 | Checkpoint | Date | Commit | Tag | Evidence (commands and results) | Notes |
 |---|---|---|---|---|---|
-| CP-0.3 | 2026-11-19 | `0d073dd` | `cp-0.3` | Frozen install, peers, format, typecheck, lint, 3 Vitest tests, 2 Playwright tests, production build and indexing/header smoke pass; audit reports 0 vulnerabilities | Committed on `development`; no remote configured |
+| CP-0.3 | 2026-11-19 | `45563c5` | `cp-0.3` | Frozen install, peers, format, typecheck, lint, 3 Vitest tests, 2 Playwright tests, production build and indexing/header smoke pass; audit reports 0 vulnerabilities | Committed on `development`; no remote configured. Hash is the amended commit (docs previously recorded the pre-amend `0d073dd`) |
 
 ---
 
@@ -57,7 +58,7 @@ Tracked in detail in `docs/DECISIONS.md` (section "Open questions"). Headlines:
 - Which products to list, and chemical licence and labelling rules
 - What "Malaysian" means for MCS, with proof
 - Launch cities (Lahore only or more)
-- Domain name, hosting budget, who maintains the site, who answers live chat
+- Domain name, who maintains the site, who answers live chat (hosting: decided — Vercel, ADR-012)
 - Old WordPress URL list (the site is down; start recovery now, see `docs/SEO.md`)
 
 ---
@@ -66,7 +67,8 @@ Tracked in detail in `docs/DECISIONS.md` (section "Open questions"). Headlines:
 
 | # | Issue | Severity | Found in | Status |
 |---|---|---|---|---|
-| — | None yet | — | — | — |
+| 1 | `@payloadcms/storage-s3@3.94.0` declares Node engines `^22.23.5 \|\| ^24.22.3 \|\| >=26.13.1`; installed Node is 22.23.1 (CI too). pnpm installs and tests pass regardless. | Low (deploy risk) | CP-1.1, 2026-11-19 | Open — upgrade Node to ≥22.23.5 before the first Vercel deploy |
+| 2 | Filebase endpoint intermittently unreachable from this network (`ETIMEDOUT` on IPv4, `ENETUNREACH` on IPv6); can fail the Filebase integration test alone. | Low | CP-1.1, 2026-11-19 | Mitigated: S3 clients retry `maxAttempts: 5`; re-run the test before treating a failure as a regression |
 
 ---
 
@@ -101,6 +103,14 @@ Newest first. Add an entry at the end of each session, even a short one.
 - Verification passed: frozen install, `pnpm peers check`, `pnpm audit` (0 advisories), format, typecheck, lint, unit tests (3), E2E browser tests (2) using system Chrome, and `SITE_ENV=production pnpm build`.
 - Production smoke: home returned 200 with `index, follow`, HSTS, nosniff, referrer, permissions, frame and CSP report-only headers; `/robots.txt` allowed `/` and disallowed `/admin`, `/api`, `/edit`; `/admin` returned `Cache-Control: no-store`.
 - No first admin account was created; no client identity was provided. CP-0.2 remains partially complete for that criterion. CP-0.3 does not depend on first-user creation. Commit `0d073dd` and tag `cp-0.3` created; working tree clean.
+
+### 2026-11-19 — CP-1.1 users/roles + Filebase media
+
+- **Users/roles** (committed as `40953fe`): four roles, `src/access/roles.ts` helpers + tests, bootstrap first-super-admin hook. Fixed during review: `users.access.admin` would have locked all non-super-admins out of the whole admin panel (removed); `defaultValue: 'super-admin'` on a `hasMany` select was wrong type and a privilege foot-gun (removed); regenerated the Payload import map (runtime `PayloadComponent not found` warnings). ADR-012 recorded as Vercel with its constraints.
+- **Filebase facts** (human + current docs, 2026-11-19): endpoint `https://s3.filebase.io`, region `auto`, **one public bucket `vaultifier`** (two-bucket plan dropped). `.env.example` rewritten with per-variable comments; `.env.local` region/bucket names fixed (its empty `DATABASE_URL=`/`PAYLOAD_SECRET=` lines were clobbering `.env` — removed).
+- **Media** (this chunk): `@payloadcms/storage-s3` added (engines say Node ≥22.23.5, installed 22.23.1 — known issue 1), `media` collection with `media/` prefix, WebP + AVIF variants, required `alt`, `src/cms/limits.ts` registry started, server-side size cap. Payload quirks found: `req.file.size` becomes `undefined` for non-images (measure `file.data.length`); `ValidationError` surfaces as "field is invalid" with details in `error.data.errors`.
+- **Evidence:** format/typecheck/lint pass; `pnpm test` 16/16 (Filebase round trip 5/5 twice — upload, byte-identical S3 read-back, delete, alt enforcement, 11 MB PDF rejected); staging build + E2E 2/2; production build pass; smoke: `GET /api/media` 200 (public read), anon `POST` 403. One leftover test PDF from a pre-fix run was deleted and verified gone (0 media docs).
+- **Still open for CP-1.1:** delivery-path spike (PLAN item 4) and an uploaded image on a test page (exit criterion). Next: commit, then the spike.
 
 ---
 

@@ -73,11 +73,11 @@
 
 ### CP-1.1 — Users, access helpers, Filebase media
 - [x] `users` collection with `roles` (`super-admin`, `editor`, `product-manager`, `sales-support`) and access helper functions (`docs/DATABASE.md`) (2026-11-19; 8 unit tests pass, typecheck/lint/build pass)
-- [ ] Filebase account checked: endpoint and region confirmed against current Filebase docs; public and private buckets created (the human creates accounts; see `docs/STORAGE.md`)
-- [ ] `media` collection using the S3 storage adapter pointed at Filebase. No object ACLs (Filebase does not support them)
+- [x] Filebase account checked: endpoint and region confirmed against current Filebase docs; public and private buckets created (the human creates accounts; see `docs/STORAGE.md`) (2026-11-19; `https://s3.filebase.io` + region `auto` confirmed in current Filebase docs; one **public** bucket `vaultifier`, human confirmed — two-bucket plan dropped, see `docs/STORAGE.md` §3)
+- [x] `media` collection using the S3 storage adapter pointed at Filebase. No object ACLs (Filebase does not support them) (2026-11-19; `@payloadcms/storage-s3`, prefix `media/`, no `acl` option set)
 - [ ] Spike: choose the media delivery path (Next image optimizer, Filebase gateway, or Cloudflare in front). Record in `docs/STORAGE.md` and `DECISIONS.md`
-- [ ] Image processing on upload (resized variants, WebP/AVIF), required alt text
-- [ ] Integration test: upload, read back, delete
+- [x] Image processing on upload (resized variants, WebP/AVIF), required alt text (2026-11-19; thumb/card/hero in WebP + card/hero in AVIF, `withoutEnlargement`; `alt` required with `maxLength` from `src/cms/limits.ts`; server-side size caps)
+- [x] Integration test: upload, read back, delete (2026-11-19; `src/collections/media.integration.test.ts`, 5 tests against the real bucket + local PostgreSQL, skipped in CI)
 - **Exit:** an uploaded image appears on a test page with the right URL; alt text is enforced
 - **Commit:** `checkpoint(CP-1.1): users with roles and Filebase-backed media`
 

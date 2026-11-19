@@ -1,6 +1,6 @@
 # OPERATIONS — Environments, Deploy, Backups, Monitoring
 
-> **Status:** planned. Hosting is undecided (ADR-012), so sections show what must hold on either Vercel or a VPS. Update when the choice is made and whenever an env var, job or procedure changes.
+> **Status:** planned for execution. Hosting is decided — Vercel (ADR-012) — so sections below reflect Vercel constraints. Update whenever an env var, job or procedure changes.
 
 ---
 
@@ -30,7 +30,7 @@ Copy `.env.example` to `.env`. Never commit `.env`. The app validates required v
 | `CRON_SECRET` | Protects the jobs endpoint if used with cron |
 
 ### Storage (see `docs/STORAGE.md`)
-`FILEBASE_ENDPOINT`, `FILEBASE_REGION`, `FILEBASE_ACCESS_KEY_ID`, `FILEBASE_SECRET_ACCESS_KEY`, `FILEBASE_PUBLIC_BUCKET`, `FILEBASE_PRIVATE_BUCKET`, `FILEBASE_PUBLIC_BASE_URL`, `UPLOAD_ENCRYPTION_KEY`, `UPLOAD_ENCRYPTION_KEY_ID`
+`FILEBASE_ENDPOINT`, `FILEBASE_REGION`, `FILEBASE_ACCESS_KEY_ID`, `FILEBASE_SECRET_ACCESS_KEY`, `FILEBASE_BUCKET`, `FILEBASE_PUBLIC_BASE_URL`, `UPLOAD_ENCRYPTION_KEY`, `UPLOAD_ENCRYPTION_KEY_ID` — one line each in `.env.example` with plain-language comments explaining what they do.
 
 ### Security
 | Name | Purpose |

@@ -43,6 +43,10 @@ Do not rely on memory for versions. Query the registry or docs, then record.
 | Users/roles chunk (CP-1.1 part 1) | `pnpm format:check && pnpm typecheck && pnpm lint && pnpm test` | Pass (2 files, 8 tests) | 2026-11-19 | Added `src/access/roles.test.ts`; Payload types and import map regenerated |
 | Build re-run after users/roles + import map | `SITE_ENV=production pnpm build` | Pass (6 static pages; `/admin` dynamic) | 2026-11-19 | First attempt failed: empty `DATABASE_URL=`/`PAYLOAD_SECRET=` lines in `.env.local` clobbered `.env` (gotcha 17); removed the empty lines |
 | E2E re-run for the users/roles chunk | `SITE_ENV=staging pnpm build` then `pnpm test:e2e` | Pass (2 tests) | 2026-11-19 | First attempt failed against a production-flavoured `.next` (build-time metadata; ordering note in section 4) |
+| Media/Filebase chunk (CP-1.1 part 2) | `pnpm format:check && pnpm typecheck && pnpm lint && pnpm test` | Pass (3 files, 16 tests) | 2026-11-19 | Includes the live Filebase round trip (`src/collections/media.integration.test.ts`, 5 tests: upload with variants, byte-identical S3 read-back under `media/`, alt rejection, 11 MB valid-PDF size-cap rejection, delete + object gone); ran 5/5 twice. Skipped in CI (placeholder creds) |
+| Staging build + E2E for the media chunk | `SITE_ENV=staging pnpm build` then `pnpm test:e2e` | Pass (2 tests) | 2026-11-19 | |
+| Production build for the media chunk | `SITE_ENV=production pnpm build` | Pass | 2026-11-19 | Config now fail-fast requires `FILEBASE_*` env; CI placeholders added to `ci.yml` |
+| Runtime smoke for media access | `curl /api/health`, `GET /api/media`, anon `POST /api/media` | Pass (200 / 200 / **403**) | 2026-11-19 | Public read works; anonymous upload correctly denied. Leftover test PDF from an intermediate run deleted and verified (0 media docs) |
 
 CI runs the same commands with the same Node and pnpm versions.
 
