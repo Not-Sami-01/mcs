@@ -43,6 +43,18 @@ export function textareaField(args: Extra<TextareaField> & { preset: TextPreset 
   };
 }
 
+/** A length-limited email address with server-side format validation. */
+export function emailField(args: Extra<TextField> & { label: string }): TextField {
+  return textField({
+    ...args,
+    preset: 'emailAddress',
+    validate: (value: string | string[] | null | undefined) =>
+      typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+        ? true
+        : 'Enter a valid email address.',
+  });
+}
+
 /** Row bounds for a list field, taken from a count preset. */
 export function rows(preset: CountPreset): { minRows: number; maxRows: number } {
   const { min, max } = COUNT_LIMITS[preset];

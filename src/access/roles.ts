@@ -45,6 +45,28 @@ export const isSuperAdmin: Access = ({ req }) => hasRole(req.user, 'super-admin'
 /** Super Admin + Editor may write content (docs/DATABASE.md §4: categories/pages CRUD). */
 export const writeContent: Access = ({ req }) => hasAnyRole(req.user, ['super-admin', 'editor']);
 
+/** Super Admin + Editor may update navigation; no other staff role may. */
+export const writeNavigation: Access = ({ req }) => hasAnyRole(req.user, ['super-admin', 'editor']);
+
+/** Site-settings document update; field access narrows Editors to contact data. */
+export const writeSiteSettings: Access = ({ req }) =>
+  hasAnyRole(req.user, ['super-admin', 'editor']);
+
+/** Super Admin-only operational fields (recipients, retention and chat setup). */
+export const writeSensitiveSiteSettings: Access = ({ req }) => hasRole(req.user, 'super-admin');
+
+export function canEditContactSettings(user: unknown): boolean {
+  return hasAnyRole(user, ['super-admin', 'editor']);
+}
+
+export function canEditNavigation(user: unknown): boolean {
+  return hasAnyRole(user, ['super-admin', 'editor']);
+}
+
+export function canEditSensitiveSiteSettings(user: unknown): boolean {
+  return hasRole(user, 'super-admin');
+}
+
 /**
  * Public reads published pages only; any signed-in staff role reads everything
  * (matrix R for Product Manager and Sales and Support). `categories` have no

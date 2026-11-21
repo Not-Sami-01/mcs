@@ -92,11 +92,11 @@
 - **Commit:** `checkpoint(CP-1.2): limits registry, categories and pages`
 
 ### CP-1.3 — Globals and seed
-- [ ] `site-settings` global (company name, phones, WhatsApp, email, address, hours, timezone, social links)
-- [ ] `navigation` global (header menu, footer columns) with limits
-- [ ] `pnpm seed` creates sample content, clearly marked as sample (never in production)
-- [ ] Document collections and fields in `docs/DATABASE.md`
-- **Exit:** a fresh database plus `pnpm seed` gives a browsable sample
+- [x] `site-settings` global (company name, phones, WhatsApp, email, address, hours, timezone, social links)
+- [x] `navigation` global (header menu, footer columns) with limits
+- [x] `pnpm seed` creates sample content, clearly marked as sample (never in production)
+- [x] Document collections and fields in `docs/DATABASE.md`
+- **Exit:** a fresh database plus `pnpm seed` gives a browsable sample — verified 2026-11-21 on scratch `mcs_seed_verify` (SAMPLE category + draft page, idempotent re-run; see `docs/QUALITY.md` §2)
 - **Commit:** `checkpoint(CP-1.3): site settings, navigation and seed data`
 
 ---

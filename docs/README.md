@@ -63,7 +63,7 @@ cp .env.example .env          # fill in values, see docs/OPERATIONS.md
 docker compose up -d db       # local PostgreSQL
 pnpm payload migrate          # apply migrations
 pnpm seed:admin               # first Super Admin (follow the prompt)
-pnpm seed                     # optional sample content
+pnpm seed                     # optional, clearly marked draft sample content (dev/staging only)
 pnpm dev                      # http://localhost:3000, admin at /admin
 ```
 

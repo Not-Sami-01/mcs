@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 import { BLOCKS } from '../blocks';
 import { COLLECTIONS } from '../collections';
+import { GLOBALS } from '../globals';
 import { COUNT_LIMITS, TEXT_LIMITS } from './limits';
 
 /**
@@ -17,6 +18,10 @@ const targets = [
   ...COLLECTIONS.map((collection) => ({
     name: `collection:${collection.slug}`,
     fields: collection.fields,
+  })),
+  ...GLOBALS.map((global) => ({
+    name: `global:${global.slug}`,
+    fields: global.fields,
   })),
   ...BLOCKS.map((block) => ({ name: `block:${block.slug}`, fields: block.fields })),
 ];
@@ -51,8 +56,10 @@ function walk(
 }
 
 describe('field limits', () => {
-  it('covers every collection and block currently configured', () => {
-    expect(targets.length).toBeGreaterThanOrEqual(COLLECTIONS.length + BLOCKS.length);
+  it('covers every collection, global and block currently configured', () => {
+    expect(targets.length).toBeGreaterThanOrEqual(
+      COLLECTIONS.length + GLOBALS.length + BLOCKS.length,
+    );
   });
 
   for (const { name, fields } of targets) {
@@ -111,5 +118,29 @@ describe('limits registry matches docs/CONTENT.md §5', () => {
     );
 
     expect(documented).toEqual(fromCode);
+  });
+});
+
+describe('global configuration access', () => {
+  it('keeps lead alert recipients out of public and non-admin reads', () => {
+    const settings = GLOBALS.find((global) => global.slug === 'site-settings');
+    const recipients = settings?.fields.find(
+      (field) => 'name' in field && field.name === 'leadAlertRecipients',
+    );
+
+    const config = recipients as { access?: { read?: unknown; update?: unknown } } | undefined;
+    expect(config?.access?.read).toBeTypeOf('function');
+    expect(config?.access?.update).toBeTypeOf('function');
+  });
+
+  it('requires bounded lists on global nested arrays', () => {
+    for (const global of GLOBALS) {
+      walk(global.fields, `global:${global.slug}`, (field, label) => {
+        if (field.type === 'array') {
+          expect(typeof field.maxRows, `${label} needs maxRows`).toBe('number');
+          expect(typeof field.minRows, `${label} needs minRows`).toBe('number');
+        }
+      });
+    }
   });
 });

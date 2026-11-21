@@ -93,8 +93,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+    navigation: Navigation;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -1263,6 +1269,259 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Max 80 characters.
+   */
+  companyName: string;
+  phones?:
+    | {
+        /**
+         * Max 60 characters.
+         */
+        label: string;
+        /**
+         * Max 40 characters.
+         */
+        number: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Max 40 characters.
+   */
+  whatsappNumber: string;
+  /**
+   * Max 254 characters.
+   */
+  email: string;
+  /**
+   * Max 400 characters.
+   */
+  address: string;
+  /**
+   * Max 40 characters.
+   */
+  workingHours: string;
+  /**
+   * Max 40 characters.
+   */
+  timezone: string;
+  socialLinks?:
+    | {
+        platform: 'facebook' | 'instagram' | 'linkedin' | 'youtube' | 'tiktok' | 'x';
+        /**
+         * Max 200 characters.
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  chat: {
+    provider: 'none' | 'whatsapp' | 'tawk' | 'crisp';
+    /**
+     * Max 40 characters.
+     */
+    hours?: string | null;
+  };
+  leadAlertRecipients?:
+    | {
+        /**
+         * Max 254 characters.
+         */
+        email: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * How long customer lead photos are retained before automatic deletion.
+   */
+  retentionMonths?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  headerItems?:
+    | {
+        /**
+         * Max 24 characters.
+         */
+        label: string;
+        /**
+         * Max 200 characters.
+         */
+        href: string;
+        children?:
+          | {
+              /**
+               * Max 24 characters.
+               */
+              label: string;
+              /**
+               * Max 200 characters.
+               */
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  headerButtons?:
+    | {
+        /**
+         * Max 24 characters.
+         */
+        label: string;
+        kind: 'call' | 'whatsapp' | 'inspection' | 'link';
+        /**
+         * Max 200 characters.
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  footerColumns?:
+    | {
+        /**
+         * Max 60 characters.
+         */
+        title: string;
+        links?:
+          | {
+              /**
+               * Max 24 characters.
+               */
+              label: string;
+              /**
+               * Max 200 characters.
+               */
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  legalLinks?:
+    | {
+        /**
+         * Max 24 characters.
+         */
+        label: string;
+        /**
+         * Max 200 characters.
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  companyName?: T;
+  phones?:
+    | T
+    | {
+        label?: T;
+        number?: T;
+        id?: T;
+      };
+  whatsappNumber?: T;
+  email?: T;
+  address?: T;
+  workingHours?: T;
+  timezone?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  chat?:
+    | T
+    | {
+        provider?: T;
+        hours?: T;
+      };
+  leadAlertRecipients?:
+    | T
+    | {
+        email?: T;
+        id?: T;
+      };
+  retentionMonths?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  headerItems?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  headerButtons?:
+    | T
+    | {
+        label?: T;
+        kind?: T;
+        href?: T;
+        id?: T;
+      };
+  footerColumns?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  legalLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

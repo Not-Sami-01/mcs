@@ -7,6 +7,7 @@ import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
 import { COLLECTIONS } from './collections';
+import { GLOBALS } from './globals';
 import { Users } from './collections/Users';
 import { publicFileUrl } from './cms/media-urls';
 
@@ -46,6 +47,7 @@ export default buildConfig({
     },
   },
   collections: COLLECTIONS,
+  globals: GLOBALS,
   plugins: [
     s3Storage({
       bucket: filebaseBucket,

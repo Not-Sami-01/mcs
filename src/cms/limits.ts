@@ -44,6 +44,7 @@ export const TEXT_LIMITS = {
   postBody: 20000,
   /** External link targets (added for block action links; not in the original table). */
   url: 200,
+  emailAddress: 254,
 } as const;
 
 export type TextPreset = keyof typeof TEXT_LIMITS;
@@ -77,6 +78,16 @@ export const COUNT_LIMITS = {
   textBlockParagraphs: { label: 'Text block paragraphs', min: 1, max: 8 },
   differencePoints: { label: 'Difference points', min: 1, max: 4 },
   warrantyHighlights: { label: 'Warranty highlights', min: 1, max: 4 },
+  headerMenuItems: { label: 'Header menu items', min: 1, max: 8 },
+  menuItemChildren: { label: 'Menu item children', min: 0, max: 10 },
+  headerButtons: { label: 'Header buttons', min: 0, max: 3 },
+  footerColumns: { label: 'Footer columns', min: 1, max: 5 },
+  footerColumnLinks: { label: 'Footer column links', min: 1, max: 10 },
+  legalLinks: { label: 'Legal links', min: 1, max: 6 },
+  sitePhones: { label: 'Site phones', min: 1, max: 4 },
+  socialLinks: { label: 'Social links', min: 0, max: 8 },
+  leadAlertRecipients: { label: 'Lead alert recipients', min: 0, max: 5 },
+  seedSamplePages: { label: 'Seed sample pages', min: 1, max: 4 },
 } as const;
 
 export type CountPreset = keyof typeof COUNT_LIMITS;

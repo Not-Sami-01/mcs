@@ -8,11 +8,12 @@
 
 > Keep this block short and accurate. Rewrite it before starting each task and after finishing each step.
 
-- **Last updated:** 2026-11-19
-- **Current phase / checkpoint:** Phase 1, **CP-1.2 COMPLETE**. All exit criteria verified: category hierarchy + path calculation ✓, page with blocks + path calculation ✓, server-side `maxLength` rejection ✓, slug validation rejection ✓, legal page publish guard ✓ (`src/collections/categories-pages.integration.test.ts`, 5/5 pass). Checks: format ✓ typecheck ✓ lint ✓ **51/51 Vitest tests across 7 suites** ✓, Next 16 production build (7/7 routes) ✓, Playwright E2E 3/3 ✓, second migration generated (`20261119_171018_add_categories_and_pages.ts`).
-- **State of the repo:** branch `development`; working tree clean apart from CP-1.2 checkpoint commit.
-- **What I was doing:** completed and verified CP-1.2: limits registry, field factories, categories collection, pages collection, first 14 blocks, slug utilities & tests, integration tests, migration creation.
-- **Next step:** CP-1.3 per `docs/PLAN.md` — `site-settings` global, `navigation` global, and seed script (`pnpm seed`).
+- **Last updated:** 2026-11-21
+- **Current phase / checkpoint:** Phase 1, **CP-1.3 COMPLETE — verification done, committing now**. Globals (`site-settings`, `navigation` with field-level access) + idempotent sample seed + migration `20261120_114629_add_globals` (11 tables + 3 enums) reviewed and verified. Evidence (all 2026-11-21, full detail in `docs/QUALITY.md` §2): format ✓ typecheck ✓ lint ✓ **69/69 Vitest across 10 suites** ✓ (Filebase failures were gotcha 22, re-run green); seed guards refused in production/unset with **exit 1** (DB-free); fresh-DB scratch `mcs_seed_verify` → 3 migrations apply in order → `pnpm seed` created 1 SAMPLE category + 1 SAMPLE draft page → run 2 idempotent → globals untouched; global row lifecycle verified (reads create nothing; first save inserts; partial `site-settings` save rejected naming the 4 required fields — docs corrected); staging build (9 routes) + **E2E 3/3** ✓; production build + clean smoke (`index, follow`, HSTS/X-Frame-Options, robots Allow `/`, media 200s, anon POSTs **403**, anon global read 200) ✓; `src/seed/probe.ts` deleted.
+- **State of the repo:** branch `development`; HEAD `2288ed4`. Uncommitted = the CP-1.3 change set only (globals, `src/seed/*`, migration, limits/roles/fields + tests, docs incl. QUALITY §2 rows, PLAN ticks, corrected DATABASE row-lifecycle paragraph, CONTENT duplicate-row fix). **Caution:** an earlier stale copy of this session briefly overwrote `Categories.ts`/`Pages.ts` with pre-CP-1.2 drafts — both restored from HEAD, stray `writeContentExceptLegal` removed; tree verified green afterwards.
+- **What I was doing:** stage → secret-review → `git add -A`, commit `checkpoint(CP-1.3): site settings, navigation and seed data`, then add the checkpoint-log row (needs the hash) in a follow-up `docs(progress)` commit, tag `cp-1.3`, report.
+- **Next step:** the commit/tag sequence above. After CP-1.3: CP-1.4 (see `docs/PLAN.md`); before first deploy, upgrade Node ≥22.23.5 (podman image `node:22-bookworm` v22.23.5 already pulled) and free `FILEBASE_PUBLIC_BASE_URL` (bucket flip = human's Q13 action).
+- **Open decision (unchanged):** `pnpm seed:admin` is documented (AGENTS §9, DATABASE §6, README quickstart) but **not implemented** — it belongs with the CP-0.2 first-user choice below.
 - **CP-0.2 first-user status (checked 2026-11-19):** the single user row (`admin@admin.admin`, created 2026-11-18) predates the roles system (shipped 2026-11-19) and has **no rows in `users_roles`** — it can sign in to the panel (entry is unrestricted by design, `docs/DATABASE.md` §4) but `hasAnyRole` fails, so it cannot write media or manage users. The bootstrap hook (`applyBootstrapRole`, unit-tested) only assigns `super-admin` on an unauthenticated create, which cannot happen while this user exists. **Open:** backfill this row's role or reset and recreate the first user (`pnpm seed:admin` / `/admin/create-first-user`) — destructive, human's call.
 - **Environment incident (2026-11-19, resolved):** machine rebooted mid-session; system PostgreSQL 18 (human's install from earlier that day) took port 5432 and the rootless podman container `mcs-db` (our dev DB) could not start. The human disabled the system service; `podman start mcs-db` restored everything — verified media doc 12, 1 user, all 10 tables. If it recurs: free 5432, then `podman start mcs-db`.
 - **Blockers:** `@payloadcms/storage-s3@3.94.0` declares Node `^22.23.5` (installed 22.23.1) — installs and runs, but upgrade Node before deploy (gotcha 21). Filebase endpoint times out intermittently from this network (S3 clients retry `maxAttempts: 5`; gotcha 22 — Playwright's browser download also stalls here, use `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome` locally). Docker unavailable (podman used instead). CP-0.2 first-user role backfill open (above). Bucket still private — anonymous media URL 403/DNS, so `FILEBASE_PUBLIC_BASE_URL` stays empty (ADR-015 flip pending the human's Q13 action). No remote → CI has never actually run.
@@ -23,17 +24,18 @@
 
 | Area | Status |
 |---|---|
-| Docs | CP-1.2 updated; ADR-012 Vercel, ADR-015 delivery path, `.env.example` guidance, single-bucket decision, gotchas 12/23 |
+| Docs | CP-1.3 updated; ADR-012 Vercel, ADR-015 delivery path, `.env.example` guidance, single-bucket decision, gotchas 12/23/22 |
 | Repo scaffold | Implemented; frozen install, typecheck, lint, build, home/admin route and live DB health check verified; first user row exists but has **no roles** (see Resume here) |
-| Data model | `users`, `media`, `categories`, `pages` implemented + 14 blocks + migrations (`20261119_101405_initial`, `20261119_171018_add_categories_and_pages`); other collections not started |
-| Admin and roles | Roles + access helpers (unit tested); media access enforced (anon create 403 in smoke); legal page publish gate (super-admin only); invite/2FA (CP-2.x) not started |
+| Data model | `users`, `media`, `categories`, `pages` + globals `site-settings`, `navigation` + 14 blocks + 3 migrations (`20261119_101405_initial`, `20261119_171018_add_categories_and_pages`, `20261120_114629_add_globals`); other collections not started |
+| Admin and roles | Roles + access helpers (unit tested); field-level access on both globals (Editor = contact fields, Super Admin = chat/alerts/retention); media access enforced (anon create 403 in smoke); legal page publish gate (super-admin only); invite/2FA (CP-2.x) not started |
+| Seeds | `pnpm seed` (dev/staging only, production guard exit 1, idempotent, SAMPLE-marked) verified on a fresh DB; `pnpm seed:admin` documented but not implemented (known issue 3) |
 | Media and storage | Filebase S3 adapter live (upload/variants/alt/size-cap/round trip green); delivery path **decided** (ADR-015: Payload route now, direct Filebase URLs via `FILEBASE_PUBLIC_BASE_URL` when the bucket goes public); `/media-test` page + E2E 3/3 |
 | Public site | Not started |
 | Inline editing | Not started |
 | Services, locations, products, blog | Not started |
 | Leads and forms | Not started |
 | SEO and analytics | Not started |
-| QA, performance, security | CP-0.3 baseline implemented; 51 Vitest tests, 3 Playwright E2E tests, dependency audit clean |
+| QA, performance, security | CP-0.3 baseline implemented; 69 Vitest tests (10 suites), 3 Playwright E2E tests, dependency audit clean |
 | Launch | Not started |
 
 Phase progress lives in `docs/PLAN.md`. This table is a quick view only.
@@ -70,14 +72,26 @@ Tracked in detail in `docs/DECISIONS.md` (section "Open questions"). Headlines:
 
 | # | Issue | Severity | Found in | Status |
 |---|---|---|---|---|
-| 1 | `@payloadcms/storage-s3@3.94.0` declares Node engines `^22.23.5 \|\| ^24.22.3 \|\| >=26.13.1`; installed Node is 22.23.1 (CI too). pnpm installs and tests pass regardless. | Low (deploy risk) | CP-1.1, 2026-11-19 | Open — upgrade Node to ≥22.23.5 before the first Vercel deploy |
-| 2 | Filebase endpoint intermittently unreachable from this network (`ETIMEDOUT` on IPv4, `ENETUNREACH` on IPv6); can fail the Filebase integration test alone. | Low | CP-1.1, 2026-11-19 | Mitigated: S3 clients retry `maxAttempts: 5`; re-run the test before treating a failure as a regression |
+| 1 | `@payloadcms/storage-s3@3.94.0` declares Node engines `^22.23.5 \|\| ^24.22.3 \|\| >=26.13.1`; installed Node is 22.23.1 (CI too). pnpm installs and tests pass regardless. | Low (deploy risk) | CP-1.1, 2026-11-19 | Open — upgrade Node to ≥22.23.5 before the first Vercel deploy. **Mitigation available:** podman image `node:22-bookworm` (v22.23.5) pulled 2026-11-21 for container runs |
+| 2 | Filebase endpoint intermittently unreachable from this network (`ETIMEDOUT` on IPv4, `ENETUNREACH` on IPv6); can fail the Filebase integration test alone. | Low | CP-1.1, 2026-11-19 | Mitigated: S3 clients retry `maxAttempts: 5`; re-run the test before treating a failure as a regression. Same flakiness stalls `podman pull`/Playwright downloads — retry |
+| 3 | `pnpm seed:admin` is documented (AGENTS §9, DATABASE §6, README quickstart) but no such script exists in `package.json`. | Low (docs drift) | CP-1.3, 2026-11-21 | Open — belongs with the CP-0.2 first-user decision (backfill vs recreate); implement when that is decided |
+| 4 | System PostgreSQL 18 re-enables itself (reboot/upgrade) and takes port 5432, breaking every DB test with `password authentication failed for user "mcs"` — `mcs-db` cannot bind. Recurred 2026-11-21. | Medium (blocks all DB work) | CP-1.3, 2026-11-21 | Open until the human permanently disables the system service: `sudo systemctl stop postgresql-18 && sudo systemctl disable postgresql-18`, then `podman start mcs-db` |
 
 ---
 
 ## Session log
 
 Newest first. Add an entry at the end of each session, even a short one.
+
+### 2026-11-21 — CP-1.3 site settings, navigation globals and seed
+
+- **Globals:** `src/globals/SiteSettings.ts` (company name, phones, WhatsApp, email, address, hours, timezone, social links, chat/alerts, retention) and `src/globals/Navigation.ts` (header items + children, header buttons, footer columns/links, legal links) with **field-level access** — Editor edits contact fields, Super Admin alone edits chat/alerts/retention. Registered via `src/globals/index.ts`.
+- **Seed:** `src/seed/` (`cli.ts`, `guard.ts`, `index.ts`, `content.ts` + tests) behind `pnpm seed`. Guard refuses production (`SITE_ENV`/`NODE_ENV`) and unset env with **exit 1**; content is SAMPLE-marked and idempotent ("already exists; leaving it unchanged"); globals are never touched.
+- **Migration:** `20261120_114629_add_globals` — 11 `CREATE TABLE` + 3 enums; verified on a fresh scratch DB together with the two earlier migrations (all apply in order).
+- **Review fixes this session:** duplicate `emailAddress` row removed from `docs/CONTENT.md` §5; **false row-lifecycle claim corrected in `docs/DATABASE.md`** — reads create *nothing* (verified: `navigation.headerItems` → `[]`, 0 rows); only the first save inserts a row; the first `site-settings` save must supply the four `NOT NULL` contact fields or validation names them. Stray `writeContentExceptLegal` removed from `src/access/roles.ts`; `src/seed/probe.ts` deleted after use; a stale copy of this session's pre-CP-1.2 `Categories.ts`/`Pages.ts` drafts was restored from HEAD (`git checkout --`).
+- **Evidence:** format ✓ typecheck ✓ lint ✓ **69/69 Vitest across 10 suites** ✓ (Filebase suite failed twice on gotcha 22 `ETIMEDOUT`/`ENETUNREACH`, isolated re-run 5/5, then full suite green); fresh-DB seed proof (1 SAMPLE category + 1 SAMPLE draft page, idempotent re-run, 0 globals rows, scratch dropped); staging build 9 routes + **E2E 3/3** ✓; production build (`SITE_ENV=production`, `index, follow` in built HTML) + clean smoke: health/home/media-test/media-file 200, HSTS + `X-Frame-Options: DENY`, robots `Allow: /` + `/admin|/api|/edit` disallowed, anon `POST /api/pages` **403**, anon `POST /api/globals/navigation` **403**, anon global read 200 (public by design).
+- **Gotchas hit:** (a) `pkill -f` patterns appear in the smoke script's own command line — use `next[-]server`/`next[ ]start` bracket patterns or the shell kills itself (exit 143); (b) a surviving `next start` from a previous run keeps port 3000 and serves a stale `.next` — kill it before re-smoking (an old noindex build caused a confusing "still noindex" reading); (c) building without `SITE_ENV=production` bakes `noindex, nofollow` (OPERATIONS warning is real).
+- **Environment:** podman image `node:22-bookworm` pulled (v22.23.5, satisfies engines — known issue 1 mitigation for container runs). System PostgreSQL 18 took 5432 again mid-session; the human restarted `mcs-db` and 78 tables were verified.
 
 ### 2026-11-19 — CP-1.2 limits registry, categories, pages and blocks
 

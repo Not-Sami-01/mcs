@@ -104,6 +104,7 @@ Canonical values live in `src/cms/limits.ts`. They are starting points. Tune the
 | `localNotes` | 1,500 | Location unique content (minimum 400, see 7.4) |
 | `postBody` | 20,000 | Blog and legal pages, rich text |
 | `url` | 200 | External link targets |
+| `emailAddress` | 254 | Email addresses |
 
 ### Count limits (items)
 
@@ -131,6 +132,16 @@ Canonical values live in `src/cms/limits.ts`. They are starting points. Tune the
 | Text block paragraphs | 1 | 8 |
 | Difference points | 1 | 4 |
 | Warranty highlights | 1 | 4 |
+| Header menu items | 1 | 8 |
+| Menu item children | 0 | 10 |
+| Header buttons | 0 | 3 |
+| Footer columns | 1 | 5 |
+| Footer column links | 1 | 10 |
+| Legal links | 1 | 6 |
+| Site phones | 1 | 4 |
+| Social links | 0 | 8 |
+| Lead alert recipients | 0 | 5 |
+| Seed sample pages | 1 | 4 |
 
 ### Rendering safety
 
