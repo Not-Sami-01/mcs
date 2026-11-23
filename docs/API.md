@@ -28,7 +28,7 @@ Rules for every custom route:
 
 | Route | Methods | Access |
 |---|---|---|
-| `/api/users/login`, `/api/users/logout`, `/api/users/me`, `/api/users/forgot-password`, `/api/users/reset-password` | POST/GET | Login flow. Two-factor step added in CP-2.2. Invite uses the reset-password mechanism |
+| `/api/users/login`, `/api/users/logout`, `/api/users/me`, `/api/users/forgot-password`, `/api/users/reset-password` | POST/GET | Login flow. Two-factor step added in CP-2.2. Invite uses the reset-password mechanism (ADR-016). `/api/users/first-register` and anonymous `POST /api/users` return **403** (CP-2.1, verified) |
 | `/api/pages`, `/api/services`, `/api/locations`, `/api/products`, `/api/posts`, `/api/categories`, `/api/reviews` | GET | Public: **published only**. Writes need a role (matrix in `docs/DATABASE.md`) |
 | `/api/media`, `/api/media/file/...` | GET/POST | Public read of public media. Upload needs a role |
 | `/api/leads`, `/api/lead-photos`, `/api/audit-logs`, `/api/price-history`, `/api/redirects` | any | Staff only, per matrix. Deny public |

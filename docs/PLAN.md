@@ -106,11 +106,11 @@
 **Goal:** only invited staff can sign in, with two-factor login and server-checked roles.
 
 ### CP-2.1 — Invite-only accounts
-- [ ] No public sign up. Creating users is Super Admin only. First Super Admin via `pnpm seed:admin`
-- [ ] Invite email with one-time set-password link; expiry set
-- [ ] Lockout after failed logins; short admin session lifetime; secure cookie settings; CSRF and CORS allowlist
-- [ ] Admin routes `noindex` and disallowed in `robots.txt`
-- **Exit:** tests prove a stranger cannot create or invite a user, and lockout triggers
+- [x] No public sign up. Creating users is Super Admin only. First Super Admin via `pnpm seed:admin` (2026-11-23; `src/access/first-user.ts` blocks Payload's first-register path, `pnpm seed:admin` implemented)
+- [x] Invite email with one-time set-password link; expiry set (2026-11-23; 24 h, single use, ADR-016)
+- [x] Lockout after failed logins; short admin session lifetime; secure cookie settings; CSRF and CORS allowlist (2026-11-23; 5 attempts / 15 min, 2 h session, `SameSite=Strict`, `Secure` in production, origin allowlist from `NEXT_PUBLIC_SITE_URL`)
+- [x] Admin routes `noindex` and disallowed in `robots.txt` (2026-11-23; `X-Robots-Tag` + metadata `robots` + existing `/robots.txt` rule)
+- **Exit:** tests prove a stranger cannot create or invite a user, and lockout triggers (2026-11-23; `src/collections/users.integration.test.ts` 6/6, anonymous create and first-register both 403 in a live smoke)
 - **Commit:** `checkpoint(CP-2.1): invite-only staff accounts and lockout`
 
 ### CP-2.2 — Two-factor login

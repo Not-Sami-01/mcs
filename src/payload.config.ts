@@ -10,6 +10,7 @@ import { COLLECTIONS } from './collections';
 import { GLOBALS } from './globals';
 import { Users } from './collections/Users';
 import { publicFileUrl } from './cms/media-urls';
+import { getSiteEnvironment } from './config/site-env';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -39,7 +40,21 @@ const filebaseSecretAccessKey = requireEnv('FILEBASE_SECRET_ACCESS_KEY');
 // Verify the bucket is actually public first (anonymous curl must return 200).
 const filebasePublicBaseUrl = process.env.FILEBASE_PUBLIC_BASE_URL?.trim() ?? '';
 
+// CSRF/CORS allowlist (docs/SECURITY.md C3): our own origin only, never `*`.
+// Local development also accepts the default Next.js origin so `pnpm dev` keeps
+// working when NEXT_PUBLIC_SITE_URL points at staging.
+const siteURL = (process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000').replace(
+  /\/+$/,
+  '',
+);
+const allowedOrigins = Array.from(
+  new Set([siteURL, ...(getSiteEnvironment() === 'production' ? [] : ['http://localhost:3000'])]),
+);
+
 export default buildConfig({
+  serverURL: siteURL,
+  cors: allowedOrigins,
+  csrf: allowedOrigins,
   admin: {
     user: Users.slug,
     importMap: {

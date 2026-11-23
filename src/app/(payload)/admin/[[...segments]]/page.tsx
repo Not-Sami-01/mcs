@@ -13,8 +13,13 @@ type Args = {
   }>;
 };
 
-export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> =>
-  generatePageMetadata({ config, params, searchParams });
+export const generateMetadata = async ({ params, searchParams }: Args): Promise<Metadata> => {
+  const metadata = await generatePageMetadata({ config, params, searchParams });
+
+  // Keep the panel out of search results in every environment
+  // (docs/SECURITY.md C9, CP-2.1); robots.txt disallows /admin as well.
+  return { ...metadata, robots: { index: false, follow: false } };
+};
 
 const Page = ({ params, searchParams }: Args) =>
   RootPage({ config, params, searchParams, importMap });

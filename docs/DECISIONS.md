@@ -89,6 +89,12 @@
 - **Status:** Accepted
 - **Decision:** Lexical rich text for blog posts and legal pages only, with a restricted feature set and a character cap. All marketing content uses structured fields with limits.
 
+### ADR-016 — Invites reuse Payload's reset-password token
+- **Status:** Accepted (CP-2.1, 2026-11-23)
+- **Decision:** Staff accounts are created only by a Super Admin. Creating one generates a Payload `forgotPassword` token (24 h, single use), stored in the built-in `resetPasswordToken` / `resetPasswordExpiration` fields, and emails our own set-password link (`src/auth/invites.ts`). The same token backs the normal "forgot password" flow. The first account comes from `pnpm seed:admin`; the public first-register endpoint is blocked in a `beforeChange` hook because it bypasses access control.
+- **Why:** Payload has no built-in invitation feature, and this reuses its tested token storage, expiry and password-reset endpoint instead of inventing a custom token table. It also keeps one "set your password" mechanism for both invites and resets.
+- **Consequences:** Payload requires a password when creating an auth user, so the create hook overwrites the typed value with a random secret; the invite link is the only way in. Until the email provider is chosen (Q10), the console adapter means the link is logged in non-production only. `pnpm seed:admin` fills the first-user gap, so the first-register admin screen is never the way in.
+
 ### ADR-015 — Media delivery: Filebase direct at launch, Payload route until the bucket is public
 - **Status:** Accepted (CP-1.1 spike, 2026-11-19; probe evidence in `docs/STORAGE.md` §4)
 - **Decision:** Serve public media straight from Filebase at `https://<bucket>.s3.filebase.io/<object-key>` once the bucket is public. Until that flip lands, Payload's media route (`/api/media/file/…`) serves every image. Do **not** put the Next image optimizer or Cloudflare in the launch path.

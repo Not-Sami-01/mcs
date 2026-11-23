@@ -26,11 +26,19 @@
 | Field | Notes |
 |---|---|
 | `email` | Login. Unique |
-| `name` | |
+| `name` | Not implemented yet |
 | `roles` | Multi-select: `super-admin`, `editor`, `product-manager`, `sales-support` |
 | `totp` group | Encrypted secret, `enabled`, `enrolledAt`; recovery codes stored **hashed** (CP-2.2) |
-| `lastLoginAt` | |
-Auth: lockout after failed attempts, short session lifetime, secure cookies. No public create.
+| `lastLoginAt` | Not implemented yet |
+| `resetPasswordToken` / `resetPasswordExpiration` | Payload internals behind invites and password resets |
+
+Auth (implemented CP-2.1, `src/collections/Users.ts`):
+
+- **No public sign up.** `access.create` is Super Admin only, and `src/access/first-user.ts` rejects *every* unauthenticated create in `beforeChange`. That guard is required because Payload's `/api/users/first-register` endpoint calls `payload.create({ overrideAccess: true })` and would otherwise ignore access rules. Only `pnpm seed:admin` may create the first account, via the Local-API context flag `allowFirstUserBootstrap` (an HTTP caller cannot set request context).
+- **Lockout:** `maxLoginAttempts: 5`, `lockTime: 15 minutes` (Payload columns `loginAttempts` / `lockUntil`). A successful login resets the counter; Super Admins can unlock manually.
+- **Sessions:** `tokenExpiration: 2 hours`; cookies are `HttpOnly` (Payload default), `SameSite=Strict`, and `Secure` when `SITE_ENV=production`.
+- **Invites:** creating a user as a Super Admin generates a one-time Payload reset token (`forgotPassword.expiration` = 24 h, `minRequestInterval` = 60 s) and emails a set-password link. Payload requires a password on every auth-user create, so the hook overwrites whatever the Super Admin typed with a random 32-byte secret — nobody knows it and only the invite link sets a usable password.
+- **Email provider:** still the console adapter in development (Q10), so the link is also logged server-side when `EMAIL_PROVIDER=console` and `SITE_ENV` is not production. Production `pnpm seed:admin` refuses to run with the console provider.
 
 ### `categories` (nested tree)
 `title`, `slug`, `parent` (self relation), `kind` (`services`, `industries`, `locations`, `blog`, `products`, `general`), `intro` (`shortParagraph`), `showInNav`, `navOrder`, `seo` group. The full path is computed (`/industries/restaurants-and-hotels`) and unique.
@@ -167,7 +175,7 @@ Add one entry per applied migration. Include how to roll back and what to check.
 
 | Command | Environment | Purpose |
 |---|---|---|
-| `pnpm seed:admin` | any | Create the first Super Admin. Email from env or prompt. Sends an invite or prints a one-time link. Refuses to run if a Super Admin exists |
+| `pnpm seed:admin` | any (production needs a real email provider) | Implemented CP-2.1 in `src/seed/admin.ts`. Creates the first Super Admin without a password and issues a 24-hour one-time invite link. Email from `SEED_ADMIN_EMAIL`, or asks on a TTY. Refuses when a Super Admin already exists or the email is taken. Console mail provider prints the link (development only); production refuses `EMAIL_PROVIDER=console`. |
 | `pnpm seed` | development, staging | Appends one clearly labelled **SAMPLE** category and draft page to their respective collections. Leaves globals/contact settings untouched, refuses production, reads both globals first (fails fast if the globals config is broken) and is idempotent by the sample slugs. |
 
 No seed ever contains real customer data or invented business facts presented as real. Sample content makes no service, qualification, results, price, or availability claims; sample records are drafts and must be replaced or removed before launch.

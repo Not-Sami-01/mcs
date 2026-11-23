@@ -25,8 +25,12 @@ const nextConfig = {
     return [
       { source: '/:path*', headers: securityHeaders },
       {
+        // The admin panel is never indexed, in any environment.
         source: '/admin/:path*',
-        headers: [{ key: 'Cache-Control', value: 'no-store' }],
+        headers: [
+          { key: 'Cache-Control', value: 'no-store' },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
       },
       {
         source: '/edit/:path*',

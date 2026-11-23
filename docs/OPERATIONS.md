@@ -28,6 +28,7 @@ Copy `.env.example` to `.env`. Never commit `.env`. The app validates required v
 | `DATABASE_URL` | PostgreSQL connection string (pooled on Vercel) |
 | `PAYLOAD_SECRET` | Payload signing secret (long random value) |
 | `CRON_SECRET` | Protects the jobs endpoint if used with cron |
+| `SEED_ADMIN_EMAIL` | First Super Admin address for `pnpm seed:admin` (optional; asks on a TTY) |
 
 ### Storage (see `docs/STORAGE.md`)
 `FILEBASE_ENDPOINT`, `FILEBASE_REGION`, `FILEBASE_ACCESS_KEY_ID`, `FILEBASE_SECRET_ACCESS_KEY`, `FILEBASE_BUCKET`, `FILEBASE_PUBLIC_BASE_URL`, `UPLOAD_ENCRYPTION_KEY`, `UPLOAD_ENCRYPTION_KEY_ID` — one line each in `.env.example` with plain-language comments explaining what they do.
@@ -155,7 +156,8 @@ Record who the owner is and where recovery codes are kept (never in the repo).
 
 | Task | Steps |
 |---|---|
-| Invite a staff member | Super Admin → Users → create with role → they receive an invite, set a password, enrol two-factor |
+| Invite a staff member | Super Admin → Users → create with role (the typed password is discarded) → they receive a 24-hour one-time set-password link → they set a password and, from CP-2.2, enrol two-factor. Without an email provider, development logs the link (`EMAIL_PROVIDER=console`) |
+| Create the first Super Admin | `SEED_ADMIN_EMAIL=<address> pnpm seed:admin` with env loaded (gotcha 17) → follow the printed invite link. Refuses if a Super Admin already exists |
 | Remove a staff member | Disable user, revoke sessions, review audit log, rotate shared secrets if they had access |
 | Reset someone's two-factor | Super Admin resets enrolment; user re-enrols; audit entry |
 | Rotate a secret | Create the new value, deploy, verify, revoke the old one, record the date |
