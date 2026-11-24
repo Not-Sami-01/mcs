@@ -34,7 +34,7 @@ export default async function MediaTestPage() {
     : "Payload's media route (FILEBASE_PUBLIC_BASE_URL empty)";
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-6 py-16">
+    <div className="mx-auto w-full max-w-2xl px-4 py-16">
       <p className="text-sm font-medium tracking-wide text-neutral-500 uppercase">
         Malaysian Care System
       </p>
@@ -94,6 +94,6 @@ export default async function MediaTestPage() {
           })}
         </ul>
       )}
-    </main>
+    </div>
   );
 }

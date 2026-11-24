@@ -2,6 +2,8 @@
 
 > **Purpose:** tokens, component patterns and layout rules for the public site and the edit-mode UI. Brand colours and logo are **not supplied yet** (Q6), so values below are neutral placeholders. Replace them when the client sends brand files, and update this doc.
 > Principle: clean, trustworthy, real photos, mobile first.
+>
+> **Implemented CP-3.1 (2026-11-24):** tokens live in `src/app/(frontend)/globals.css` (`:root` variables mapped into Tailwind with `@theme inline`); header/footer/sticky bars are in `src/components/layout/`. Contact actions are hidden until staff save real numbers. Google Fonts is unreachable from the build network, so the interim system stack below is used instead of `next/font` until local brand font files arrive.
 
 ---
 
@@ -39,7 +41,7 @@ Defined as CSS variables and mapped in the Tailwind theme. Colours in OKLCH or h
 
 ### Typography
 
-- Fonts through `next/font`, **max two families**, `display: swap`, subset to Latin now. For Urdu later, add a Nastaliq or Naskh font only on Urdu pages.
+- **Interim:** system font stack via the `--font-body` CSS variable (no network request, no layout shift). Switch to `next/font/local` with brand files when Q6 is answered; **max two families**, `display: swap`, subset to Latin now. For Urdu later, add a Nastaliq or Naskh font only on Urdu pages.
 - Scale (mobile / desktop): H1 32/48, H2 26/36, H3 20/26, body 16/18, small 14. Line height 1.5 for body, 1.2 for headings.
 - Minimum body size 16 px. Never lower body text on mobile.
 - `text-wrap: balance` on headings where supported.
@@ -93,7 +95,7 @@ Each block in `docs/CONTENT.md` section 6 has one renderer and at most two layou
 
 ## 6. Icons and imagery
 
-- Icon set: `lucide-react` (or another single set; record the choice here). Decorative icons `aria-hidden`; meaningful icons have names.
+- Icon set: small inline SVGs in `src/components/layout/icons.tsx` (no icon dependency added). Decorative icons are `aria-hidden` and not focusable; icon-only controls carry an accessible name.
 - Real photography of MCS work and team. Avoid generic stock where it undermines trust. Provide alt text.
 - Image budgets in `docs/QUALITY.md`.
 
@@ -104,6 +106,7 @@ Each block in `docs/CONTENT.md` section 6 has one renderer and at most two layou
 | Element | Rules |
 |---|---|
 | Staff bar | Fixed top, 44 px, high contrast, not part of the public design. Edit mode toggle, View as visitor, Admin, status |
+| Mobile menu (built CP-3.1) | Native `<details>` disclosure, so it is keyboard operable without client JavaScript; children show only in the mobile panel |
 | Region outline | 2 px dashed outline on hover and focus, offset 2 px, no layout shift; colour distinct from brand |
 | Edit button | Small labelled button at the region corner, reachable by keyboard |
 | Content box | Drawer (desktop) or bottom sheet (mobile), focus trapped, labelled, counters visible next to inputs |

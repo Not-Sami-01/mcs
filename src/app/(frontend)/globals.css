@@ -1,1 +1,105 @@
 @import 'tailwindcss';
+
+/*
+ * Design tokens (docs/DESIGNS.md §2). Brand colours and fonts are placeholders
+ * until the client supplies Q6; changing a value here updates every component.
+ */
+:root {
+  --brand-primary: #0f6b3e;
+  --brand-primary-contrast: #ffffff;
+  --brand-accent: #f59e0b;
+  --surface: #ffffff;
+  --surface-alt: #f4f7f5;
+  --ink: #0b1f17;
+  --ink-muted: #44554c;
+  --line: #d5ded9;
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #b91c1c;
+  --whatsapp: #25d366;
+  --focus: #0b63ce;
+
+  /*
+   * System stack for now. Brand fonts are pending (Q6) and Google Fonts is
+   * unreachable from the build network, so `next/font` would break the build.
+   * Replace with `next/font/local` when the font files arrive (docs/DESIGNS.md §2).
+   */
+  --font-body:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+}
+
+@theme inline {
+  --font-sans: var(--font-body);
+
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-contrast: var(--brand-primary-contrast);
+  --color-brand-accent: var(--brand-accent);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-whatsapp: var(--whatsapp);
+  --color-focus: var(--focus);
+
+  --radius-input: 0.5rem;
+  --radius-card: 0.75rem;
+  --shadow-card: 0 1px 2px rgb(11 31 23 / 6%), 0 8px 24px rgb(11 31 23 / 6%);
+}
+
+@layer base {
+  html {
+    scroll-padding-block: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-body);
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  summary {
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility content-text {
+  /* Worst-case CMS content must never widen the layout (docs/DESIGNS.md §8). */
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}

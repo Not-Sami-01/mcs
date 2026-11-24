@@ -19,7 +19,7 @@
 | 0 | Foundations: repo, scaffold, tooling | 1 | NOT STARTED |
 | 1 | Data model, storage, media | 1 | NOT STARTED |
 | 2 | Admin security: invite-only, roles, 2FA, audit | 2 | COMPLETE |
-| 3 | Public site shell and blocks | 2 | NOT STARTED |
+| 3 | Public site shell and blocks | 2 | IN PROGRESS |
 | 4 | Inline editing (click-to-edit content box) | 3 | NOT STARTED |
 | 5 | Services, locations, products, blog, reviews | 3–4 | NOT STARTED |
 | 6 | Leads, forms, WhatsApp, live chat, tracking | 4 | NOT STARTED |
@@ -135,11 +135,11 @@
 **Goal:** the public site renders from CMS content, fast and accessible, with no editing UI yet.
 
 ### CP-3.1 — Design system and layout
-- [ ] Design tokens as CSS variables and Tailwind theme (`docs/DESIGNS.md`). Brand colours are placeholders until the client supplies them
-- [ ] Header (menu from global), footer, mobile sticky call bar, floating WhatsApp (stubs wired to settings)
-- [ ] `next/font`, skip link, focus styles, reduced-motion, logical CSS properties (Urdu-ready)
-- [ ] UI strings in a message catalogue, not hard-coded
-- **Exit:** layout passes an axe check at 360 px and 1280 px
+- [x] Design tokens as CSS variables and Tailwind theme (`docs/DESIGNS.md`). Brand colours are placeholders until the client supplies them (2026-11-24; `src/app/(frontend)/globals.css` with `@theme inline`)
+- [x] Header (menu from global), footer, mobile sticky call bar, floating WhatsApp (stubs wired to settings) (2026-11-24; contact facts render only when saved, menu has catalogue fallbacks, desktop nav starts at 1280 px)
+- [~] `next/font`, skip link, focus styles, reduced-motion, logical CSS properties (Urdu-ready) (2026-11-24; skip link, focus ring, reduced motion and logical utilities done. **`next/font` not used:** brand fonts are pending Q6 and Google Fonts is unreachable from the build network, so an interim system stack is used — switch to `next/font/local` when files arrive)
+- [x] UI strings in a message catalogue, not hard-coded (2026-11-24; `src/messages/en.json` + typed accessor)
+- **Exit:** layout passes an axe check at 360 px and 1280 px (2026-11-24; `tests/e2e/accessibility.spec.ts`, 6/6 E2E with the skip-link check)
 - **Commit:** `checkpoint(CP-3.1): design tokens, header, footer and sticky bars`
 
 ### CP-3.2 — Block renderers and page routes

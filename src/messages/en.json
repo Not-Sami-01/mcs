@@ -1,0 +1,46 @@
+{
+  "common": {
+    "skipToContent": "Skip to content",
+    "menu": "Menu"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Services",
+    "products": "Products",
+    "locations": "Locations",
+    "warranty": "Warranty",
+    "pestLibrary": "Pest Library",
+    "contact": "Contact Us"
+  },
+  "cta": {
+    "freeInspection": "Free Inspection",
+    "getQuote": "Get a Quote",
+    "call": "Call",
+    "whatsapp": "WhatsApp"
+  },
+  "footer": {
+    "description": "Pest control services in Lahore, Pakistan.",
+    "company": "Company",
+    "explore": "Explore",
+    "areas": "Areas",
+    "legal": "Legal",
+    "about": "About Us",
+    "contact": "Contact Us",
+    "allServices": "All services",
+    "products": "Products",
+    "allLocations": "Areas we serve",
+    "terms": "Terms and Conditions",
+    "privacy": "Privacy Policy",
+    "rights": "All rights reserved."
+  },
+  "whatsapp": {
+    "greeting": "Hi MCS, I would like help with pest control."
+  },
+  "a11y": {
+    "primaryNav": "Primary navigation",
+    "footerNav": "Footer navigation",
+    "call": "Call Malaysian Care System",
+    "chatOnWhatsApp": "Chat on WhatsApp"
+  }
+}
