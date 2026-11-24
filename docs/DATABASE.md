@@ -1,6 +1,6 @@
 # DATABASE — Collections, Access and Migrations
 
-> **Status:** `users` (including two-factor columns), `media`, `categories`, `pages`, `site-settings` and `navigation` are implemented (CP-1.3/CP-2.2); other collections are designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
+> **Status:** `users` (including two-factor columns), `media`, `categories`, `pages`, `audit-logs`, `site-settings` and `navigation` are implemented (CP-1.3–CP-2.3); other collections are designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
 > Payload defines the schema from collection configs and generates the PostgreSQL tables (Drizzle). Field shapes below are the intended design. Verify exact option names against the installed Payload version.
 
 ---
@@ -108,8 +108,17 @@ Payload upload collection on the Filebase **public** bucket: `alt` (required, `a
 ### `redirects`
 `from` (path, unique), `to` (path or URL), `type` (301 or 302), `note`, `source` (`manual`, `import`, `auto`). Auto entries are created when a slug changes.
 
-### `audit-logs` (create-only)
-`actor`, `action`, `collection`, `documentId`, `summary` (no personal data), `ipHash`, `createdAt`. Super Admin read only.
+### `audit-logs` (create-only, implemented CP-2.3)
+| Field | Notes |
+|---|---|
+| `action` | Enum of login, login failed, user create/update/delete, publish/unpublish, delete, the TOTP events, and reserved `price_change`/`export` |
+| `collectionSlug`, `documentId` | Text; the affected document (empty for anonymous events) |
+| `actor` | Optional relation to `users` (empty for failed logins) |
+| `summary` | One short line (`auditSummary` limit); never names, phones, emails, tokens or file contents |
+| `ipHash` | Salted HMAC of the request address (`IP_HASH_SALT`); absent when no request or salt |
+| `createdAt` | Automatic |
+
+Access: **no HTTP writes at all** (`create`, `update`, `delete` return false); wrote only by server hooks with `overrideAccess: true`. Read: Super Admin only. Hooks live in `src/audit/hooks.ts`; the TOTP plugin reports through `onAuditEvent` (`src/audit/log.ts`). Price/export events arrive with products and CSV (CP-5.3/CP-5.4).
 
 ### `rate_limits` (internal table, ADR-009)
 `key`, `windowStart`, `count`. Cleaned by a scheduled job.
@@ -169,6 +178,7 @@ Add one entry per applied migration. Include how to roll back and what to check.
 | 2026-11-19 | `20261119_101405_initial` | Initial schema for CI/production: `users` (+ `users_roles`, `users_sessions`), `media`, Payload system tables — 10 `CREATE TABLE`, identical to the dev database. Needed because CI/production build pages that query Payload and `payload.config.ts` never pushes schema outside development. | Created with `payload migrate:create`; verified end-to-end on an empty scratch database 2026-11-19 (10 tables + `payload_migrations` row, then dropped). CI runs `pnpm payload migrate` before `pnpm build`. Local dev still runs on schema push, so it has no `payload_migrations` row — expected. Down drops all 10 tables; never run it where data matters. |
 | 2026-11-19 | `20261119_171018_add_categories_and_pages` | CP-1.2: `categories` (nested, `path` unique) and `pages` (drafts, versions, blocks join tables). Row added at CP-1.3 because it was generated but never logged here. | Created with `payload migrate:create`; applied on the empty scratch DB together with the other migrations at CP-1.3 (2026-11-20). Down drops the tables; never run it where data matters. |
 | 2026-11-20 | `20261120_114629_add_globals` | CP-1.3: the two globals — `site_settings` (+ `site_settings_phones`, `_social_links`, `_lead_alert_recipients`) and `navigation` (+ header/footer/legal arrays) — 11 `CREATE TABLE`, 3 enums (`social_links_platform`, `chat_provider`, `header_buttons_kind`). | Created with `payload migrate:create --name add_globals`; verified twice on an empty scratch DB 2026-11-20 (all 3 migrations apply in order, tables listed, `payload_migrations` row recorded, DB dropped). Down drops all 11 tables and the 3 enums; never run it where data matters. |
+| 2026-11-24 | `20261124_070719` | CP-2.3: `audit_logs` (action enum, collection/document, actor relation, summary, ip hash) plus its locked-documents relation. | Generated with `payload migrate:create`; applied fifth on a fresh scratch DB 2026-11-24, after which the full suite (116 tests) passed. Down drops the table, relation column and enum; audit history is lost, so never run it where the trail matters. |
 | 2026-11-23 | `20261123_105317` | CP-2.2: two-factor schema — `users.totp_enabled`, `totp_secret`, `totp_last_counter`, `users_totp_backup_codes` (hash + used), and `payload_totp_rate_limits` for the plugin's attempt locking. | Generated with `payload migrate:create`; applied in order with the other three on a fresh scratch DB 2026-11-24, after which the full suite (including 5 TOTP integration tests) passed. Down drops the three columns and two tables; enrolment data is lost, so never run it against a live database. |
 
 ### Rules
@@ -195,6 +205,6 @@ No seed ever contains real customer data or invented business facts presented as
 
 - `beforeValidate`: apply limits, normalise phone numbers and slugs.
 - `beforeChange`: publish gates (`docs/INLINE-EDITING.md` section 9), discount validation.
-- `afterChange`: `revalidateTag` for affected pages and menus; write `price-history`; write `audit-logs`; auto-redirect on slug change.
+- `afterChange`: `revalidateTag` for affected pages and menus; write `price-history`; write `audit-logs` (implemented for users, publish/unpublish and deletes); auto-redirect on slug change.
 - `afterDelete`: remove orphaned media references; log.
 - Never put secrets or personal data in hook logs.

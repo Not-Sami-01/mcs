@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload';
 import { ValidationError } from 'payload';
 
 import { readPublic, writeMedia } from '../access/roles';
+import { auditDelete } from '../audit/hooks';
 import { MEDIA_LIMITS } from '../cms/limits';
 
 const mb = (bytes: number) => Math.round(bytes / (1024 * 1024));
@@ -60,6 +61,7 @@ export const Media: CollectionConfig = {
     ],
   },
   hooks: {
+    afterDelete: [auditDelete('media')],
     // Server-side size cap. Payload has no built-in file size limit; the picker
     // mimeTypes list above is convenience, this is the enforcement.
     beforeValidate: [

@@ -33,7 +33,8 @@ Rules for every custom route:
 | `/api/users/totp/reenroll` | POST | Super Admin only, and only with a verified second factor. Body `{ email }`. Clears the target's enrolment; they are forced through setup at next login. Returns `{ ok: true }` |
 | `/api/pages`, `/api/services`, `/api/locations`, `/api/products`, `/api/posts`, `/api/categories`, `/api/reviews` | GET | Public: **published only**. Writes need a role (matrix in `docs/DATABASE.md`) |
 | `/api/media`, `/api/media/file/...` | GET/POST | Public read of public media. Upload needs a role |
-| `/api/leads`, `/api/lead-photos`, `/api/audit-logs`, `/api/price-history`, `/api/redirects` | any | Staff only, per matrix. Deny public |
+| `/api/leads`, `/api/lead-photos`, `/api/price-history`, `/api/redirects` | any | Staff only, per matrix. Deny public |
+| `/api/audit-logs` | GET | Super Admin read only (CP-2.3). No HTTP create, update or delete exists; entries come from server hooks |
 | `/api/graphql` | POST | Disabled unless needed. If enabled, same access rules and a depth limit |
 
 Decide in CP-0.3 whether to keep GraphQL at all. Default: off.

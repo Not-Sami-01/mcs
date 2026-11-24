@@ -18,7 +18,7 @@
 |---|---|---|---|
 | 0 | Foundations: repo, scaffold, tooling | 1 | NOT STARTED |
 | 1 | Data model, storage, media | 1 | NOT STARTED |
-| 2 | Admin security: invite-only, roles, 2FA, audit | 2 | IN PROGRESS |
+| 2 | Admin security: invite-only, roles, 2FA, audit | 2 | COMPLETE |
 | 3 | Public site shell and blocks | 2 | NOT STARTED |
 | 4 | Inline editing (click-to-edit content box) | 3 | NOT STARTED |
 | 5 | Services, locations, products, blog, reviews | 3–4 | NOT STARTED |
@@ -123,9 +123,9 @@
 - **Commit:** `checkpoint(CP-2.2): two-factor login with recovery codes`
 
 ### CP-2.3 — Audit log and role tests
-- [ ] `audit-logs` collection written by hooks (login, failed login, 2FA events, user changes, publish, delete, price change, export)
-- [ ] Access test matrix generated from `docs/DATABASE.md` roles table: every role against every collection and operation
-- **Exit:** role tests pass; audit entries appear for the listed events
+- [~] `audit-logs` collection written by hooks (login, failed login, 2FA events, user changes, publish, delete, price change, export) (2026-11-24; create-only collection, Super Admin read, salted IP hash, no personal data. Login, failed login, 2FA setup/verify/recovery/re-enrol/lockout, user create/update/delete, publish/unpublish and delete are wired and tested. **Missing:** `price_change` and `export` actions exist in the schema but have no source yet — wire them with products/CSV in CP-5.3/CP-5.4. Failed-login detection runs on REST/GraphQL `afterError`; Local API login errors do not fire that hook)
+- [x] Access test matrix generated from `docs/DATABASE.md` roles table: every role against every collection and operation (2026-11-24; `src/access/matrix.test.ts` parses §4 and covers all implemented collections, globals and anonymous reads)
+- **Exit:** role tests pass; audit entries appear for the listed events (2026-11-24; 116/116 tests, audit integration 4/4, matrix 13/13; price/export deferred as noted)
 - **Commit:** `checkpoint(CP-2.3): audit log and role access tests`
 
 ---

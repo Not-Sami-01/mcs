@@ -2,6 +2,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload';
 import { APIError } from 'payload';
 
 import { hasRole, readPublished, writeContent } from '../access/roles';
+import { auditDelete, auditPublish } from '../audit/hooks';
 import { PAGE_BLOCKS } from '../blocks/allowed';
 import { rows, seoGroup, slugField, textField } from '../cms/fields';
 import { TEXT_LIMITS } from '../cms/limits';
@@ -141,5 +142,7 @@ export const Pages: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [computePath, guardLegalPublish],
+    afterChange: [auditPublish],
+    afterDelete: [auditDelete('pages')],
   },
 };

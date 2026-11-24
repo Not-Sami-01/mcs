@@ -159,7 +159,7 @@ Set in `next.config` and verify at the edge:
 
 ### C14. Logging, audit and monitoring
 - Structured logs without personal data, secrets or file contents.
-- `audit-logs` for logins, 2FA events, user changes, publish, delete, price change, exports.
+- `audit-logs` for logins, 2FA events, user changes, publish, delete, price change, exports (implemented CP-2.3; price/export wired when those features land). Entries are create-only, Super Admin readable, and carry a salted IP hash rather than the raw address.
 - Error monitoring and uptime monitoring with alerts to a named person.
 - Alert on repeated failed logins, spikes in form submissions, 5xx rates.
 
@@ -170,7 +170,7 @@ Set in `next.config` and verify at the edge:
 | Test | Proves |
 |---|---|
 | Stranger cannot create or invite users | No public sign up |
-| Role matrix, every role × collection × operation | Access control |
+| Role matrix, every role × collection × operation | Access control (**CP-2.3**: `src/access/matrix.test.ts` parses the `docs/DATABASE.md` table and fails when code and docs disagree) |
 | Lockout after N failures | Brute force protection |
 | Login without second factor fails on every path | 2FA coverage (**CP-2.2**: `src/auth/totp.integration.test.ts` covers REST/GraphQL hook and pre-enrolment refusal; live smoke covers admin redirects) |
 | Public API returns no drafts, no unverified reviews, no leads | Data exposure |

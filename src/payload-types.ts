@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     categories: Category;
     pages: Page;
+    'audit-logs': AuditLog;
     'totp-rate-limits': TotpRateLimit;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -84,6 +85,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'totp-rate-limits': TotpRateLimitsSelect<false> | TotpRateLimitsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -676,6 +678,55 @@ export interface Page {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Read-only. Written automatically by the server; never edited.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs".
+ */
+export interface AuditLog {
+  id: number;
+  action:
+    | 'login'
+    | 'login_failed'
+    | 'user_created'
+    | 'user_updated'
+    | 'user_deleted'
+    | 'publish'
+    | 'unpublish'
+    | 'delete'
+    | 'totp_setup_started'
+    | 'totp_enrolled'
+    | 'totp_verified'
+    | 'totp_failed'
+    | 'totp_recovery_used'
+    | 'totp_reenrolled'
+    | 'totp_locked'
+    | 'price_change'
+    | 'export';
+  /**
+   * Max 80 characters.
+   */
+  collectionSlug?: string | null;
+  /**
+   * Max 40 characters.
+   */
+  documentId?: string | null;
+  /**
+   * Empty for anonymous events such as a failed login.
+   */
+  actor?: (number | null) | User;
+  /**
+   * Max 300 characters.
+   */
+  summary: string;
+  /**
+   * Salted HMAC of the request address. Never the raw IP.
+   */
+  ipHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "totp-rate-limits".
  */
@@ -820,6 +871,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'audit-logs';
+        value: number | AuditLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1240,6 +1295,20 @@ export interface PagesSelect<T extends boolean = true> {
   createdAt?: T;
   deletedAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs_select".
+ */
+export interface AuditLogsSelect<T extends boolean = true> {
+  action?: T;
+  collectionSlug?: T;
+  documentId?: T;
+  actor?: T;
+  summary?: T;
+  ipHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

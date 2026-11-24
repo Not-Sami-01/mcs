@@ -122,7 +122,7 @@ Alerts go to a human who can act. Test an alert once before launch.
 
 1. Review dependency updates and changelogs (Next.js, Payload, security advisories). Update intentionally, run the full check suite, deploy to staging, then production.
 2. Run the dependency audit; fix or document.
-3. Review audit logs, failed logins, user list (remove people who left, reduce roles).
+3. Review **Admin → Security → Audit log** (login/failed login, 2FA, user, publish and delete events), failed logins, and the user list (remove people who left, reduce roles).
 4. Restore test of the latest backup (rotate through quarterly full test).
 5. Review Search Console (errors, 404s, coverage) and add redirects.
 6. Check uptime and error reports; clear alert noise.

@@ -1,6 +1,7 @@
 import { addDataAndFileToRequest, type Endpoint } from 'payload';
 
 import { hasRole } from '../access/roles';
+import { hashIp, writeAuditLog } from '../audit/log';
 
 /**
  * CP-2.2: reset another staff member's two-factor enrolment.
@@ -79,6 +80,17 @@ export const reenrollTotpEndpoint: Endpoint = {
       },
       overrideAccess: true,
       req,
+    });
+
+    await writeAuditLog({
+      payload,
+      req,
+      action: 'totp_reenrolled',
+      collectionSlug: 'users',
+      documentId: String(targetUser.id),
+      actorId: user.id,
+      summary: 'Two-factor reset by a Super Admin',
+      ipHash: hashIp(req.headers),
     });
 
     return Response.json({ ok: true });

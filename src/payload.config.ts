@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
+import { handleTotpAuditEvent, registerAuditPayload } from './audit/log';
 import { enforceTotpSetup } from './auth/totp-setup-guard';
 import { COLLECTIONS } from './collections';
 import { GLOBALS } from './globals';
@@ -107,8 +108,14 @@ export default buildConfig({
       // The token re-issued after verification must keep the two-hour staff
       // session from CP-2.1; the plugin's default is seven days.
       tokenExpiration: '2h',
+      // CP-2.3: map the plugin's security events into the audit log.
+      onAuditEvent: handleTotpAuditEvent,
     }),
   ],
+  onInit: async (payload) => {
+    // The plugin's audit callback has no request, so it needs the instance.
+    registerAuditPayload(payload);
+  },
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

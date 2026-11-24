@@ -2,6 +2,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload';
 import { APIError } from 'payload';
 
 import { readPublic, writeContent } from '../access/roles';
+import { auditDelete } from '../audit/hooks';
 import { seoGroup, slugField, textField, textareaField } from '../cms/fields';
 import { TEXT_LIMITS } from '../cms/limits';
 import { joinPath, validateSlug } from '../cms/slugs';
@@ -122,5 +123,6 @@ export const Categories: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [computePath],
+    afterDelete: [auditDelete('categories')],
   },
 };

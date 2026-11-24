@@ -19,6 +19,7 @@ import {
   shouldSendInvite,
 } from '../auth/invites';
 import { reenrollTotpEndpoint } from '../auth/totp';
+import { auditLogin, auditLoginError, auditUserChange, auditUserDelete } from '../audit/hooks';
 import { getSiteEnvironment } from '../config/site-env';
 
 export const Users: CollectionConfig = {
@@ -130,6 +131,11 @@ export const Users: CollectionConfig = {
 
         return doc;
       },
+      // CP-2.3 audit trail (docs/SECURITY.md C14).
+      auditUserChange,
     ],
+    afterLogin: [auditLogin],
+    afterError: [auditLoginError],
+    afterDelete: [auditUserDelete],
   },
 };

@@ -105,6 +105,8 @@ Canonical values live in `src/cms/limits.ts`. They are starting points. Tune the
 | `postBody` | 20,000 | Blog and legal pages, rich text |
 | `url` | 200 | External link targets |
 | `emailAddress` | 254 | Email addresses |
+| `auditSummary` | 300 | Audit-log line (no personal data) |
+| `ipHash` | 64 | Salted IP hash in the audit log |
 
 ### Count limits (items)
 

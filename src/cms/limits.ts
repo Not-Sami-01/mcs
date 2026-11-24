@@ -45,6 +45,10 @@ export const TEXT_LIMITS = {
   /** External link targets (added for block action links; not in the original table). */
   url: 200,
   emailAddress: 254,
+  /** One audit-log line (CP-2.3). Never contains personal data. */
+  auditSummary: 300,
+  /** Hex SHA-256/HMAC output stored as an IP hash (CP-2.3). */
+  ipHash: 64,
 } as const;
 
 export type TextPreset = keyof typeof TEXT_LIMITS;
