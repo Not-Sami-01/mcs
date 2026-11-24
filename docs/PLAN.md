@@ -115,7 +115,7 @@
 
 ### CP-2.2 — Two-factor login
 - [x] Spike (timebox): compare the community `payload-totp` plugin with a custom TOTP step built on Payload auth hooks. Check maintenance, Payload version support, how it handles REST and the Local API. Record the decision as ADR-008 (2026-11-24; plugin chosen, two incompatibilities patched — ADR-008)
-- [x] TOTP enrolment (QR), verification on login, recovery codes (hashed), re-enrol by Super Admin (2026-11-24; plugin setup/verify/validate UI + `/api/users/totp/reenroll`)
+- [~] TOTP enrolment (QR), verification on login, recovery codes (hashed), re-enrol by Super Admin (2026-11-24; enrolment/verify/recovery UI from the plugin and `/api/users/totp/reenroll` are done and tested. **Missing:** an admin-panel control for the re-enrol endpoint — the plugin's disable button checks for a role literally named `admin`, so Super Admins currently need the API/runbook. Add the button in CP-2.3)
 - [x] TOTP secrets encrypted at rest (2026-11-24; AES-256-GCM with `TOTP_ENCRYPTION_KEY`, integration test asserts ciphertext)
 - [x] Super Admin and Editor must enrol before reaching the admin or edit mode; all roles by launch (2026-11-24; admin guard `forceSetup` and data-API guard for every role. Edit mode does not exist until Phase 4; its actions will use the same guard)
 - [x] Tests: login without code fails on every path (admin UI, REST, Local API usage in custom code) (2026-11-24; `src/auth/totp.integration.test.ts` 5/5 + live browser smoke)
