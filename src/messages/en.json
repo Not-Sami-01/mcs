@@ -47,6 +47,10 @@
     "contactAddress": "Address",
     "contactHours": "Working hours"
   },
+  "homePending": {
+    "title": "Website content is being prepared",
+    "body": "The home page has not been published yet. Please check back soon."
+  },
   "notFound": {
     "title": "Page not found",
     "body": "This page may have moved, or it is not published yet.",

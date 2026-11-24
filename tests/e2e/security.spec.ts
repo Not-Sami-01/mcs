@@ -5,7 +5,7 @@ test('public page is reachable but marked noindex outside production', async ({ 
 
   expect(response?.status()).toBe(200);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
-  await expect(page.getByRole('heading', { name: 'Website scaffold is running' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
   const headers = response?.headers();
   expect(headers?.['x-robots-tag']).toBe('noindex, nofollow');

@@ -91,7 +91,7 @@ export const COUNT_LIMITS = {
   sitePhones: { label: 'Site phones', min: 1, max: 4 },
   socialLinks: { label: 'Social links', min: 0, max: 8 },
   leadAlertRecipients: { label: 'Lead alert recipients', min: 0, max: 5 },
-  seedSamplePages: { label: 'Seed sample pages', min: 1, max: 4 },
+  seedSamplePages: { label: 'Seed sample pages', min: 1, max: 8 },
 } as const;
 
 export type CountPreset = keyof typeof COUNT_LIMITS;

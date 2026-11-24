@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { getCachedPageByPath, getCachedPublishedPagePaths, getCachedSiteChrome } from '@/cms/cache';
-import { BlockRenderer } from '@/components/blocks';
+import { HOME_PATH } from '@/cms/pages';
+import { buildPageMetadata } from '@/cms/page-meta';
+import { PageView } from '@/components/PageView';
 
 type RouteParams = { segments: string[] };
 
@@ -20,7 +22,7 @@ export const revalidate = 300;
 export async function generateStaticParams(): Promise<RouteParams[]> {
   const paths = await getCachedPublishedPagePaths();
 
-  return paths.filter((path) => path !== 'home').map((path) => ({ segments: path.split('/') }));
+  return paths.filter((path) => path !== HOME_PATH).map((path) => ({ segments: path.split('/') }));
 }
 
 export async function generateMetadata({
@@ -32,14 +34,7 @@ export async function generateMetadata({
   const page = await getCachedPageByPath(path);
   if (!page) return {};
 
-  const chrome = await getCachedSiteChrome();
-  const title = page.seo?.metaTitle?.trim() || page.title;
-
-  return {
-    title: title === chrome.companyName ? title : `${title} | ${chrome.companyName}`,
-    description: page.seo?.metaDescription?.trim() || undefined,
-    ...(page.noindex ? { robots: { index: false, follow: false } } : {}),
-  };
+  return buildPageMetadata(page, await getCachedSiteChrome());
 }
 
 export default async function CmsPage({ params }: { params: Promise<RouteParams> }) {
@@ -47,13 +42,5 @@ export default async function CmsPage({ params }: { params: Promise<RouteParams>
   const page = await getCachedPageByPath(path);
   if (!page) notFound();
 
-  const chrome = await getCachedSiteChrome();
-  const hasHero = (page.layout ?? []).some((block) => block.blockType === 'hero');
-
-  return (
-    <div>
-      {hasHero ? null : <h1 className="sr-only">{page.title}</h1>}
-      <BlockRenderer blocks={page.layout} chrome={chrome} />
-    </div>
-  );
+  return <PageView page={page} chrome={await getCachedSiteChrome()} />;
 }

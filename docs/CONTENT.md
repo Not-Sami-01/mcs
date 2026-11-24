@@ -143,7 +143,7 @@ Canonical values live in `src/cms/limits.ts`. They are starting points. Tune the
 | Site phones | 1 | 4 |
 | Social links | 0 | 8 |
 | Lead alert recipients | 0 | 5 |
-| Seed sample pages | 1 | 4 |
+| Seed sample pages | 1 | 8 |
 
 ### Rendering safety
 

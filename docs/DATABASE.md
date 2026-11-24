@@ -195,9 +195,9 @@ Add one entry per applied migration. Include how to roll back and what to check.
 | Command | Environment | Purpose |
 |---|---|---|
 | `pnpm seed:admin` | any (production needs a real email provider) | Implemented CP-2.1 in `src/seed/admin.ts`. Creates the first Super Admin without a password and issues a 24-hour one-time invite link. Email from `SEED_ADMIN_EMAIL`, or asks on a TTY. Refuses when a Super Admin already exists or the email is taken. Console mail provider prints the link (development only); production refuses `EMAIL_PROVIDER=console`. |
-| `pnpm seed` | development, staging | Appends one clearly labelled **SAMPLE** category and draft page to their respective collections. Leaves globals/contact settings untouched, refuses production, reads both globals first (fails fast if the globals config is broken) and is idempotent by the sample slugs. |
+| `pnpm seed` | development, staging | Appends one clearly labelled **SAMPLE** category and draft page, plus four **STARTER DRAFT** pages (About Us, Warranty, Terms and Conditions, Privacy Policy) whose bodies are `TODO(client)` placeholders and whose legal pair is flagged `isLegal`. Nothing is published. Leaves globals/contact settings untouched, refuses production, reads both globals first (fails fast if the globals config is broken) and is idempotent by slug. |
 
-No seed ever contains real customer data or invented business facts presented as real. Sample content makes no service, qualification, results, price, or availability claims; sample records are drafts and must be replaced or removed before launch.
+No seed ever contains real customer data or invented business facts presented as real. Sample content makes no service, qualification, results, price, or availability claims; sample records are drafts and must be replaced or removed before launch. Starter drafts contain only page labels and `TODO(client)` text so staff start from the right URLs without inventing copy.
 
 ---
 

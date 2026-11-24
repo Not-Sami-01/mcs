@@ -150,9 +150,9 @@
 - **Commit:** `checkpoint(CP-3.2): block renderers and page routes with revalidation`
 
 ### CP-3.3 — Home and static pages
-- [ ] Home built from blocks in the order from `docs/CONTENT.md` section 7
-- [ ] About Us, Warranty, Terms, Privacy as pages (legal text marked `TODO(client): lawyer review`)
-- **Exit:** Lighthouse mobile run recorded in QUALITY.md (not yet gated)
+- [x] Home built from blocks in the order from `docs/CONTENT.md` section 7 (2026-11-24; `/` loads the published `pages` document with path `home` through the shared `PageView`, and shows a neutral noindex holding state until staff publish it. Block order lives in the document's layout, per §7)
+- [~] About Us, Warranty, Terms, Privacy as pages (legal text marked `TODO(client): lawyer review`) (2026-11-24; `pnpm seed` adds all four as drafts with `TODO(client)` bodies; the legal pair is flagged `isLegal`. **Missing:** client-approved copy for About and Warranty, and lawyer-reviewed Terms/Privacy — publishing is a content decision, nothing is invented in code)
+- **Exit:** Lighthouse mobile run recorded in QUALITY.md (not yet gated) (2026-11-24; Lighthouse 12 mobile on a published-home fixture: performance 99, accessibility 100, LCP 1.4 s, CLS 0, TBT 140 ms. SEO 54 is staging `noindex`; cold first run scored 89 performance)
 - **Commit:** `checkpoint(CP-3.3): home page and static pages from blocks`
 
 ---

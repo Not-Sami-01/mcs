@@ -11,6 +11,9 @@ import type { Page } from '@/payload-types';
  * exclude them, so an unpublished URL returns 404 even if a stale route exists.
  */
 
+/** The page document that supplies the root URL (docs/DATABASE.md §2). */
+export const HOME_PATH = 'home';
+
 /** Look up a published page by its computed path (`home` is the root page). */
 export async function findPublishedPage(path: string): Promise<Page | null> {
   const payload = await getPayload({ config });

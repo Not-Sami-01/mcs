@@ -2,20 +2,21 @@ import { getPayload } from 'payload';
 
 import { COUNT_LIMITS } from '../cms/limits';
 import config from '../payload.config';
-import { sampleCategory, samplePages } from './content';
+import { sampleCategory, samplePages, starterPages } from './content';
 import { validateSeedEnvironment } from './guard';
 
-export { sampleCategory, samplePages } from './content';
+export { sampleCategory, samplePages, starterPages } from './content';
 export { validateSeedEnvironment } from './guard';
 
 export async function seedSampleContent(): Promise<void> {
   validateSeedEnvironment();
 
+  const seedPageCount = samplePages.length + starterPages.length;
   if (
-    samplePages.length < COUNT_LIMITS.seedSamplePages.min ||
-    samplePages.length > COUNT_LIMITS.seedSamplePages.max
+    seedPageCount < COUNT_LIMITS.seedSamplePages.min ||
+    seedPageCount > COUNT_LIMITS.seedSamplePages.max
   ) {
-    throw new Error('Sample page count is outside the configured seed limits.');
+    throw new Error('Seed page count is outside the configured seed limits.');
   }
 
   const payload = await getPayload({ config });
@@ -57,7 +58,7 @@ export async function seedSampleContent(): Promise<void> {
     );
 
     console.info(
-      'Adding clearly marked SAMPLE content. Existing content and contact settings are untouched.',
+      'Adding clearly marked SAMPLE and STARTER DRAFT content. Existing content and contact settings are untouched.',
     );
 
     const category =
@@ -81,7 +82,29 @@ export async function seedSampleContent(): Promise<void> {
       });
     }
 
-    console.info(`Sample seed is complete (${samplePages.length} configured page(s)).`);
+    for (const page of starterPages) {
+      const existing = await payload.find({
+        collection: 'pages',
+        where: { slug: { equals: page.slug } },
+        limit: 1,
+        overrideAccess: true,
+      });
+
+      if (existing.docs[0]) {
+        console.info(`Starter page "${page.slug}" already exists; leaving it unchanged.`);
+        continue;
+      }
+
+      await payload.create({
+        collection: 'pages',
+        overrideAccess: true,
+        data: { ...page, _status: 'draft' },
+      });
+    }
+
+    console.info(
+      `Seed is complete (${samplePages.length} sample page(s), ${starterPages.length} starter draft(s)).`,
+    );
   } finally {
     await payload.destroy();
   }

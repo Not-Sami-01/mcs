@@ -167,7 +167,7 @@ pnpm test             # unit + integration (Vitest)
 pnpm test:e2e         # Playwright browser smoke tests
 pnpm payload migrate:create   # create a DB migration
 pnpm payload migrate          # apply migrations
-pnpm seed             # load sample content (dev/staging only)
+pnpm seed             # load sample + TODO starter drafts (dev/staging only)
 pnpm seed:admin       # create the first Super Admin (see docs/SECURITY.md)
 ```
 
