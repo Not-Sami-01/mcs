@@ -10,7 +10,7 @@
 | Audience | Auth | Examples |
 |---|---|---|
 | Public | None | Forms, health |
-| Staff | Payload session + verified two-factor + role | Lead export, photo viewer, CSV import |
+| Staff | Payload session + role; enrolled accounts must also have the verified two-factor cookie | Lead export, photo viewer, CSV import |
 | Internal | Server only | Local API calls inside server components and actions |
 
 Rules for every custom route:
@@ -29,8 +29,8 @@ Rules for every custom route:
 | Route | Methods | Access |
 |---|---|---|
 | `/api/users/login`, `/api/users/logout`, `/api/users/me`, `/api/users/forgot-password`, `/api/users/reset-password` | POST/GET | Login flow. Invite uses the reset-password mechanism (ADR-016). `/api/users/first-register` and anonymous `POST /api/users` return **403** (CP-2.1, verified) |
-| `/api/users/totp/setup`, `/totp/verify`, `/totp/validate`, `/totp/status` | POST/GET | Two-factor flow (CP-2.2, plugin). `setup`, `verify` and `status` are reachable with a first-factor session so enrolment can happen; `validate` accepts a recovery code once. A session without the verified cookie is refused on every other data-API operation |
-| `/api/users/totp/reenroll` | POST | Super Admin only, and only with a verified second factor. Body `{ email }`. Clears the target's enrolment; they are forced through setup at next login. Returns `{ ok: true }` |
+| `/api/users/totp/setup`, `/totp/verify`, `/totp/validate`, `/totp/status` | POST/GET | Two-factor flow (CP-2.2, plugin). `setup`, `verify` and `status` are reachable with a first-factor session so enrolment can happen; `validate` accepts a recovery code once. A session without the verified cookie is refused on every other data-API operation **when the account has enrolled** (two-factor is optional since 2026-11-24) |
+| `/api/users/totp/reenroll` | POST | Super Admin only; a Super Admin who has enrolled must also present the verified second factor. Body `{ email }`. Clears the target's enrolment; they can re-enrol at `/admin/setup-totp`. Returns `{ ok: true }` |
 | `/api/pages`, `/api/services`, `/api/locations`, `/api/products`, `/api/posts`, `/api/categories`, `/api/reviews` | GET | Public: **published only**. Writes need a role (matrix in `docs/DATABASE.md`) |
 | `/api/media`, `/api/media/file/...` | GET/POST | Public read of public media. Upload needs a role |
 | `/api/leads`, `/api/lead-photos`, `/api/price-history`, `/api/redirects` | any | Staff only, per matrix. Deny public |

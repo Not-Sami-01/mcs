@@ -23,9 +23,10 @@ const serverFunction: ServerFunctionClient = async function (args) {
 
 const Layout = ({ children }: Args) => (
   <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
-    {/* CP-2.2: no staff page renders without a verified second factor. */}
+    {/* Enrolled accounts must verify; unenrolled accounts are not redirected
+        to setup because two-factor is optional (2026-11-24). */}
     <Suspense fallback={null}>
-      <TOTPGuard config={config} forceSetup>
+      <TOTPGuard config={config} forceSetup={false}>
         <TOTPGate>{children}</TOTPGate>
       </TOTPGuard>
     </Suspense>

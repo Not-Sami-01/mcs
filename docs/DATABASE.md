@@ -44,8 +44,8 @@ Auth (two-factor, implemented CP-2.2, ADR-008):
 
 - TOTP enrolment (`/admin/setup-totp`), login verification (`/admin/verify-totp`) and 10 recovery codes come from `@purposeinplay/payload-totp@0.5.1` (patched).
 - **Encryption:** `TOTP_ENCRYPTION_KEY` (64 hex chars) encrypts `users.totp_secret` with AES-256-GCM. `TOTP_ENCRYPTION_KEY` must be identical across processes and is required in production.
-- **Enforcement:** the admin layout wraps Payload in `TOTPGuard`/`TOTPGate` (`forceSetup`), so an unenrolled account is sent to setup and an enrolled account without a verified cookie is sent to verify. `src/auth/totp-setup-guard.ts` refuses every data-API operation for an authenticated unenrolled user except the auth handshake. The plugin's `beforeOperation` hook refuses every data-API call whose verified cookie does not match the session.
-- **Reset:** `POST /api/users/totp/reenroll` `{ email }` lets a second-factor-verified Super Admin clear another user's enrolment (the user re-enrols at next login). The plugin's own disable endpoint is not used because it checks for a role literally named `admin`.
+- **Enforcement (optional since 2026-11-24):** the admin layout wraps Payload in `TOTPGuard`/`TOTPGate` with `forceSetup={false}`, so an unenrolled account reaches the panel normally; an enrolled account without a verified cookie is sent to verify. The plugin's `beforeOperation` hook refuses data-API calls for enrolled accounts whose verified cookie does not match the session. Unenrolled accounts are not gated (client request; ADR-008 amendment).
+- **Reset:** `POST /api/users/totp/reenroll` `{ email }` lets a Super Admin clear another user's enrolment; an enrolled Super Admin must have completed their own second factor. The target can re-enrol at `/admin/setup-totp` (optional). The plugin's own disable endpoint is not used because it checks for a role literally named `admin`.
 - **Rate limiting:** failures are stored in `payload_totp_rate_limits` (`user_key`, `failures`, `window_start`, `locked_until`), managed by the plugin.
 
 ### `categories` (nested tree)

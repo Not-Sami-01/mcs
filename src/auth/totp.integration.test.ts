@@ -207,10 +207,11 @@ describe.skipIf(!enabled)('two-factor login (CP-2.2)', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('blocks data-API use until the account has enrolled', async () => {
+  it('allows data-API use without enrolling (two-factor is optional)', async () => {
     const unenrolled = await createUser(uniqueEmail());
 
-    // Staff operations are refused while `totp.enabled` is false…
+    // Enrolment is opt-in since 2026-11-24: a password-authenticated account
+    // with `totp.enabled: false` passes the plugin's data-API hook.
     await expect(
       payload.find({
         collection: 'users',
@@ -218,20 +219,15 @@ describe.skipIf(!enabled)('two-factor login (CP-2.2)', () => {
         user: unenrolled,
         overrideAccess: false,
       }),
-    ).rejects.toThrow();
+    ).resolves.toBeDefined();
 
-    // …but the login handshake still works, so setup remains reachable.
+    // The login handshake still works, so the account can opt in later.
     await expect(
       payload.login({
         collection: 'users',
         data: { email: unenrolled.email, password: PASSWORD },
       }),
     ).resolves.toMatchObject({ user: { email: unenrolled.email } });
-
-    // Trusted server code may still read with an explicit access bypass.
-    await expect(
-      payload.find({ collection: 'users', limit: 1, overrideAccess: true }),
-    ).resolves.toBeDefined();
   });
 
   it('consumes a recovery code once', async () => {

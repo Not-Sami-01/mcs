@@ -16,8 +16,9 @@ import { hashIp, writeAuditLog } from '../audit/log';
  *    `beforeOperation` hook blocks (403) unless the verified cookie matches the
  *    session.
  *
- * Clearing `totp` sends the target back to forced setup at their next login.
- * The secret and recovery-code hashes never leave the database.
+ * Clearing `totp` removes the target's second factor; they can enrol again at
+ * `/admin/setup-totp` (enrolment is optional since 2026-11-24). The secret and
+ * recovery-code hashes never leave the database.
  */
 export const reenrollTotpEndpoint: Endpoint = {
   path: '/totp/reenroll',
@@ -29,12 +30,13 @@ export const reenrollTotpEndpoint: Endpoint = {
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    if (!hasRole(user, 'super-admin') || !user.totp?.enabled) {
+    if (!hasRole(user, 'super-admin')) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Fails closed: the plugin's data-API hook throws Forbidden when this
-    // session has not completed its second factor.
+    // Fails closed for enrolled Super Admins: the plugin's data-API hook throws
+    // Forbidden when a TOTP-enabled session has not completed its second factor.
+    // A Super Admin who has not opted in has no factor to verify.
     try {
       await payload.find({
         collection: 'users',

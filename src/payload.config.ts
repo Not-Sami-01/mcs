@@ -8,7 +8,6 @@ import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
 import { handleTotpAuditEvent, registerAuditPayload } from './audit/log';
-import { enforceTotpSetup } from './auth/totp-setup-guard';
 import { COLLECTIONS } from './collections';
 import { GLOBALS } from './globals';
 import { Users } from './collections/Users';
@@ -63,13 +62,14 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      // Opt-in entry for two-factor setup; hidden once enrolled.
+      afterNavLinks: ['/components/admin/TwoFactorLink'],
+    },
   },
   collections: COLLECTIONS,
   globals: GLOBALS,
   plugins: [
-    // Before the TOTP plugin so the plugin's verified-session hook stays last
-    // and can be exercised as the final gate in tests.
-    enforceTotpSetup,
     s3Storage({
       bucket: filebaseBucket,
       collections: {
@@ -103,8 +103,10 @@ export default buildConfig({
     totpPlugin({
       authCollectionSlug: 'users',
       issuer: 'MCS Admin',
-      // Every staff role must set up a second factor before using the panel.
-      forceSetup: true,
+      // Enrolment is optional (2026-11-24 client request): unenrolled staff can
+      // use the admin and data API, and can opt in at /admin/setup-totp.
+      // Accounts that did enrol must still present a code on every login.
+      forceSetup: false,
       // The token re-issued after verification must keep the two-hour staff
       // session from CP-2.1; the plugin's default is seven days.
       tokenExpiration: '2h',

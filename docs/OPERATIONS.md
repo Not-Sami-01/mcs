@@ -156,10 +156,10 @@ Record who the owner is and where recovery codes are kept (never in the repo).
 
 | Task | Steps |
 |---|---|
-| Invite a staff member | Super Admin → Users → create with role (the typed password is discarded) → they receive a 24-hour one-time set-password link → they set a password, then are forced through TOTP setup at `/admin/setup-totp` and must keep the 10 recovery codes. Without an email provider, development logs the link (`EMAIL_PROVIDER=console`) |
+| Invite a staff member | Super Admin → Users → create with role (the typed password is discarded) → they receive a 24-hour one-time set-password link → they set a password. TOTP setup at `/admin/setup-totp` is offered but **optional** (2026-11-24); if they enrol, they must keep the 10 recovery codes and will need a code at every login. Without an email provider, development logs the link (`EMAIL_PROVIDER=console`) |
 | Create the first Super Admin | `SEED_ADMIN_EMAIL=<address> pnpm seed:admin` with env loaded (gotcha 17) → follow the printed invite link. Refuses if a Super Admin already exists |
 | Remove a staff member | Disable user, revoke sessions, review audit log, rotate shared secrets if they had access |
-| Reset someone's two-factor | As a second-factor-verified Super Admin, `POST /api/users/totp/reenroll` with the target email (UI form pending, CP-2.3); the user re-enrols at next login. Never change `TOTP_ENCRYPTION_KEY` to "reset" an account — it invalidates everyone |
+| Reset someone's two-factor | As a Super Admin (with your own second factor verified if you have enrolled), `POST /api/users/totp/reenroll` with the target email (UI form pending, CP-2.3); the user can re-enrol at `/admin/setup-totp`. Never change `TOTP_ENCRYPTION_KEY` to "reset" an account — it invalidates everyone |
 | Rotate a secret | Create the new value, deploy, verify, revoke the old one, record the date |
 | Roll back a bad deploy | Redeploy the previous build; if a migration ran, follow its rollback note in `docs/DATABASE.md` section 5 |
 | Restore a bad content change | Page version history (restore) or trash (restore) |
