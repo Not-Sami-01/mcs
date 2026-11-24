@@ -7,6 +7,7 @@ import { PAGE_BLOCKS } from '../blocks/allowed';
 import { rows, seoGroup, slugField, textField } from '../cms/fields';
 import { TEXT_LIMITS } from '../cms/limits';
 import { joinPath, validateSlug } from '../cms/slugs';
+import { revalidatePagesAfterChange, revalidatePagesAfterDelete } from '../cms/revalidate-hooks';
 
 /**
  * CMS-driven pages (docs/DATABASE.md §2). The public site's catch-all route
@@ -142,7 +143,7 @@ export const Pages: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [computePath, guardLegalPublish],
-    afterChange: [auditPublish],
-    afterDelete: [auditDelete('pages')],
+    afterChange: [auditPublish, revalidatePagesAfterChange],
+    afterDelete: [auditDelete('pages'), revalidatePagesAfterDelete],
   },
 };

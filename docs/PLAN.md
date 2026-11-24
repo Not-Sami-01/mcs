@@ -143,10 +143,10 @@
 - **Commit:** `checkpoint(CP-3.1): design tokens, header, footer and sticky bars`
 
 ### CP-3.2 — Block renderers and page routes
-- [ ] One server component per block in the catalogue; each handles missing or maximum content without overflow (defensive CSS in `docs/DESIGNS.md`)
-- [ ] Catch-all route for pages and category pages; static generation with ISR; `afterChange` hooks revalidate by tag
-- [ ] 404 and error pages; `notFound` for unpublished
-- **Exit:** a seeded page renders every block type; unpublishing returns 404
+- [x] One server component per block in the catalogue; each handles missing or maximum content without overflow (defensive CSS in `docs/DESIGNS.md`) (2026-11-24; all 14 types in `src/components/blocks/`, registry in `index.tsx`)
+- [x] Catch-all route for pages and category pages; static generation with ISR; `afterChange` hooks revalidate by tag (2026-11-24; required `[...segments]` route, tags `pages` and `site-chrome`, 300 s)
+- [x] 404 and error pages; `notFound` for unpublished (2026-11-24; `/[...segments]` returns 404 for drafts and unknown paths)
+- **Exit:** a seeded page renders every block type; unpublishing returns 404 (2026-11-24; one renderer test mounts all 14 block types in a single page, integration test unpublishes a page and gets no result. The committed seed page stays a draft by design, so it correctly 404s in E2E)
 - **Commit:** `checkpoint(CP-3.2): block renderers and page routes with revalidation`
 
 ### CP-3.3 — Home and static pages

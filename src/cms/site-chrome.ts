@@ -99,7 +99,7 @@ function fallbackLegalLinks(): NavLink[] {
   ];
 }
 
-export async function getSiteChrome(): Promise<SiteChrome> {
+export async function loadSiteChrome(): Promise<SiteChrome> {
   const payload = await getPayload({ config });
 
   const [navigation, settings] = await Promise.all([

@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload';
 
 import { canEditNavigation, readPublic, writeNavigation } from '../access/roles';
 import { actionFields, rows, textField } from '../cms/fields';
+import { revalidateChromeAfterChange } from '../cms/revalidate-hooks';
 
 export const Navigation: GlobalConfig = {
   slug: 'navigation',
@@ -72,4 +73,7 @@ export const Navigation: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidateChromeAfterChange],
+  },
 };

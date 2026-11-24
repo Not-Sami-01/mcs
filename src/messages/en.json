@@ -34,6 +34,29 @@
     "privacy": "Privacy Policy",
     "rights": "All rights reserved."
   },
+  "blocks": {
+    "trustStripLabel": "Trust and proof",
+    "before": "Before",
+    "after": "After",
+    "issuedBy": "Issued by",
+    "startInspection": "Start your free inspection",
+    "contactDetails": "Contact details",
+    "contactEmpty": "Contact details are not published yet.",
+    "contactPhone": "Phone",
+    "contactEmail": "Email",
+    "contactAddress": "Address",
+    "contactHours": "Working hours"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page may have moved, or it is not published yet.",
+    "home": "Go to the home page"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "body": "The page could not be loaded. Please try again.",
+    "retry": "Try again"
+  },
   "whatsapp": {
     "greeting": "Hi MCS, I would like help with pest control."
   },

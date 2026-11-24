@@ -83,6 +83,8 @@ Defined as CSS variables and mapped in the Tailwind theme. Colours in OKLCH or h
 
 Each block in `docs/CONTENT.md` section 6 has one renderer and at most two layout variants. Variants are chosen by a field with a short enum, not by free CSS. Grids: 1 column on mobile, 2 on tablet, 3 or 4 on desktop. A block with the maximum items must still look intentional (wrap, not scroll sideways, unless it is a labelled carousel).
 
+**Implemented CP-3.2:** one server component per block in `src/components/blocks/`, selected by `BlockRenderer` (`index.tsx`) from the Pages `layout` union. `Section` owns the shared shell (landmark, container, background, heading level), `SiteImage` emits a `<picture>` with the pre-generated `thumb`/`card`/`hero` variants (ADR-015), and `BlockAction` resolves `call`/`whatsapp` against saved settings and drops unsafe schemes. Missing fields render nothing rather than an empty box; `beforeAfter` pairs appear only with `consentConfirmed`; proof notes stay internal. Contact facts are never invented — unset phone/WhatsApp actions disappear. The 404 and error boundaries use the same message catalogue and site chrome; the route renders a visually hidden H1 only when no hero supplies one.
+
 ---
 
 ## 5. Motion

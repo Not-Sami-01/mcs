@@ -8,6 +8,7 @@ import {
   writeSiteSettings,
 } from '../access/roles';
 import { emailField, rows, textField, textareaField } from '../cms/fields';
+import { revalidateChromeAfterChange } from '../cms/revalidate-hooks';
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -174,4 +175,7 @@ export const SiteSettings: GlobalConfig = {
       },
     },
   ],
+  hooks: {
+    afterChange: [revalidateChromeAfterChange],
+  },
 };

@@ -6,6 +6,7 @@ import { auditDelete } from '../audit/hooks';
 import { seoGroup, slugField, textField, textareaField } from '../cms/fields';
 import { TEXT_LIMITS } from '../cms/limits';
 import { joinPath, validateSlug } from '../cms/slugs';
+import { revalidatePagesAfterChange, revalidatePagesAfterDelete } from '../cms/revalidate-hooks';
 
 /**
  * Nested category tree (docs/DATABASE.md §2, docs/CONTENT.md §3).
@@ -123,6 +124,7 @@ export const Categories: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [computePath],
-    afterDelete: [auditDelete('categories')],
+    afterChange: [revalidatePagesAfterChange],
+    afterDelete: [auditDelete('categories'), revalidatePagesAfterDelete],
   },
 };

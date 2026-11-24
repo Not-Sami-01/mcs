@@ -6,7 +6,7 @@ import { MobileStickyBar } from '@/components/layout/MobileStickyBar';
 import { SkipLink } from '@/components/layout/SkipLink';
 import { WhatsAppButton } from '@/components/layout/WhatsAppButton';
 import { getRobotsDirectives } from '@/config/site-env';
-import { getSiteChrome } from '@/cms/site-chrome';
+import { getCachedSiteChrome } from '@/cms/cache';
 
 import './globals.css';
 
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
-  const chrome = await getSiteChrome();
+  const chrome = await getCachedSiteChrome();
 
   return (
     <html lang="en" dir="ltr">
