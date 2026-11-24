@@ -1,0 +1,73 @@
+diff --git a/dist/crypto/jwt-edge.js b/dist/crypto/jwt-edge.js
+index e722c664b35e937e6c138cc986d7ef904643425f..940bc229efeec3fb7b2eb3642b6b3ea97678e078 100644
+--- a/dist/crypto/jwt-edge.js
++++ b/dist/crypto/jwt-edge.js
+@@ -21,14 +21,20 @@
+     const truncated = hex.slice(0, 32);
+     return new TextEncoder().encode(truncated);
+ }
++// Mirrors payload's JWT_AUTH_VERSION (1). Kept as a literal so this edge-safe
++// module does not import the Node entry point of `payload`.
++const JWT_AUTH_VERSION = 1;
+ export async function verifyJWT(token) {
+     try {
+         const key = await deriveSigningKey();
+-        const { payload } = await jwtVerify(token, key, {
++        const { payload, protectedHeader } = await jwtVerify(token, key, {
+             algorithms: [
+                 'HS256'
+             ]
+         });
++        if (protectedHeader.authVersion !== JWT_AUTH_VERSION) {
++            return null;
++        }
+         return payload;
+     } catch  {
+         return null;
+diff --git a/dist/crypto/payload-token.js b/dist/crypto/payload-token.js
+index 35a7c3836d46ef20d39ddda831613e89dd82e47d..f1de7a74d29011b71cad7f08530083f4e0ae88a2 100644
+--- a/dist/crypto/payload-token.js
++++ b/dist/crypto/payload-token.js
+@@ -3,7 +3,7 @@
+  * Must match Payload's internal key derivation exactly.
+  */ import crypto from 'node:crypto';
+ import { SignJWT } from 'jose';
+-import { APIError } from 'payload';
++import { APIError, JWT_AUTH_VERSION } from 'payload';
+ import { DEFAULT_AUTH_COLLECTION_SLUG } from '../defaults.js';
+ /**
+  * Derives a signing key matching Payload's internal JWT key derivation.
+@@ -38,7 +38,10 @@ export async function createPayloadToken(user, tokenExpiration = DEFAULT_TOKEN_E
+         } : {}
+     };
+     const token = await new SignJWT(payload).setProtectedHeader({
+-        alg: 'HS256'
++        alg: 'HS256',
++        // Payload 3.94 rejects JWTs without its authVersion protected header.
++        authVersion: JWT_AUTH_VERSION,
++        typ: 'JWT'
+     }).setIssuedAt().setExpirationTime(tokenExpiration).sign(key);
+     return token;
+ }
+diff --git a/dist/utilities/helpers.js b/dist/utilities/helpers.js
+index 37e670011700c0ba6ff31ec030e4dd5e97ee570d..5b82d7f512a4eda9060a5e6e366ac43b020a08fc 100644
+--- a/dist/utilities/helpers.js
++++ b/dist/utilities/helpers.js
+@@ -47,14 +47,15 @@ export function getClientIp(headers) {
+     return 'unknown';
+ }
+ export function buildPayloadTokenSetCookieHeader(token) {
+-    const maxAge = 60 * 60 * 24 * 7;
++    // Match the collection's CP-2.1 policy: same-site strict cookies.
++    const maxAge = 60 * 60 * 2;
+     const isProd = process.env.NODE_ENV === 'production';
+     return [
+         `payload-token=${token}`,
+         'Path=/',
+         `Max-Age=${maxAge}`,
+         'HttpOnly',
+-        'SameSite=Lax',
++        'SameSite=Strict',
+         ...isProd ? [
+             'Secure'
+         ] : []

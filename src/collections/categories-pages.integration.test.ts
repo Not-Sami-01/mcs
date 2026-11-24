@@ -29,6 +29,8 @@ describe.skipIf(!enabled)('categories and pages integration (CP-1.2 exit criteri
     id: 999991,
     email: 'superadmin-test@example.com',
     roles: ['super-admin'],
+    // CP-2.2: staff must have enrolled before using the data API.
+    totp: { enabled: true },
     collection: 'users' as const,
     _strategy: 'local',
   };
@@ -37,6 +39,7 @@ describe.skipIf(!enabled)('categories and pages integration (CP-1.2 exit criteri
     id: 999992,
     email: 'editor-test@example.com',
     roles: ['editor'],
+    totp: { enabled: true },
     collection: 'users' as const,
     _strategy: 'local',
   };

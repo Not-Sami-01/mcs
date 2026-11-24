@@ -29,6 +29,9 @@ jobs:
       SITE_ENV: staging
       DATABASE_URL: postgresql://mcs:mcs_dev_password@localhost:5432/mcs
       PAYLOAD_SECRET: ci-only-placeholder-secret-not-used-in-production
+      # Valid 64-hex placeholder so the TOTP integration test can encrypt secrets.
+      # CI only; never reuse it anywhere else.
+      TOTP_ENCRYPTION_KEY: '1111111111111111111111111111111111111111111111111111111111111111'
       # Placeholder Filebase config: payload.config.ts requires these names to exist.
       # No upload tests run in CI, so the values are never used to reach Filebase.
       FILEBASE_ENDPOINT: https://s3.filebase.io
@@ -49,10 +52,11 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm format:check
-      - run: pnpm test
-      # Schema for the build: CI's Postgres is empty and `next build` prerenders pages
-      # that query Payload (payload.config never pushes schema outside development).
+      # Schema first: CI's Postgres is empty, the TOTP integration test needs the
+      # tables, and `next build` prerenders pages that query Payload
+      # (payload.config never pushes schema outside development).
       - run: pnpm payload migrate
+      - run: pnpm test
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e

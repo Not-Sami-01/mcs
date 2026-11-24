@@ -13,3 +13,5 @@ minimumReleaseAgeExclude:
   - '@vitest/mocker@4.1.12'
   - '@vitest/spy@4.1.12'
   - vitest@4.1.12
+patchedDependencies:
+  '@purposeinplay/payload-totp@0.5.1': patches/@purposeinplay__payload-totp@0.5.1.patch

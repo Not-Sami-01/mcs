@@ -1,6 +1,6 @@
 # DATABASE — Collections, Access and Migrations
 
-> **Status:** `users`, `media`, `categories`, `pages`, `site-settings` and `navigation` are implemented (CP-1.3, 2026-11-20); other collections are designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
+> **Status:** `users` (including two-factor columns), `media`, `categories`, `pages`, `site-settings` and `navigation` are implemented (CP-1.3/CP-2.2); other collections are designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
 > Payload defines the schema from collection configs and generates the PostgreSQL tables (Drizzle). Field shapes below are the intended design. Verify exact option names against the installed Payload version.
 
 ---
@@ -28,7 +28,7 @@
 | `email` | Login. Unique |
 | `name` | Not implemented yet |
 | `roles` | Multi-select: `super-admin`, `editor`, `product-manager`, `sales-support` |
-| `totp` group | Encrypted secret, `enabled`, `enrolledAt`; recovery codes stored **hashed** (CP-2.2) |
+| `totp` group | **Implemented CP-2.2** by the plugin: `enabled`, `secret` (AES-256-GCM ciphertext), `backupCodes[]` (`hash`, `used`), `lastCounter`. The base32 secret and recovery codes are never stored in plaintext |
 | `lastLoginAt` | Not implemented yet |
 | `resetPasswordToken` / `resetPasswordExpiration` | Payload internals behind invites and password resets |
 
@@ -39,6 +39,14 @@ Auth (implemented CP-2.1, `src/collections/Users.ts`):
 - **Sessions:** `tokenExpiration: 2 hours`; cookies are `HttpOnly` (Payload default), `SameSite=Strict`, and `Secure` when `SITE_ENV=production`.
 - **Invites:** creating a user as a Super Admin generates a one-time Payload reset token (`forgotPassword.expiration` = 24 h, `minRequestInterval` = 60 s) and emails a set-password link. Payload requires a password on every auth-user create, so the hook overwrites whatever the Super Admin typed with a random 32-byte secret — nobody knows it and only the invite link sets a usable password.
 - **Email provider:** still the console adapter in development (Q10), so the link is also logged server-side when `EMAIL_PROVIDER=console` and `SITE_ENV` is not production. Production `pnpm seed:admin` refuses to run with the console provider.
+
+Auth (two-factor, implemented CP-2.2, ADR-008):
+
+- TOTP enrolment (`/admin/setup-totp`), login verification (`/admin/verify-totp`) and 10 recovery codes come from `@purposeinplay/payload-totp@0.5.1` (patched).
+- **Encryption:** `TOTP_ENCRYPTION_KEY` (64 hex chars) encrypts `users.totp_secret` with AES-256-GCM. `TOTP_ENCRYPTION_KEY` must be identical across processes and is required in production.
+- **Enforcement:** the admin layout wraps Payload in `TOTPGuard`/`TOTPGate` (`forceSetup`), so an unenrolled account is sent to setup and an enrolled account without a verified cookie is sent to verify. `src/auth/totp-setup-guard.ts` refuses every data-API operation for an authenticated unenrolled user except the auth handshake. The plugin's `beforeOperation` hook refuses every data-API call whose verified cookie does not match the session.
+- **Reset:** `POST /api/users/totp/reenroll` `{ email }` lets a second-factor-verified Super Admin clear another user's enrolment (the user re-enrols at next login). The plugin's own disable endpoint is not used because it checks for a role literally named `admin`.
+- **Rate limiting:** failures are stored in `payload_totp_rate_limits` (`user_key`, `failures`, `window_start`, `locked_until`), managed by the plugin.
 
 ### `categories` (nested tree)
 `title`, `slug`, `parent` (self relation), `kind` (`services`, `industries`, `locations`, `blog`, `products`, `general`), `intro` (`shortParagraph`), `showInNav`, `navOrder`, `seo` group. The full path is computed (`/industries/restaurants-and-hotels`) and unique.
@@ -161,6 +169,7 @@ Add one entry per applied migration. Include how to roll back and what to check.
 | 2026-11-19 | `20261119_101405_initial` | Initial schema for CI/production: `users` (+ `users_roles`, `users_sessions`), `media`, Payload system tables — 10 `CREATE TABLE`, identical to the dev database. Needed because CI/production build pages that query Payload and `payload.config.ts` never pushes schema outside development. | Created with `payload migrate:create`; verified end-to-end on an empty scratch database 2026-11-19 (10 tables + `payload_migrations` row, then dropped). CI runs `pnpm payload migrate` before `pnpm build`. Local dev still runs on schema push, so it has no `payload_migrations` row — expected. Down drops all 10 tables; never run it where data matters. |
 | 2026-11-19 | `20261119_171018_add_categories_and_pages` | CP-1.2: `categories` (nested, `path` unique) and `pages` (drafts, versions, blocks join tables). Row added at CP-1.3 because it was generated but never logged here. | Created with `payload migrate:create`; applied on the empty scratch DB together with the other migrations at CP-1.3 (2026-11-20). Down drops the tables; never run it where data matters. |
 | 2026-11-20 | `20261120_114629_add_globals` | CP-1.3: the two globals — `site_settings` (+ `site_settings_phones`, `_social_links`, `_lead_alert_recipients`) and `navigation` (+ header/footer/legal arrays) — 11 `CREATE TABLE`, 3 enums (`social_links_platform`, `chat_provider`, `header_buttons_kind`). | Created with `payload migrate:create --name add_globals`; verified twice on an empty scratch DB 2026-11-20 (all 3 migrations apply in order, tables listed, `payload_migrations` row recorded, DB dropped). Down drops all 11 tables and the 3 enums; never run it where data matters. |
+| 2026-11-23 | `20261123_105317` | CP-2.2: two-factor schema — `users.totp_enabled`, `totp_secret`, `totp_last_counter`, `users_totp_backup_codes` (hash + used), and `payload_totp_rate_limits` for the plugin's attempt locking. | Generated with `payload migrate:create`; applied in order with the other three on a fresh scratch DB 2026-11-24, after which the full suite (including 5 TOTP integration tests) passed. Down drops the three columns and two tables; enrolment data is lost, so never run it against a live database. |
 
 ### Rules
 

@@ -18,6 +18,7 @@ import {
   sendStaffInvite,
   shouldSendInvite,
 } from '../auth/invites';
+import { reenrollTotpEndpoint } from '../auth/totp';
 import { getSiteEnvironment } from '../config/site-env';
 
 export const Users: CollectionConfig = {
@@ -74,6 +75,7 @@ export const Users: CollectionConfig = {
       saveToJWT: true,
     },
   ],
+  endpoints: [reenrollTotpEndpoint],
   hooks: {
     beforeChange: [
       ({ data, operation, req }) => {

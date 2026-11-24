@@ -137,7 +137,7 @@ describe.skipIf(!enabled)('invite-only staff accounts (CP-2.1)', () => {
     await expect(
       payload.login({ collection: 'users', data: { email: user.email, password } }),
     ).resolves.toMatchObject({ user: { email: user.email } });
-  });
+  }, 120_000);
 
   it('discards the password typed by a Super Admin and keeps the account invite-only', async () => {
     const superAdmin = await createTestUser();
@@ -147,7 +147,8 @@ describe.skipIf(!enabled)('invite-only staff accounts (CP-2.1)', () => {
     const invited = await payload.create({
       collection: 'users',
       data: { email, roles: ['editor'], password: knownPassword },
-      user: superAdmin,
+      // CP-2.2: a staff actor must have enrolled before using the data API.
+      user: { ...superAdmin, totp: { enabled: true } },
       overrideAccess: false,
     });
     createdIds.push(invited.id);

@@ -47,9 +47,14 @@
 - **Decision:** No checkout. Product pages offer "Order on WhatsApp" and "Add to Quote".
 
 ### ADR-008 — Two-factor login
-- **Status:** Proposed (spike in CP-2.2)
-- **Decision:** TOTP authenticator codes plus hashed recovery codes. Evaluate the community `payload-totp` plugin against a custom step on Payload's auth hooks.
-- **Why a spike:** Payload does not ship two-factor login; community plugins vary in maintenance and version support. Pick on evidence, record it here.
+- **Status:** Accepted (CP-2.2, 2026-11-24)
+- **Decision:** TOTP authenticator codes plus hashed recovery codes, using `@purposeinplay/payload-totp@0.5.1` with three local adjustments:
+  1. A pnpm patch (`patches/@purposeinplay__payload-totp@0.5.1.patch`) adds the `authVersion: 1` protected header Payload 3.94 requires when it issues its own JWT, and makes the plugin's rotated session cookie `SameSite=Strict` with a 2-hour lifetime (matching CP-2.1).
+  2. `src/auth/totp-setup-guard.ts` closes the plugin's pre-enrolment window on the data API: an authenticated but unenrolled staff user is refused every collection operation except the auth handshake (`login`, `refresh`, `forgotPassword`, `resetPassword`, `me`). Trusted Local API calls with `overrideAccess: true` bypass it as Payload intends.
+  3. `/api/users/totp/reenroll` (Super Admin only, second factor verified) replaces the plugin's disable endpoint, which looks for a role literally named `admin` rather than our `super-admin`.
+- **Why the plugin over a custom step:** it ships enrolment (QR + manual key), verification, 10 hashed recovery codes, per-user attempt locking, the admin redirect guard (`TOTPGuard`/`TOTPGate`), and REST/GraphQL enforcement through a `beforeOperation` hook — all of which a custom build would have to reimplement and test. It declares support for Payload 3.x and its code was reviewed against installed 3.94; the two incompatibilities found were small and are covered by the patch above.
+- **Why not a custom TOTP step:** it would duplicate the plugin's field encryption, recovery-code hashing, rate limiting and admin routing, and the security-sensitive parts would be new code. The plugin's source is small enough to audit, and the patch is explicit and version-pinned.
+- **Consequences:** the dependency is patched, so a version bump must re-check both hunks (JWT header and cookie policy) before upgrading. `TOTP_ENCRYPTION_KEY` (exactly 64 hex characters) encrypts secrets with AES-256-GCM; changing it makes every enrolment unreadable, so rotate only after re-enrolling staff. `forceSetup: true` means an account that has not enrolled can sign in but reaches only `/admin/setup-totp`; the admin and data API are both gated. Email is still the console adapter (Q10), which does not affect TOTP.
 
 ### ADR-009 — Spam protection and rate limiting
 - **Status:** Proposed

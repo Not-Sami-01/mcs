@@ -1,11 +1,13 @@
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { s3Storage } from '@payloadcms/storage-s3';
+import { totpPlugin } from '@purposeinplay/payload-totp';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
+import { enforceTotpSetup } from './auth/totp-setup-guard';
 import { COLLECTIONS } from './collections';
 import { GLOBALS } from './globals';
 import { Users } from './collections/Users';
@@ -64,6 +66,9 @@ export default buildConfig({
   collections: COLLECTIONS,
   globals: GLOBALS,
   plugins: [
+    // Before the TOTP plugin so the plugin's verified-session hook stays last
+    // and can be exercised as the final gate in tests.
+    enforceTotpSetup,
     s3Storage({
       bucket: filebaseBucket,
       collections: {
@@ -90,6 +95,18 @@ export default buildConfig({
           secretAccessKey: filebaseSecretAccessKey,
         },
       },
+    }),
+    // CP-2.2 two-factor login (ADR-008): TOTP with AES-256-GCM secrets at rest,
+    // hashed recovery codes and REST/GraphQL enforcement for enrolled accounts.
+    // Keep this plugin after any plugin that adds collections (its README).
+    totpPlugin({
+      authCollectionSlug: 'users',
+      issuer: 'MCS Admin',
+      // Every staff role must set up a second factor before using the panel.
+      forceSetup: true,
+      // The token re-issued after verification must keep the two-hour staff
+      // session from CP-2.1; the plugin's default is seven days.
+      tokenExpiration: '2h',
     }),
   ],
   typescript: {

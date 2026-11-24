@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     categories: Category;
     pages: Page;
+    'totp-rate-limits': TotpRateLimit;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -83,6 +84,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    'totp-rate-limits': TotpRateLimitsSelect<false> | TotpRateLimitsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -142,6 +144,18 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   roles: ('super-admin' | 'editor' | 'product-manager' | 'sales-support')[];
+  totp?: {
+    enabled?: boolean | null;
+    secret?: string | null;
+    backupCodes?:
+      | {
+          hash?: string | null;
+          used?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    lastCounter?: number | null;
+  };
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -663,6 +677,20 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "totp-rate-limits".
+ */
+export interface TotpRateLimit {
+  id: number;
+  userKey: string;
+  failures: number;
+  windowStart: string;
+  lockedUntil?: string | null;
+  version: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -841,6 +869,20 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   roles?: T;
+  totp?:
+    | T
+    | {
+        enabled?: T;
+        secret?: T;
+        backupCodes?:
+          | T
+          | {
+              hash?: T;
+              used?: T;
+              id?: T;
+            };
+        lastCounter?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1198,6 +1240,19 @@ export interface PagesSelect<T extends boolean = true> {
   createdAt?: T;
   deletedAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "totp-rate-limits_select".
+ */
+export interface TotpRateLimitsSelect<T extends boolean = true> {
+  userKey?: T;
+  failures?: T;
+  windowStart?: T;
+  lockedUntil?: T;
+  version?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

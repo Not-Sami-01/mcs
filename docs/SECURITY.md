@@ -82,7 +82,7 @@ A critical or high finding appears, a secret may have leaked, or a requirement c
 ### C1. Authentication and sessions
 - Staff only. Users created by Super Admin; invite email with a one-time, expiring set-password link.
 - Passwords: strong minimum length, allow paste and password managers (WCAG 3.3.8), checked against common-password lists where practical. Hashing is handled by Payload; do not roll your own.
-- Two-factor: TOTP plus hashed recovery codes (CP-2.2). Secrets encrypted at rest with `TOTP_ENCRYPTION_KEY`.
+- Two-factor: TOTP plus hashed recovery codes (**implemented CP-2.2**, ADR-008). Secrets encrypted at rest with `TOTP_ENCRYPTION_KEY`; unenrolled staff are forced to setup and cannot use the data API; a session without the verified cookie is redirected to verify on every admin path.
 - Lockout after repeated failures (Payload's `maxLoginAttempts` and `lockTime`; verify names). Same error for unknown email and wrong password.
 - Cookies: `HttpOnly`, `Secure`, `SameSite` set deliberately, short lifetime for staff, logout invalidates.
 - Re-verify two-factor on sensitive actions where practical (user changes, exports).
@@ -172,7 +172,7 @@ Set in `next.config` and verify at the edge:
 | Stranger cannot create or invite users | No public sign up |
 | Role matrix, every role × collection × operation | Access control |
 | Lockout after N failures | Brute force protection |
-| Login without second factor fails on every path | 2FA coverage |
+| Login without second factor fails on every path | 2FA coverage (**CP-2.2**: `src/auth/totp.integration.test.ts` covers REST/GraphQL hook and pre-enrolment refusal; live smoke covers admin redirects) |
 | Public API returns no drafts, no unverified reviews, no leads | Data exposure |
 | Overlong and malformed inputs rejected by routes and actions | Validation |
 | Honeypot and bad Turnstile token rejected | Spam protection |
@@ -191,7 +191,7 @@ Mirrors `docs/PLAN.md` launch gates, security subset.
 
 - [ ] HTTPS everywhere; headers verified with a scanner
 - [ ] CSP enforced (not just report-only), no violations on key pages
-- [ ] Two-factor required for all staff; recovery codes tested
+- [~] Two-factor required for all staff; recovery codes tested — implemented and tested 2026-11-24, but the checkpoint's live SMS/authenticator acceptance by real staff is still pending
 - [ ] Role matrix tests pass; `overrideAccess: true` usages reviewed and justified
 - [ ] Forms: validation, Turnstile, honeypot, rate limit tested
 - [ ] Uploads: re-encode, metadata removed, encryption verified
