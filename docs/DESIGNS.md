@@ -112,8 +112,8 @@ Each block in `docs/CONTENT.md` section 6 has one renderer and at most two layou
 | Region outline | 2 px dashed outline on hover and focus, offset 2 px, no layout shift; colour distinct from brand |
 | Edit button | Small labelled button at the region corner, reachable by keyboard |
 | Content box | Drawer (desktop) or bottom sheet (mobile), focus trapped, labelled, counters visible next to inputs. **CP-4.1:** 460 px right drawer / 85 vh bottom sheet, autosave 2 s after a pause, focus moved to the first field and returned to the Edit trigger on close |
-| Counters | `42 / 80`, turns warning colour at 90 percent, plus text (not colour alone) |
-| Block toolbar | Icon buttons with tooltips and accessible names; move up/down, duplicate, hide, delete |
+| Counters | `42 / 80`, turns warning colour at 90 percent, plus text (not colour alone). **CP-4.2:** repeaters show `n / max`, disable Add at max and Remove at min, and reorder with Move up/down buttons |
+| Block toolbar | Icon buttons with tooltips and accessible names; move up/down, duplicate, hide, delete. **CP-4.2:** text-labelled buttons in a `Section tools` group, plus an inline section-type picker for "Add section"; hidden blocks render faded with a "Hidden section" badge |
 
 Edit-mode styles live in their own CSS and are loaded only on the edit route. They must not leak into public pages.
 

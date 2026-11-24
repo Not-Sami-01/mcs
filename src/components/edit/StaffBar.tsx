@@ -1,6 +1,10 @@
 import Link from 'next/link';
 
+import type { GlobalRegionKey } from '@/edit/global-regions';
+import type { EditNode } from '@/edit/registry';
 import { messages } from '@/messages';
+
+import { GlobalEditorButton } from './GlobalEditorButton';
 
 /**
  * Thin staff bar for the edit route (docs/INLINE-EDITING.md §1). It is not part
@@ -10,7 +14,20 @@ import { messages } from '@/messages';
  * stored preference, so the next navigation returns to edit mode and the
  * public page never needs a staff-only link back.
  */
-export function StaffBar({ publicPath, pageTitle }: { publicPath: string; pageTitle: string }) {
+export function StaffBar({
+  publicPath,
+  pageTitle,
+  globals = [],
+}: {
+  publicPath: string;
+  pageTitle: string;
+  globals?: Array<{
+    region: GlobalRegionKey;
+    label: string;
+    schema: EditNode[];
+    initialValues: Record<string, unknown>;
+  }>;
+}) {
   const previewUrl = `${publicPath}${publicPath.includes('?') ? '&' : '?'}view=visitor`;
 
   return (
@@ -29,7 +46,11 @@ export function StaffBar({ publicPath, pageTitle }: { publicPath: string; pageTi
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {globals.map((global) => (
+            <GlobalEditorButton key={global.region} {...global} />
+          ))}
+
           <Link
             href={previewUrl}
             prefetch={false}

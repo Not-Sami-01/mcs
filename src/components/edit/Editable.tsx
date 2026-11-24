@@ -2,7 +2,8 @@
 
 import { useRef, useState, type ReactNode } from 'react';
 
-import type { EditField } from '@/edit/registry';
+import { saveDraftAction } from '@/app/(edit)/actions/save-draft';
+import type { EditNode } from '@/edit/registry';
 import { messages } from '@/messages';
 
 import { ContentBox } from './ContentBox';
@@ -16,19 +17,23 @@ import { ContentBox } from './ContentBox';
 export function Editable({
   children,
   label,
-  fields,
+  schema,
   initialValues,
   pageId,
   blockId,
   blockIndex,
+  hidden = false,
+  tools,
 }: {
   children: ReactNode;
   label: string;
-  fields: EditField[];
-  initialValues: Record<string, string>;
+  schema: EditNode[];
+  initialValues: Record<string, unknown>;
   pageId: number | string;
   blockId?: string | null;
   blockIndex: number;
+  hidden?: boolean;
+  tools?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -42,7 +47,15 @@ export function Editable({
 
   return (
     <div className="group/edit relative outline-2 outline-offset-[-2px] outline-dashed outline-transparent hover:outline-brand-primary/70 focus-within:outline-brand-primary">
-      {children}
+      <div className={hidden ? 'opacity-50' : undefined}>{children}</div>
+
+      {hidden ? (
+        <p className="pointer-events-none absolute inset-x-0 bottom-3 z-20 mx-auto w-fit rounded-full bg-ink px-3 py-1 text-xs font-semibold text-brand-primary-contrast">
+          {messages.edit.hiddenSection}
+        </p>
+      ) : null}
+
+      {tools}
       <button
         ref={triggerRef}
         type="button"
@@ -59,12 +72,10 @@ export function Editable({
         <>
           <div aria-hidden="true" className="fixed inset-0 z-40 bg-ink/40" />
           <ContentBox
-            fields={fields}
+            schema={schema}
             initialValues={initialValues}
-            pageId={pageId}
-            blockId={blockId}
-            blockIndex={blockIndex}
             label={label}
+            onSave={(values) => saveDraftAction({ pageId, blockId, blockIndex, values })}
             onClose={close}
           />
         </>

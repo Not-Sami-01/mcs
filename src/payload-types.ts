@@ -355,6 +355,10 @@ export interface Page {
                 }[]
               | null;
             image?: (number | null) | Media;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'hero';
@@ -377,6 +381,10 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'trustStrip';
@@ -403,6 +411,10 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'whyChoose';
@@ -429,6 +441,10 @@ export interface Page {
              * Internal note: what proves this. Never rendered.
              */
             proofNote: string;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'ourDifference';
@@ -451,6 +467,10 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'howItWorks';
@@ -484,6 +504,10 @@ export interface Page {
                */
               href: string;
             };
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'warrantyPromise';
@@ -517,6 +541,10 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'whoWeServe';
@@ -542,6 +570,10 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'beforeAfter';
@@ -565,6 +597,10 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'certificates';
@@ -578,6 +614,10 @@ export interface Page {
              * Form fields themselves are fixed (docs/CONTENT.md §6).
              */
             shortParagraph: string;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'inspectionForm';
@@ -600,6 +640,10 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'faq';
@@ -627,6 +671,10 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'cta';
@@ -645,6 +693,10 @@ export interface Page {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'textBlocks';
@@ -654,6 +706,10 @@ export interface Page {
              * Max 80 characters.
              */
             headline: string;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'contactDetails';
@@ -1089,6 +1145,7 @@ export interface PagesSelect<T extends boolean = true> {
                     id?: T;
                   };
               image?: T;
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1103,6 +1160,7 @@ export interface PagesSelect<T extends boolean = true> {
                     proofNote?: T;
                     id?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1118,6 +1176,7 @@ export interface PagesSelect<T extends boolean = true> {
                     cardBody?: T;
                     id?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1133,6 +1192,7 @@ export interface PagesSelect<T extends boolean = true> {
                     id?: T;
                   };
               proofNote?: T;
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1147,6 +1207,7 @@ export interface PagesSelect<T extends boolean = true> {
                     cardBody?: T;
                     id?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1168,6 +1229,7 @@ export interface PagesSelect<T extends boolean = true> {
                     kind?: T;
                     href?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1189,6 +1251,7 @@ export interface PagesSelect<T extends boolean = true> {
                         };
                     id?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1206,6 +1269,7 @@ export interface PagesSelect<T extends boolean = true> {
                     consentConfirmed?: T;
                     id?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1221,6 +1285,7 @@ export interface PagesSelect<T extends boolean = true> {
                     issuer?: T;
                     id?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1229,6 +1294,7 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               headline?: T;
               shortParagraph?: T;
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1243,6 +1309,7 @@ export interface PagesSelect<T extends boolean = true> {
                     answer?: T;
                     id?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1259,6 +1326,7 @@ export interface PagesSelect<T extends boolean = true> {
                     href?: T;
                     id?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1272,6 +1340,7 @@ export interface PagesSelect<T extends boolean = true> {
                     paragraph?: T;
                     id?: T;
                   };
+              hidden?: T;
               id?: T;
               blockName?: T;
             };
@@ -1279,6 +1348,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               headline?: T;
+              hidden?: T;
               id?: T;
               blockName?: T;
             };

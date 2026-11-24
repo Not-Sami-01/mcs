@@ -171,11 +171,11 @@
 - **Commit:** `checkpoint(CP-4.1): edit mode and content box for text fields`
 
 ### CP-4.2 — Lists, images, links, blocks
-- [ ] Repeaters with add, remove, reorder (buttons first, drag as extra), min/max enforced
-- [ ] Image field with media picker and required alt text
-- [ ] Add, duplicate, hide, delete and reorder whole blocks within allowed types and `maxRows`
-- [ ] Global regions editable: menu, footer, contact details in settings
-- **Exit:** every block in the catalogue is editable in edit mode
+- [x] Repeaters with add, remove, reorder (buttons first, drag as extra), min/max enforced (2026-11-25; recursive registry + `EditFields`; move up/down/remove disable at the bounds, add disabled at max; server re-checks `minRows`/`maxRows`)
+- [x] Image field with media picker and required alt text (2026-11-25; existing-library `<select>` with thumbnail plus upload to `/api/media`; alt is required before upload and the media collection itself requires it)
+- [x] Add, duplicate, hide, delete and reorder whole blocks within allowed types and `maxRows` (2026-11-25; per-section toolbar, 30-block cap, last block cannot be deleted; `hidden` checkbox added to every block, public renderer skips hidden blocks and edit mode shows a ghost)
+- [x] Global regions editable: menu, footer, contact details in settings (2026-11-25; **via staff-bar buttons** opening the content box, not inline wrappers, because the shared layout is static. `navigation` exposes header/footer arrays; `site-settings` exposes contact fields only — chat, alert recipients and retention stay Super Admin only)
+- **Exit:** every block in the catalogue is editable in edit mode (2026-11-25; the registry covers all 14 implemented blocks including `trustStrip` via its repeater; browser smoke added a stat, saved a draft and hid the section)
 - **Commit:** `checkpoint(CP-4.2): repeaters, images and block management inline`
 
 ### CP-4.3 — Draft, publish, concurrency, versions

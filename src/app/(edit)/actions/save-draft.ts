@@ -9,7 +9,7 @@ export type SaveDraftActionInput = {
   pageId: number | string;
   blockId?: string | null;
   blockIndex: number;
-  values: Record<string, string>;
+  values: Record<string, unknown>;
 };
 
 export type SaveDraftActionResult =
@@ -37,18 +37,20 @@ function parseInput(value: unknown): SaveDraftActionInput | null {
   if (input.blockId !== undefined && input.blockId !== null && typeof input.blockId !== 'string') {
     return null;
   }
-  if (!input.values || typeof input.values !== 'object') return null;
+  if (!input.values || typeof input.values !== 'object' || Array.isArray(input.values)) {
+    return null;
+  }
 
-  const values = input.values as Record<string, unknown>;
-  const entries = Object.entries(values);
-  if (entries.length > 40) return null;
-  if (entries.some(([name, text]) => name.length > 80 || typeof text !== 'string')) return null;
+  // Nested repeaters make the payload bigger, so cap the serialized size and
+  // trust the recursive registry validation for shape and limits.
+  const serialized = JSON.stringify(input.values);
+  if (serialized.length > 100_000) return null;
 
   return {
     pageId,
     blockId: (input.blockId as string | null | undefined) ?? null,
     blockIndex: input.blockIndex,
-    values: Object.fromEntries(entries) as Record<string, string>,
+    values: input.values as Record<string, unknown>,
   };
 }
 

@@ -2,40 +2,40 @@
 
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 
-import { saveDraftAction } from '@/app/(edit)/actions/save-draft';
-import type { EditField } from '@/edit/registry';
+import type { EditNode } from '@/edit/registry';
 import { messages } from '@/messages';
+
+import { EditFields } from './EditFields';
+import { setAtPath } from './paths';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
-function counterLabel(count: number, max: number): string {
-  return `${count} / ${max}`;
-}
+export type ContentBoxSaveResult =
+  { ok: true } | { ok: false; message?: string; fields?: Record<string, string> };
 
 export function ContentBox({
-  fields,
+  schema,
   initialValues,
-  pageId,
-  blockId,
-  blockIndex,
   label,
+  onSave,
   onClose,
+  saveLabel = messages.edit.saveDraft,
+  savedLabel = messages.edit.saved,
 }: {
-  fields: EditField[];
-  initialValues: Record<string, string>;
-  pageId: number | string;
-  blockId?: string | null;
-  blockIndex: number;
+  schema: EditNode[];
+  initialValues: Record<string, unknown>;
   label: string;
+  onSave: (values: Record<string, unknown>) => Promise<ContentBoxSaveResult | null>;
   onClose: () => void;
+  saveLabel?: string;
+  savedLabel?: string;
 }) {
-  const [values, setValues] = useState<Record<string, string>>(initialValues);
-  const [baseline, setBaseline] = useState<Record<string, string>>(initialValues);
+  const [values, setValues] = useState<Record<string, unknown>>(initialValues);
+  const [baseline, setBaseline] = useState<Record<string, unknown>>(initialValues);
   const [status, setStatus] = useState<SaveStatus>('idle');
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const dialogRef = useRef<HTMLDivElement>(null);
-  const firstFieldRef = useRef<HTMLElement | null>(null);
   const headingId = useId();
 
   const dirty = JSON.stringify(values) !== JSON.stringify(baseline);
@@ -45,12 +45,7 @@ export function ContentBox({
     setStatus('saving');
     setMessage(null);
 
-    const result = await saveDraftAction({
-      pageId,
-      blockId,
-      blockIndex,
-      values,
-    }).catch(() => null);
+    const result = await onSave(values).catch(() => null);
 
     if (!result) {
       setStatus('error');
@@ -67,9 +62,9 @@ export function ContentBox({
 
     setStatus('error');
     setErrors(result.fields ?? {});
-    setMessage(result.message);
+    setMessage(result.message ?? messages.edit.saveFailed);
     return false;
-  }, [blockId, blockIndex, dirty, pageId, status, values]);
+  }, [dirty, onSave, status, values]);
 
   // Autosave after a short pause (docs/INLINE-EDITING.md §5 rule 6). An error
   // waits for the next edit or an explicit Save instead of retrying forever.
@@ -80,7 +75,7 @@ export function ContentBox({
   }, [dirty, save, status]);
 
   useEffect(() => {
-    firstFieldRef.current?.focus();
+    dialogRef.current?.querySelector<HTMLElement>('input, textarea, select, button')?.focus();
   }, []);
 
   async function close() {
@@ -92,7 +87,7 @@ export function ContentBox({
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'Escape') {
       event.preventDefault();
-      close();
+      void close();
       return;
     }
 
@@ -113,8 +108,8 @@ export function ContentBox({
     }
   }
 
-  function field(name: string, value: string) {
-    setValues((current) => ({ ...current, [name]: value }));
+  function update(path: string, value: unknown) {
+    setValues((current) => setAtPath(current, path, value));
     setStatus('idle');
   }
 
@@ -138,7 +133,7 @@ export function ContentBox({
         </div>
         <button
           type="button"
-          onClick={close}
+          onClick={() => void close()}
           className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-input border border-line px-3 text-sm font-semibold text-ink hover:border-brand-primary hover:text-brand-primary"
         >
           {messages.edit.close}
@@ -152,108 +147,7 @@ export function ContentBox({
           void save();
         }}
       >
-        {fields.map((fieldDef, index) => {
-          const id = `${headingId}-${fieldDef.name}`;
-          const value = values[fieldDef.name] ?? '';
-          const error = errors[fieldDef.name];
-          const describedBy = `${id}-help`;
-
-          return (
-            <div key={fieldDef.name}>
-              <div className="flex items-baseline justify-between gap-3">
-                <label htmlFor={id} className="text-sm font-semibold text-ink">
-                  {fieldDef.label}
-                </label>
-                {fieldDef.type === 'text' || fieldDef.type === 'textarea' ? (
-                  <span
-                    id={`${id}-count`}
-                    className="text-xs tabular-nums text-ink-muted"
-                    aria-live="polite"
-                  >
-                    {counterLabel(value.length, fieldDef.maxLength ?? 0)}
-                  </span>
-                ) : null}
-              </div>
-
-              {fieldDef.type === 'textarea' ? (
-                <textarea
-                  id={id}
-                  ref={
-                    index === 0
-                      ? (element) => {
-                          firstFieldRef.current = element;
-                        }
-                      : undefined
-                  }
-                  value={value}
-                  maxLength={fieldDef.maxLength}
-                  rows={4}
-                  aria-describedby={`${describedBy} ${id}-count`}
-                  aria-invalid={Boolean(error)}
-                  onChange={(event) => field(fieldDef.name, event.target.value)}
-                  className="mt-2 w-full rounded-input border border-line bg-surface px-3 py-2 text-sm text-ink"
-                />
-              ) : fieldDef.type === 'select' ? (
-                <select
-                  id={id}
-                  ref={
-                    index === 0
-                      ? (element) => {
-                          firstFieldRef.current = element;
-                        }
-                      : undefined
-                  }
-                  value={value}
-                  aria-describedby={describedBy}
-                  aria-invalid={Boolean(error)}
-                  onChange={(event) => field(fieldDef.name, event.target.value)}
-                  className="mt-2 min-h-11 w-full rounded-input border border-line bg-surface px-3 text-sm text-ink"
-                >
-                  {!fieldDef.required ? <option value="">—</option> : null}
-                  {(fieldDef.options ?? []).map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  id={id}
-                  ref={
-                    index === 0
-                      ? (element) => {
-                          firstFieldRef.current = element;
-                        }
-                      : undefined
-                  }
-                  type={fieldDef.type === 'number' ? 'number' : 'text'}
-                  inputMode={fieldDef.type === 'number' ? 'numeric' : undefined}
-                  min={fieldDef.min}
-                  max={fieldDef.max}
-                  step={fieldDef.type === 'number' ? 1 : undefined}
-                  value={value}
-                  maxLength={fieldDef.type === 'number' ? undefined : fieldDef.maxLength}
-                  aria-describedby={`${describedBy} ${id}-count`}
-                  aria-invalid={Boolean(error)}
-                  onChange={(event) => field(fieldDef.name, event.target.value)}
-                  className="mt-2 min-h-11 w-full rounded-input border border-line bg-surface px-3 text-sm text-ink"
-                />
-              )}
-
-              <p id={describedBy} className="mt-1 text-xs text-ink-muted">
-                {error ? (
-                  <span className="text-red-700">{error}</span>
-                ) : fieldDef.type === 'number' ? (
-                  `Whole number${fieldDef.min !== undefined ? `, minimum ${fieldDef.min}` : ''}${
-                    fieldDef.max !== undefined ? `, maximum ${fieldDef.max}` : ''
-                  }.`
-                ) : (
-                  `Max ${fieldDef.maxLength ?? '—'} characters.`
-                )}
-              </p>
-            </div>
-          );
-        })}
+        <EditFields schema={schema} values={values} errors={errors} onChange={update} />
       </form>
 
       <div className="border-t border-line p-4">
@@ -264,7 +158,7 @@ export function ContentBox({
               : status === 'saving'
                 ? messages.edit.saving
                 : status === 'saved'
-                  ? messages.edit.saved
+                  ? savedLabel
                   : dirty
                     ? messages.edit.unsaved
                     : messages.edit.noChanges}
@@ -272,7 +166,7 @@ export function ContentBox({
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={close}
+              onClick={() => void close()}
               className="inline-flex min-h-11 items-center rounded-input border border-line px-4 text-sm font-semibold text-ink hover:border-brand-primary"
             >
               {messages.edit.close}
@@ -283,7 +177,7 @@ export function ContentBox({
               disabled={!dirty || status === 'saving'}
               className="inline-flex min-h-11 items-center rounded-input bg-brand-primary px-4 text-sm font-semibold text-brand-primary-contrast hover:bg-ink disabled:opacity-50"
             >
-              {status === 'saving' ? messages.edit.saving : messages.edit.saveDraft}
+              {status === 'saving' ? messages.edit.saving : saveLabel}
             </button>
           </div>
         </div>

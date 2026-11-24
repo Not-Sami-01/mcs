@@ -79,6 +79,14 @@ describe.skipIf(!enabled)('inline draft saves (CP-4.1)', () => {
             headline: 'Second block',
             paragraphs: [{ paragraph: 'Fixture text.' }],
           },
+          {
+            blockType: 'trustStrip',
+            items: [
+              { statValue: '10+', statLabel: 'Years', proofNote: 'Fixture proof A' },
+              { statValue: '5k', statLabel: 'Jobs', proofNote: 'Fixture proof B' },
+              { statValue: '24h', statLabel: 'Response', proofNote: 'Fixture proof C' },
+            ],
+          },
         ],
       },
       overrideAccess: true,
@@ -160,13 +168,99 @@ describe.skipIf(!enabled)('inline draft saves (CP-4.1)', () => {
     expect((draft.layout?.[0] as { headline?: string }).headline).not.toBe(tooLong);
   });
 
+  it('saves repeater rows with their ids and enforces the row minimum', async () => {
+    const { saveBlockDraft } = await import('./save-draft');
+    const draftBefore = await payload.findByID({
+      collection: 'pages',
+      id: pageId,
+      draft: true,
+      depth: 0,
+      overrideAccess: true,
+    });
+    const trustBlock = (draftBefore.layout?.[2] ?? {}) as {
+      id?: string | null;
+      items?: Array<{ id?: string; statValue: string }>;
+    };
+
+    const result = await saveBlockDraft({
+      payload,
+      user: editor,
+      input: {
+        pageId,
+        blockId: trustBlock.id,
+        blockIndex: 2,
+        values: {
+          items: [
+            { statValue: '11+', statLabel: 'Years', proofNote: 'Fixture proof A' },
+            {
+              id: trustBlock.items?.[1]?.id,
+              statValue: '6k',
+              statLabel: 'Jobs',
+              proofNote: 'Fixture proof B',
+            },
+            { statValue: '48h', statLabel: 'Response', proofNote: 'Fixture proof C' },
+          ],
+        },
+      },
+    });
+    expect(result.ok).toBe(true);
+
+    const draft = await payload.findByID({
+      collection: 'pages',
+      id: pageId,
+      draft: true,
+      depth: 0,
+      overrideAccess: true,
+    });
+    const items = (draft.layout?.[2] as { items?: Array<{ statValue: string }> }).items ?? [];
+    expect(items.map((item) => item.statValue)).toEqual(['11+', '6k', '48h']);
+
+    const tooFew = await saveBlockDraft({
+      payload,
+      user: editor,
+      input: {
+        pageId,
+        blockId: trustBlock.id,
+        blockIndex: 2,
+        values: { items: [{ statValue: '1', statLabel: 'A', proofNote: 'x' }] },
+      },
+    });
+    expect(tooFew).toMatchObject({ ok: false, code: 'INVALID' });
+  });
+
+  it('validates link groups and image values', async () => {
+    const { saveBlockDraft } = await import('./save-draft');
+
+    const badLink = await saveBlockDraft({
+      payload,
+      user: editor,
+      input: {
+        pageId,
+        blockId,
+        blockIndex: 0,
+        values: {
+          primaryAction: { label: 'Bad', kind: 'link', href: 'javascript:alert(1)' },
+        },
+      },
+    });
+    expect(badLink).toMatchObject({ ok: false, code: 'INVALID' });
+    if (!badLink.ok) expect(badLink.fields?.['primaryAction.href']).toMatch(/http/);
+
+    const badImage = await saveBlockDraft({
+      payload,
+      user: editor,
+      input: { pageId, blockId, blockIndex: 0, values: { image: { id: 1 } } },
+    });
+    expect(badImage).toMatchObject({ ok: false, code: 'INVALID' });
+  });
+
   it('rejects unknown fields and roles without content access', async () => {
     const { saveBlockDraft } = await import('./save-draft');
 
     const unknown = await saveBlockDraft({
       payload,
       user: editor,
-      input: { pageId, blockId, blockIndex: 0, values: { image: 'x' } },
+      input: { pageId, blockId, blockIndex: 0, values: { notAField: 'x' } },
     });
     expect(unknown).toMatchObject({ ok: false, code: 'INVALID' });
 

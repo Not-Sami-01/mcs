@@ -110,16 +110,15 @@ Full rules: `docs/STORAGE.md`.
 
 ## 6. Edit-mode Server Actions
 
-Defined in `src/app/(edit)/actions/`. They are not HTTP APIs, but their inputs are validated like routes. **CP-4.1 implements `saveDraft` only, for scalar block fields**; the rows below it are planned for CP-4.2/CP-4.3. `saveDraft` re-checks session, role and two-factor state, then validates each value against `src/edit/registry.ts` and the Payload Local API (with the staff `user` and `overrideAccess: false`). `expectedUpdatedAt` and conflict reporting arrive with CP-4.3.
+Defined in `src/app/(edit)/actions/`. They are not HTTP APIs, but their inputs are validated like routes. **CP-4.1/4.2 implement `saveDraft`, `block` and `saveGlobal`**; the remaining rows are planned for CP-4.3. Every action re-checks session, role and two-factor state, then runs the Payload Local API with the staff `user` and `overrideAccess: false`. `saveDraft` and `saveGlobal` validate recursively against `src/edit/registry.ts` (text caps, row bounds, select options, link schemes, number ranges). `expectedUpdatedAt` and conflict reporting arrive with CP-4.3.
 
 | Action | Input (summary) | Result |
 |---|---|---|
-| `saveDraft` (implemented) | `{ pageId, blockId?, blockIndex, values: Record<string, string> }` | `{ ok, updatedAt }` or `{ ok: false, code: 'AUTH'\|'TWO_FACTOR'\|'INVALID'\|'NOT_FOUND'\|'FORBIDDEN', message, fields? }` |
+| `saveDraft` (implemented) | `{ pageId, blockId?, blockIndex, values: Record<string, unknown> }` (nested repeaters/groups) | `{ ok, updatedAt }` or `{ ok: false, code: 'AUTH'\|'TWO_FACTOR'\|'INVALID'\|'NOT_FOUND'\|'FORBIDDEN', message, fields? }` |
+| `block` (implemented) | `{ op: 'add', pageId, blockType, index }` or `{ op: 'duplicate'\|'remove'\|'toggleHidden', pageId, blockId }` or `{ op: 'move', pageId, blockId, direction: 'up'\|'down' }` | `{ ok }` or `{ ok: false, code, message }` |
+| `saveGlobal` (implemented) | `{ region: 'navigation'\|'contact', values }` | `{ ok }` or `{ ok: false, code, message, fields? }` |
 | `publish` | `{ collection, id }` | `{ ok }` or gate failures listing fields |
 | `discardDraft` | `{ collection, id }` | `{ ok }` |
-| `addBlock` | `{ collection, id, blockType, index }` | New block path |
-| `removeBlock`, `moveBlock`, `duplicateBlock`, `toggleBlockHidden` | `{ collection, id, path, ... }` | `{ ok }` |
-| `saveGlobal` | `{ slug, values }` | `{ ok }` |
 | `schedulePublish` | `{ collection, id, publishAt, unpublishAt }` | `{ ok }` |
 | `listVersions`, `restoreVersion` | `{ collection, id, versionId }` | Versions or `{ ok }` |
 

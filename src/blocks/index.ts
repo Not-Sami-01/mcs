@@ -303,6 +303,15 @@ export const contactDetails: Block = {
   ],
 };
 
+/** Hide a section without deleting it (edit mode shows a ghost instead). */
+const hiddenField: Field = {
+  name: 'hidden',
+  label: 'Hide this section',
+  type: 'checkbox',
+  defaultValue: false,
+  admin: { description: 'Visitors will not see this section. It stays in the draft.' },
+};
+
 /** Every block implemented so far, in catalogue order. */
 export const BLOCKS: Block[] = [
   hero,
@@ -319,7 +328,7 @@ export const BLOCKS: Block[] = [
   cta,
   textBlocks,
   contactDetails,
-];
+].map((block) => ({ ...block, fields: [...block.fields, hiddenField] }));
 
 /** Blocks in docs/CONTENT.md §6 that wait on CP-5 collections. */
 export const DEFERRED_BLOCK_SLUGS = [

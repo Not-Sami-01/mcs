@@ -6,6 +6,12 @@ import { getCachedSiteChrome } from '@/cms/cache';
 import { HOME_PATH } from '@/cms/pages';
 import { PageView } from '@/components/PageView';
 import { StaffBar } from '@/components/edit/StaffBar';
+import {
+  GLOBAL_REGION_KEYS,
+  getGlobalInitialValues,
+  getGlobalRegion,
+  getGlobalSchema,
+} from '@/edit/global-regions';
 import { getEditSession } from '@/edit/session';
 
 type RouteParams = { segments: string[] };
@@ -56,9 +62,36 @@ export default async function EditPage({ params }: { params: Promise<RouteParams
 
   if (!page) notFound();
 
+  const [navigation, settings] = await Promise.all([
+    session.payload.findGlobal({
+      slug: 'navigation',
+      depth: 0,
+      overrideAccess: false,
+      user: session.user,
+    }),
+    session.payload.findGlobal({
+      slug: 'site-settings',
+      depth: 0,
+      overrideAccess: false,
+      user: session.user,
+    }),
+  ]);
+  const globalDocs = { navigation, 'site-settings': settings } as const;
+  const globals = GLOBAL_REGION_KEYS.map((key) => {
+    const region = getGlobalRegion(key);
+    return {
+      region: key,
+      label: region.label,
+      schema: getGlobalSchema(key),
+      initialValues: getGlobalInitialValues(key, {
+        ...globalDocs[region.slug],
+      }),
+    };
+  });
+
   return (
     <>
-      <StaffBar publicPath={publicPath} pageTitle={page.title} />
+      <StaffBar publicPath={publicPath} pageTitle={page.title} globals={globals} />
       <PageView page={page} chrome={await getCachedSiteChrome()} edit={{ pageId: page.id }} />
     </>
   );

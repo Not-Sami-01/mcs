@@ -1,5 +1,7 @@
+import { PAGE_BLOCKS } from '@/blocks/allowed';
 import type { SiteChrome } from '@/cms/site-chrome';
-import { getEditableFields } from '@/edit/registry';
+import { getEditableSchema, getInitialValues } from '@/edit/registry';
+import { AddSection, BlockTools } from '../edit/BlockTools';
 import { Editable } from '../edit/Editable';
 
 import { BeforeAfter } from './BeforeAfter';
@@ -32,39 +34,61 @@ export function BlockRenderer({
   chrome: SiteChrome;
   edit?: { pageId: number | string };
 }) {
+  const blockTypes = PAGE_BLOCKS.map((block) => ({
+    value: block.slug,
+    label: blockLabel(block.slug),
+  }));
+
   return (
     <>
       {(blocks ?? []).map((block, index) => {
+        // Hidden sections stay in the draft but never reach public HTML.
+        if (block.hidden && !edit) return null;
+
         const key = block.id ?? `${block.blockType}-${index}`;
         const rendered = renderBlock(block, chrome, key);
-        const fields = edit ? getEditableFields(block.blockType) : [];
+        const schema = edit ? getEditableSchema(block.blockType) : [];
 
-        if (!edit || fields.length === 0) return rendered;
+        if (!edit || schema.length === 0) return rendered;
 
-        const source = block as unknown as Record<string, unknown>;
-        const initialValues = Object.fromEntries(
-          fields.map((field) => [
-            field.name,
-            typeof source[field.name] === 'string' || typeof source[field.name] === 'number'
-              ? String(source[field.name])
-              : '',
-          ]),
-        );
+        const initialValues = getInitialValues(schema, block as unknown as Record<string, unknown>);
 
         return (
           <Editable
             key={key}
             label={blockLabel(block.blockType)}
-            fields={fields}
+            schema={schema}
             initialValues={initialValues}
             pageId={edit.pageId}
             blockId={typeof block.id === 'string' ? block.id : null}
             blockIndex={index}
+            hidden={block.hidden === true}
+            tools={
+              <BlockTools
+                pageId={edit.pageId}
+                blockId={typeof block.id === 'string' ? block.id : null}
+                index={index}
+                total={blocks?.length ?? 0}
+                hidden={block.hidden === true}
+                blockTypes={blockTypes}
+              />
+            }
           >
             {rendered}
           </Editable>
         );
       })}
+
+      {edit ? (
+        <div className="mx-auto w-full max-w-6xl px-4 py-8">
+          <AddSection
+            pageId={edit.pageId}
+            index={blocks?.length ?? 0}
+            blockTypes={blockTypes}
+            first={!blocks || blocks.length === 0}
+          />
+        </div>
+      ) : null}
     </>
   );
 }

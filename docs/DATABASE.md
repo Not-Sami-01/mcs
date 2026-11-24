@@ -138,6 +138,8 @@ Access: **no HTTP writes at all** (`create`, `update`, `delete` return false); w
 
 Blocks are defined once and used by `pages`, `services`, `locations`, `products`, `posts` where allowed. Catalogue, fields and gates: `docs/CONTENT.md` section 6. Allowed blocks per collection are set in `src/blocks/allowed.ts`.
 
+Every block also carries a `hidden` checkbox (added with CP-4.2, default `false`). Public renderers skip hidden blocks; edit mode shows a faded ghost with the toolbar so staff can unhide or delete it. Hiding is a draft change until the page is published. Payload also adds its own `id`/`blockName` block fields — the content-box registry filters them out.
+
 ---
 
 ## 4. Role access matrix

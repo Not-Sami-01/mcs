@@ -1,7 +1,7 @@
 # INLINE-EDITING — Click-to-Edit Content Box
 
 > **Purpose:** specification for the signature feature. A logged-in staff member browses the real site, clicks any content, and edits it in a **content box**. Text and list sizes are limited, so the layout cannot overflow.
-> **Status:** CP-4.1 implemented (2026-11-24): proxy rewrite, `/edit` draft route, `<Editable>`, content box for text/textarea/select/number, draft-only saves. Lists, images, links and block management are CP-4.2; publish, conflicts and version restore are CP-4.3. Decision record: ADR-004 in `docs/DECISIONS.md`.
+> **Status:** CP-4.1 and CP-4.2 implemented (2026-11-25): proxy rewrite, `/edit` draft route, `<Editable>`, content box for text/textarea/select/number, repeaters with move/remove, link groups, image picker/upload, draft-only saves, per-section toolbar (add/duplicate/hide/delete/reorder) and staff-bar editors for menu/footer and contact details. Publish, conflicts and version restore are CP-4.3. Decision record: ADR-004 in `docs/DECISIONS.md`.
 
 ---
 
@@ -118,6 +118,8 @@ Every counter is announced politely to assistive tech at thresholds (80 percent 
 ---
 
 ## 6. Block management
+
+**Implemented in CP-4.2** as a per-section toolbar plus an "Add section" picker after the last block (and on empty pages). Actions write the layout as a draft and refresh the server-rendered edit route; the 30-block cap and the minimum of one block are enforced server-side. Hiding uses the block's `hidden` checkbox.
 
 - **Add section:** a "+" between blocks opens a list of allowed block types, with a small preview and a note when the page is at `maxRows` (30).
 - **Block toolbar (on hover or focus):** move up, move down, duplicate, hide, delete (with confirmation), "Page settings".
