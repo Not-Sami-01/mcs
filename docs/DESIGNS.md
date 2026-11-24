@@ -107,11 +107,11 @@ Each block in `docs/CONTENT.md` section 6 has one renderer and at most two layou
 
 | Element | Rules |
 |---|---|
-| Staff bar | Fixed top, 44 px, high contrast, not part of the public design. Edit mode toggle, View as visitor, Admin, status |
+| Staff bar | Fixed top, 44 px, high contrast, not part of the public design. Edit mode toggle, View as visitor, Admin, status. **CP-4.1:** sticky bar on `/edit/*`; "View as visitor" is a one-request `?view=visitor` opt-out, so the public page needs no staff-only markup |
 | Mobile menu (built CP-3.1) | Native `<details>` disclosure, so it is keyboard operable without client JavaScript; children show only in the mobile panel |
 | Region outline | 2 px dashed outline on hover and focus, offset 2 px, no layout shift; colour distinct from brand |
 | Edit button | Small labelled button at the region corner, reachable by keyboard |
-| Content box | Drawer (desktop) or bottom sheet (mobile), focus trapped, labelled, counters visible next to inputs |
+| Content box | Drawer (desktop) or bottom sheet (mobile), focus trapped, labelled, counters visible next to inputs. **CP-4.1:** 460 px right drawer / 85 vh bottom sheet, autosave 2 s after a pause, focus moved to the first field and returned to the Edit trigger on close |
 | Counters | `42 / 80`, turns warning colour at 90 percent, plus text (not colour alone) |
 | Block toolbar | Icon buttons with tooltips and accessible names; move up/down, duplicate, hide, delete |
 

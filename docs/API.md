@@ -110,11 +110,11 @@ Full rules: `docs/STORAGE.md`.
 
 ## 6. Edit-mode Server Actions
 
-Defined in `src/app/(edit)/actions/`. All go through `withStaffAuth` (`docs/INLINE-EDITING.md` section 7). They are not HTTP APIs, but their inputs are validated like routes.
+Defined in `src/app/(edit)/actions/`. They are not HTTP APIs, but their inputs are validated like routes. **CP-4.1 implements `saveDraft` only, for scalar block fields**; the rows below it are planned for CP-4.2/CP-4.3. `saveDraft` re-checks session, role and two-factor state, then validates each value against `src/edit/registry.ts` and the Payload Local API (with the staff `user` and `overrideAccess: false`). `expectedUpdatedAt` and conflict reporting arrive with CP-4.3.
 
 | Action | Input (summary) | Result |
 |---|---|---|
-| `saveDraft` | `{ collection, id, path, values, expectedUpdatedAt }` | `{ ok, updatedAt }` or field errors or conflict |
+| `saveDraft` (implemented) | `{ pageId, blockId?, blockIndex, values: Record<string, string> }` | `{ ok, updatedAt }` or `{ ok: false, code: 'AUTH'\|'TWO_FACTOR'\|'INVALID'\|'NOT_FOUND'\|'FORBIDDEN', message, fields? }` |
 | `publish` | `{ collection, id }` | `{ ok }` or gate failures listing fields |
 | `discardDraft` | `{ collection, id }` | `{ ok }` |
 | `addBlock` | `{ collection, id, blockType, index }` | New block path |

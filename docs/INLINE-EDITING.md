@@ -1,7 +1,7 @@
 # INLINE-EDITING — Click-to-Edit Content Box
 
 > **Purpose:** specification for the signature feature. A logged-in staff member browses the real site, clicks any content, and edits it in a **content box**. Text and list sizes are limited, so the layout cannot overflow.
-> **Status:** not implemented (Phase 4). Decision record: ADR-004 in `docs/DECISIONS.md`.
+> **Status:** CP-4.1 implemented (2026-11-24): proxy rewrite, `/edit` draft route, `<Editable>`, content box for text/textarea/select/number, draft-only saves. Lists, images, links and block management are CP-4.2; publish, conflicts and version restore are CP-4.3. Decision record: ADR-004 in `docs/DECISIONS.md`.
 
 ---
 

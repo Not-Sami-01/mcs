@@ -2,7 +2,7 @@
 
 Custom Next.js website and admin panel for **Malaysian Care System (MCS)**, pest control in Lahore, Pakistan.
 
-> **Status:** Phases 0–2 are complete (invite-only accounts, lockout, TOTP two-factor login, audit log, generated role tests). Phase 3 has started: the public shell, design tokens and accessible chrome are in place (CP-3.1); block renderers and page routes are next. CI workflow, unit/E2E tests, security headers and the non-production indexing gate are in place. See [docs/PROGRESS.md](docs/PROGRESS.md) for the exact current state and [docs/PLAN.md](docs/PLAN.md) for what comes next.
+> **Status:** Phases 0–2 are complete (invite-only accounts, lockout, TOTP two-factor login, audit log, generated role tests). Phases 3 and CP-4.1 are complete: the public shell, block renderers, home page and the edit-mode route with a content box for scalar text fields are in place; lists, images and block management are next. CI workflow, unit/E2E tests, security headers and the non-production indexing gate are in place. See [docs/PROGRESS.md](docs/PROGRESS.md) for the exact current state and [docs/PLAN.md](docs/PLAN.md) for what comes next.
 
 ---
 

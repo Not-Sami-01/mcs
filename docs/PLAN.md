@@ -162,12 +162,12 @@
 **Goal:** staff click any content on the real site and edit it in a content box with enforced limits. Spec: `docs/INLINE-EDITING.md`.
 
 ### CP-4.1 — Edit route and content box for text fields
-- [ ] Proxy rewrites staff requests to the dynamic edit route; public routes stay static
-- [ ] Edit route verifies session and role, sets `private, no-store` and `noindex`
-- [ ] `<Editable>` wrapper, outline on hover and focus, keyboard-operable "Edit" control
-- [ ] Content box drawer (bottom sheet on mobile) for text, textarea, select, link, number fields with live counters and hard stops
-- [ ] Server actions save to a **draft** with role checks and server-side limit validation
-- **Exit:** an Editor changes a headline inline; visitors still see the published version
+- [x] Proxy rewrites staff requests to the dynamic edit route; public routes stay static (2026-11-24; a `payload-token` cookie rewrites GET/HEAD to `/edit/*`, `?view=visitor` opts out; anonymous and non-Editor sessions fall back to the public page. Matcher excludes API, admin, edit, assets)
+- [x] Edit route verifies session and role, sets `private, no-store` and `noindex` (2026-11-24; `getEditSession` re-checks session, Editor/Super Admin role and TOTP state; loads the draft with `overrideAccess: false`; headers verified live)
+- [x] `<Editable>` wrapper, outline on hover and focus, keyboard-operable "Edit" control (2026-11-24; outline uses `outline`/`offset` so no layout shift; `aria-haspopup="dialog"`; focus returns to the trigger on close)
+- [~] Content box drawer (bottom sheet on mobile) for text, textarea, select, link, number fields with live counters and hard stops (2026-11-24; text, textarea, select and number are in the derived registry. **Link fields are deferred to CP-4.2** with the other group/repeater controls; `maxLength` gives the client hard stop and the server re-validates)
+- [x] Server actions save to a **draft** with role checks and server-side limit validation (2026-11-24; `saveDraftAction` → `saveBlockDraft`, Local API with the staff user and `overrideAccess: false`; unknown fields and over-limit values rejected)
+- **Exit:** an Editor changes a headline inline; visitors still see the published version (2026-11-24; integration test saves a draft as an Editor and asserts the published doc keeps the old headline; live smoke shows draft markup only with a staff cookie)
 - **Commit:** `checkpoint(CP-4.1): edit mode and content box for text fields`
 
 ### CP-4.2 — Lists, images, links, blocks

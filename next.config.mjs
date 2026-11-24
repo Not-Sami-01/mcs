@@ -33,8 +33,12 @@ const nextConfig = {
         ],
       },
       {
+        // Edit mode is a private draft preview: never cached, never indexed.
         source: '/edit/:path*',
-        headers: [{ key: 'Cache-Control', value: 'no-store' }],
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-store' },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
       },
     ];
   },

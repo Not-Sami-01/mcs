@@ -47,6 +47,23 @@
     "contactAddress": "Address",
     "contactHours": "Working hours"
   },
+  "edit": {
+    "staffBar": "Editing tools",
+    "mode": "Editing",
+    "draftPreview": "Draft preview",
+    "viewAsVisitor": "View as visitor",
+    "admin": "Admin panel",
+    "edit": "Edit",
+    "editSection": "Edit {label}",
+    "contentBox": "Content box",
+    "close": "Close",
+    "saveDraft": "Save draft",
+    "saving": "Saving…",
+    "saved": "Draft saved",
+    "unsaved": "Unsaved changes",
+    "noChanges": "No changes yet",
+    "saveFailed": "Not saved. Check your connection and try again."
+  },
   "homePending": {
     "title": "Website content is being prepared",
     "body": "The home page has not been published yet. Please check back soon."
