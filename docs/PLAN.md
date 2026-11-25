@@ -179,11 +179,11 @@
 - **Commit:** `checkpoint(CP-4.2): repeaters, images and block management inline`
 
 ### CP-4.3 — Draft, publish, concurrency, versions
-- [ ] Save draft, Publish, Discard; scheduled publish from the content box
-- [ ] Optimistic concurrency: edit conflict shown with choices
-- [ ] Version history with restore; publish gates (proof notes, legal pages Super Admin only)
-- [ ] Accessibility: focus trap, Escape, announcements; mobile layout tested
-- **Exit:** e2e test covers edit, limit rejection, publish, conflict, restore
+- [x] Save draft, Publish, Discard; scheduled publish from the content box (2026-11-26; page-level controls live in the staff bar because publishing is per document. `publishPage` runs the §9 gates, `discardPageDraft` restores the published content, and `schedulePagePublish` queues Payload `schedulePublish` jobs (publish and optional unpublish) through `payload.jobs`; `/api/cron/jobs` runs them, protected by `CRON_SECRET`)
+- [x] Optimistic concurrency: edit conflict shown with choices (2026-11-26; every draft save carries `expectedUpdatedAt`; a stale one returns `CONFLICT` plus the saved field values. The box offers Reload theirs, Keep mine and See differences, which lists Yours/Theirs per changed field)
+- [x] Version history with restore; publish gates (proof notes, legal pages Super Admin only) (2026-11-26; `listPageVersions`/`restorePageVersion` restore as a draft, versions are scoped to the page, gates cover metadata, `TODO(client)`, trust-strip proof notes, our-difference proof notes, legal pages)
+- [x] Accessibility: focus trap, Escape, announcements; mobile layout tested (2026-11-26; drawer traps Tab, Escape saves-or-confirms, conflict and status are live regions, 360 px covered by the E2E)
+- **Exit:** e2e test covers edit, limit rejection, publish, conflict, restore (2026-11-26; `tests/e2e/edit.spec.ts` runs the whole flow, including the 360 px viewport)
 - **Commit:** `checkpoint(CP-4.3): draft/publish flow, conflicts and version restore`
 
 ---

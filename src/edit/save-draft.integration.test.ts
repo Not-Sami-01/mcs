@@ -145,6 +145,37 @@ describe.skipIf(!enabled)('inline draft saves (CP-4.1)', () => {
     expect(draft.layout?.[1]).toMatchObject({ blockType: 'textBlocks' });
   });
 
+  it('reports a conflict with the saved values when the expected version is stale', async () => {
+    const { saveBlockDraft } = await import('./save-draft');
+    const current = await payload.findByID({
+      collection: 'pages',
+      id: pageId,
+      draft: true,
+      depth: 0,
+      overrideAccess: true,
+    });
+
+    const result = await saveBlockDraft({
+      payload,
+      user: editor,
+      input: {
+        pageId,
+        blockId,
+        blockIndex: 0,
+        values: { headline: 'My stale edit' },
+        expectedUpdatedAt: '2000-01-01T00:00:00.000Z',
+      },
+    });
+
+    expect(result).toMatchObject({ ok: false, code: 'CONFLICT' });
+    if (!result.ok) {
+      expect(result.serverUpdatedAt).toBe(current.updatedAt);
+      expect(result.serverValues?.headline).toBe(
+        (current.layout?.[0] as { headline?: string } | undefined)?.headline,
+      );
+    }
+  });
+
   it('rejects a value over the shared limit without saving it', async () => {
     const { saveBlockDraft } = await import('./save-draft');
     const tooLong = 'x'.repeat(81);

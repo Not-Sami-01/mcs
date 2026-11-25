@@ -91,8 +91,18 @@ export default async function EditPage({ params }: { params: Promise<RouteParams
 
   return (
     <>
-      <StaffBar publicPath={publicPath} pageTitle={page.title} globals={globals} />
-      <PageView page={page} chrome={await getCachedSiteChrome()} edit={{ pageId: page.id }} />
+      <StaffBar
+        publicPath={publicPath}
+        pageTitle={page.title}
+        pageId={page.id}
+        status={page._status ?? 'draft'}
+        globals={globals}
+      />
+      <PageView
+        page={page}
+        chrome={await getCachedSiteChrome()}
+        edit={{ pageId: page.id, updatedAt: page.updatedAt }}
+      />
     </>
   );
 }

@@ -14,7 +14,7 @@ export function PageView({
 }: {
   page: Page;
   chrome: SiteChrome;
-  edit?: { pageId: number | string };
+  edit?: { pageId: number | string; updatedAt?: string | null };
 }) {
   const hasHero = (page.layout ?? []).some((block) => block.blockType === 'hero');
 

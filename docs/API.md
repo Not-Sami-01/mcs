@@ -110,19 +110,23 @@ Full rules: `docs/STORAGE.md`.
 
 ## 6. Edit-mode Server Actions
 
-Defined in `src/app/(edit)/actions/`. They are not HTTP APIs, but their inputs are validated like routes. **CP-4.1/4.2 implement `saveDraft`, `block` and `saveGlobal`**; the remaining rows are planned for CP-4.3. Every action re-checks session, role and two-factor state, then runs the Payload Local API with the staff `user` and `overrideAccess: false`. `saveDraft` and `saveGlobal` validate recursively against `src/edit/registry.ts` (text caps, row bounds, select options, link schemes, number ranges). `expectedUpdatedAt` and conflict reporting arrive with CP-4.3.
+Defined in `src/app/(edit)/actions/`. They are not HTTP APIs, but their inputs are validated like routes. **CP-4.1–4.3 implement every row below.** Every action re-checks session, role and two-factor state, then runs the Payload Local API with the staff `user` and `overrideAccess: false`. `saveDraft` and `saveGlobal` validate recursively against `src/edit/registry.ts` (text caps, row bounds, select options, link schemes, number ranges). `saveDraft` carries `expectedUpdatedAt` and reports a conflict with the saved values.
 
 | Action | Input (summary) | Result |
 |---|---|---|
-| `saveDraft` (implemented) | `{ pageId, blockId?, blockIndex, values: Record<string, unknown> }` (nested repeaters/groups) | `{ ok, updatedAt }` or `{ ok: false, code: 'AUTH'\|'TWO_FACTOR'\|'INVALID'\|'NOT_FOUND'\|'FORBIDDEN', message, fields? }` |
+| `saveDraft` (implemented) | `{ pageId, blockId?, blockIndex, values: Record<string, unknown>, expectedUpdatedAt? }` (nested repeaters/groups) | `{ ok, updatedAt }` or `{ ok: false, code: 'AUTH'\|'TWO_FACTOR'\|'INVALID'\|'NOT_FOUND'\|'FORBIDDEN'\|'CONFLICT', message, fields?, serverUpdatedAt?, serverValues? }` |
 | `block` (implemented) | `{ op: 'add', pageId, blockType, index }` or `{ op: 'duplicate'\|'remove'\|'toggleHidden', pageId, blockId }` or `{ op: 'move', pageId, blockId, direction: 'up'\|'down' }` | `{ ok }` or `{ ok: false, code, message }` |
 | `saveGlobal` (implemented) | `{ region: 'navigation'\|'contact', values }` | `{ ok }` or `{ ok: false, code, message, fields? }` |
-| `publish` | `{ collection, id }` | `{ ok }` or gate failures listing fields |
-| `discardDraft` | `{ collection, id }` | `{ ok }` |
-| `schedulePublish` | `{ collection, id, publishAt, unpublishAt }` | `{ ok }` |
-| `listVersions`, `restoreVersion` | `{ collection, id, versionId }` | Versions or `{ ok }` |
+| `publish` (implemented) | `{ pageId }` | `{ ok, updatedAt }` or `{ ok: false, code: 'GATES', message, problems: [{ field, message }] }`; legal pages and roles may also return `FORBIDDEN` |
+| `discardDraft` (implemented) | `{ pageId }` | `{ ok, updatedAt }`; restores the draft from the published content |
+| `schedulePublish` (implemented) | `{ pageId, publishAt, unpublishAt? }` (ISO 8601, publishAt in the future) | `{ ok, updatedAt }`; queues Payload `schedulePublish` jobs (publish and optional unpublish) after replacing pending jobs for the page |
+| `listVersions`, `restoreVersion` (implemented) | `{ pageId }`; `{ pageId, versionId }` | `{ ok, versions: [{ id, updatedAt, status }] }`; restore writes the old version back as a draft |
 
-Conflict result: `{ "conflict": { "serverUpdatedAt": "...", "fields": ["layout.3.headline"] } }`.
+Conflict result: `{ ok: false, code: 'CONFLICT', message, serverUpdatedAt, serverValues }`. `serverValues` holds the edited fields as currently saved, so the content box can show **See differences** without another request.
+
+### Scheduled-publish runner
+
+`GET /api/cron/jobs` with `Authorization: Bearer $CRON_SECRET` runs up to 100 queued Payload jobs (including scheduled publish and unpublish) and returns `{ ok, noJobsRemaining, remaining }`. Without `CRON_SECRET` it answers `503`; with a wrong header it answers `401`. It always sends `Cache-Control: no-store`.
 
 ---
 

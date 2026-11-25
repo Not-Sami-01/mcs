@@ -32,7 +32,7 @@ export function BlockRenderer({
 }: {
   blocks: PageBlock[] | null | undefined;
   chrome: SiteChrome;
-  edit?: { pageId: number | string };
+  edit?: { pageId: number | string; updatedAt?: string | null };
 }) {
   const blockTypes = PAGE_BLOCKS.map((block) => ({
     value: block.slug,
@@ -63,6 +63,7 @@ export function BlockRenderer({
             blockId={typeof block.id === 'string' ? block.id : null}
             blockIndex={index}
             hidden={block.hidden === true}
+            expectedUpdatedAt={edit.updatedAt ?? null}
             tools={
               <BlockTools
                 pageId={edit.pageId}

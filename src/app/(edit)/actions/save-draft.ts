@@ -10,15 +10,18 @@ export type SaveDraftActionInput = {
   blockId?: string | null;
   blockIndex: number;
   values: Record<string, unknown>;
+  expectedUpdatedAt?: string | null;
 };
 
 export type SaveDraftActionResult =
   | { ok: true; updatedAt: string }
   | {
       ok: false;
-      code: 'AUTH' | 'TWO_FACTOR' | 'INVALID' | 'NOT_FOUND' | 'FORBIDDEN';
+      code: 'AUTH' | 'TWO_FACTOR' | 'INVALID' | 'NOT_FOUND' | 'FORBIDDEN' | 'CONFLICT';
       message: string;
       fields?: Record<string, string>;
+      serverUpdatedAt?: string;
+      serverValues?: Record<string, unknown>;
     };
 
 function parseInput(value: unknown): SaveDraftActionInput | null {
@@ -46,11 +49,21 @@ function parseInput(value: unknown): SaveDraftActionInput | null {
   const serialized = JSON.stringify(input.values);
   if (serialized.length > 100_000) return null;
 
+  const expectedUpdatedAt = input.expectedUpdatedAt;
+  if (
+    expectedUpdatedAt !== undefined &&
+    expectedUpdatedAt !== null &&
+    typeof expectedUpdatedAt !== 'string'
+  ) {
+    return null;
+  }
+
   return {
     pageId,
     blockId: (input.blockId as string | null | undefined) ?? null,
     blockIndex: input.blockIndex,
     values: input.values as Record<string, unknown>,
+    expectedUpdatedAt: (expectedUpdatedAt as string | null | undefined) ?? null,
   };
 }
 

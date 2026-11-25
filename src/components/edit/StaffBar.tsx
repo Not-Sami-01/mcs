@@ -5,6 +5,7 @@ import type { EditNode } from '@/edit/registry';
 import { messages } from '@/messages';
 
 import { GlobalEditorButton } from './GlobalEditorButton';
+import { PublishControls } from './PublishControls';
 
 /**
  * Thin staff bar for the edit route (docs/INLINE-EDITING.md §1). It is not part
@@ -17,10 +18,14 @@ import { GlobalEditorButton } from './GlobalEditorButton';
 export function StaffBar({
   publicPath,
   pageTitle,
+  pageId,
+  status,
   globals = [],
 }: {
   publicPath: string;
   pageTitle: string;
+  pageId: number | string;
+  status: 'draft' | 'published' | null;
   globals?: Array<{
     region: GlobalRegionKey;
     label: string;
@@ -47,6 +52,8 @@ export function StaffBar({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <PublishControls pageId={pageId} status={status} />
+
           {globals.map((global) => (
             <GlobalEditorButton key={global.region} {...global} />
           ))}

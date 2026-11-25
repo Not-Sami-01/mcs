@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const baseURL = 'http://127.0.0.1:3000'
+// Keep this in step with NEXT_PUBLIC_SITE_URL so Payload's CSRF checks and
+// Next's Server Action origin check accept the test browser's origin.
+const baseURL = 'http://localhost:3000'
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -22,7 +24,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm start --hostname 127.0.0.1',
+    command: 'pnpm start',
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

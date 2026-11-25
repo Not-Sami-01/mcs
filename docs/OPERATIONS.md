@@ -66,6 +66,7 @@ Copy `.env.example` to `.env`. Never commit `.env`. The app validates required v
 - No writes to the local filesystem at runtime (uploads go to Filebase).
 - Health check: `GET /api/health`.
 - After deploy: smoke test home, a service page, `/admin` login, a form submission on staging, and the edit route as staff.
+- **Scheduled publishing** needs a cron that calls `GET /api/cron/jobs` with `Authorization: Bearer $CRON_SECRET`. Every call runs up to 100 queued Payload jobs, including scheduled publish and unpublish. Run it every minute on staging and production; a missing or wrong `CRON_SECRET` makes the endpoint answer `503`/`401` without running anything.
 
 ### Vercel
 - Use a pooled PostgreSQL URL (serverless connection limits).
@@ -76,7 +77,7 @@ Copy `.env.example` to `.env`. Never commit `.env`. The app validates required v
 ### VPS
 - Run behind a reverse proxy (Caddy or nginx) with automatic TLS, Cloudflare in front.
 - Process manager (systemd, PM2, or Docker) with restart on failure.
-- Payload jobs `autoRun` can handle scheduled work; confirm in current docs.
+- Add the same minute-ly cron entry (systemd timer or crontab) for `GET /api/cron/jobs` with `Authorization: Bearer $CRON_SECRET`; do not rely on in-process `autoRun`.
 - You own OS patches, firewall (only 80/443 and SSH from known IPs), SSH keys only, unattended security updates, disk monitoring.
 - Zero-downtime deploy via two instances or a brief rolling restart.
 

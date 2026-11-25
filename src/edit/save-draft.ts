@@ -13,15 +13,19 @@ export type SaveDraftInput = {
   blockId?: string | null;
   blockIndex: number;
   values: Record<string, unknown>;
+  expectedUpdatedAt?: string | null;
 };
 
 export type SaveDraftResult =
   | { ok: true; updatedAt: string }
   | {
       ok: false;
-      code: 'INVALID' | 'NOT_FOUND' | 'FORBIDDEN';
+      code: 'INVALID' | 'NOT_FOUND' | 'FORBIDDEN' | 'CONFLICT';
       message: string;
       fields?: Record<string, string>;
+      serverUpdatedAt?: string;
+      /** The saved values the editor can compare against when a conflict is shown. */
+      serverValues?: Record<string, unknown>;
     };
 
 /**
@@ -76,6 +80,22 @@ export async function saveBlockDraft({
     return { ok: false, code: 'FORBIDDEN', message: 'This section is not editable here.' };
   }
 
+  if (input.expectedUpdatedAt && page.updatedAt !== input.expectedUpdatedAt) {
+    const saved = block as unknown as Record<string, unknown>;
+    const serverValues: Record<string, unknown> = {};
+    for (const node of schema) {
+      if (saved[node.name] !== undefined) serverValues[node.name] = saved[node.name];
+    }
+
+    return {
+      ok: false,
+      code: 'CONFLICT',
+      message: 'This content changed while you were editing.',
+      serverUpdatedAt: page.updatedAt,
+      serverValues,
+    };
+  }
+
   const { values, errors } = validateGroup(schema, input.values, '');
 
   if (Object.keys(errors).length > 0) {
@@ -112,5 +132,19 @@ export async function saveBlockDraft({
     return { ok: false, code: 'FORBIDDEN', message: 'You cannot edit this page.' };
   }
 
-  return { ok: true, updatedAt: updated.updatedAt };
+  // `update` returns the document, but the optimistic check above reads the
+  // latest **draft** version. Return that same timestamp so the next save from
+  // this content box compares like with like.
+  const fresh = await payload
+    .findByID({
+      collection: 'pages',
+      id: page.id,
+      draft: true,
+      depth: 0,
+      overrideAccess: false,
+      user,
+    })
+    .catch(() => null);
+
+  return { ok: true, updatedAt: fresh?.updatedAt ?? updated.updatedAt };
 }

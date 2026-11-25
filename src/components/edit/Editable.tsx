@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useState, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { saveDraftAction } from '@/app/(edit)/actions/save-draft';
 import type { EditNode } from '@/edit/registry';
@@ -24,6 +25,7 @@ export function Editable({
   blockIndex,
   hidden = false,
   tools,
+  expectedUpdatedAt = null,
 }: {
   children: ReactNode;
   label: string;
@@ -34,14 +36,33 @@ export function Editable({
   blockIndex: number;
   hidden?: boolean;
   tools?: ReactNode;
+  expectedUpdatedAt?: string | null;
 }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  // Keep the newest saved timestamp here, not only inside the drawer: closing
+  // and reopening a box must not fall back to the page-load version.
+  const [version, setVersion] = useState<string | null>(expectedUpdatedAt);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  // A server refresh (for example after a block toolbar action) brings a new
+  // base version; adopt it unless the box is carrying a newer local save.
+  useEffect(() => {
+    setVersion(expectedUpdatedAt);
+  }, [expectedUpdatedAt]);
+
   const editLabel = messages.edit.editSection.replace('{label}', label);
 
   function close() {
     setOpen(false);
     // Focus returns to the control that opened the box (docs/INLINE-EDITING.md §11).
+    triggerRef.current?.focus();
+  }
+
+  function reload() {
+    // Drop local state and pull the other editor's version from the server.
+    setVersion(expectedUpdatedAt);
+    setOpen(false);
+    router.refresh();
     triggerRef.current?.focus();
   }
 
@@ -75,8 +96,20 @@ export function Editable({
             schema={schema}
             initialValues={initialValues}
             label={label}
-            onSave={(values) => saveDraftAction({ pageId, blockId, blockIndex, values })}
+            onSave={async (values, expected) => {
+              const result = await saveDraftAction({
+                pageId,
+                blockId,
+                blockIndex,
+                values,
+                expectedUpdatedAt: expected,
+              });
+              if (result.ok) setVersion(result.updatedAt);
+              return result;
+            }}
             onClose={close}
+            onReload={reload}
+            expectedUpdatedAt={version}
           />
         </>
       ) : null}

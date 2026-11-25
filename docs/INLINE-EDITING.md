@@ -1,7 +1,7 @@
 # INLINE-EDITING — Click-to-Edit Content Box
 
 > **Purpose:** specification for the signature feature. A logged-in staff member browses the real site, clicks any content, and edits it in a **content box**. Text and list sizes are limited, so the layout cannot overflow.
-> **Status:** CP-4.1 and CP-4.2 implemented (2026-11-25): proxy rewrite, `/edit` draft route, `<Editable>`, content box for text/textarea/select/number, repeaters with move/remove, link groups, image picker/upload, draft-only saves, per-section toolbar (add/duplicate/hide/delete/reorder) and staff-bar editors for menu/footer and contact details. Publish, conflicts and version restore are CP-4.3. Decision record: ADR-004 in `docs/DECISIONS.md`.
+> **Status:** CP-4.1–CP-4.3 implemented (2026-11-26): proxy rewrite, `/edit` draft route, `<Editable>`, content box for text/textarea/select/number, repeaters with move/remove, link groups, image picker/upload, draft-only saves, per-section toolbar (add/duplicate/hide/delete/reorder), staff-bar editors for menu/footer and contact details, publish/discard/schedule with server gates, optimistic conflicts with a differences view, and version restore. Publishing controls sit on the staff bar (page-level) rather than inside each block's content box. Decision record: ADR-004 in `docs/DECISIONS.md`.
 
 ---
 
@@ -86,7 +86,7 @@ Block renderers wrap each editable region once. In public rendering the wrapper 
 
 - Desktop: right drawer, 420 to 480 px, page remains visible and scrolls to the edited region.
 - Mobile: bottom sheet at 85 percent height with a drag-free close button.
-- Header: block name, close button. Footer: **Save draft**, **Publish**, **Discard changes**. Status line: "Draft saved 14:02" or "Unsaved changes".
+- Header: block name, close button. Footer: **Save draft** and close. Page-level **Publish**, **Discard draft**, **Schedule** and **Versions** live on the staff bar, because they apply to the whole document rather than one block. Status line: "Draft saved" or "Unsaved changes".
 
 ### Field types
 
@@ -146,7 +146,7 @@ All live in `src/app/(edit)/actions/` and share one wrapper (`withStaffAuth`) th
 | `discardDraft` | Remove unpublished changes |
 | `addBlock`, `removeBlock`, `moveBlock`, `duplicateBlock`, `toggleBlockHidden` | Block management |
 | `saveGlobal` | Header, footer, settings |
-| `schedulePublish` | Set a future publish or unpublish time |
+| `schedulePublish` | Set a future publish or unpublish time (Payload jobs; run by `/api/cron/jobs`) |
 | `listVersions`, `restoreVersion` | Version history |
 
 See `docs/API.md` for shapes.
@@ -156,8 +156,8 @@ See `docs/API.md` for shapes.
 ## 8. Concurrency and conflicts
 
 - Each save carries the document's `updatedAt` as an expected version.
-- If someone else saved first, the box shows "This content changed while you were editing" with **Reload theirs**, **Keep mine**, and **See differences** for the changed field.
-- Two editors in different blocks of the same page must not overwrite each other: save per block path, merge on the server, and fall back to the conflict flow only for the same path.
+- If someone else saved first, the box shows "This content changed while you were editing" with **Reload theirs**, **Keep mine**, and **See differences** for the changed field. The conflict response includes the saved values, so the comparison needs no extra request.
+- Saves are per block path on the server, so a save only replaces the fields it sends and leaves other blocks untouched. Optimistic locking is still document-wide: two editors in different blocks will see a conflict when one saves after the other. Narrowing the check to a per-block version is a possible follow-up; the conflict dialog already lets the second editor keep their text without losing the other edit.
 
 ---
 
