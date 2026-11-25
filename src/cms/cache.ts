@@ -4,6 +4,7 @@ import {
   CACHE_SECONDS,
   LOCATIONS_TAG,
   PAGES_TAG,
+  PRODUCTS_TAG,
   SERVICES_TAG,
   SITE_CHROME_TAG,
 } from './cache-tags';
@@ -16,6 +17,11 @@ import {
   listPublishedCitySlugs,
 } from './locations';
 import { findPublishedPage, listPublishedPagePaths } from './pages';
+import {
+  findPublishedProductBySlug,
+  listPublishedProductSlugs,
+  listPublishedProducts,
+} from './products';
 import {
   findPublishedServiceBySlug,
   listPublishedServiceSlugs,
@@ -92,6 +98,24 @@ export const getCachedPublishedAreaParams = unstable_cache(
   listPublishedAreaParams,
   ['published-area-params'],
   { tags: [LOCATIONS_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedPublishedProducts = unstable_cache(
+  listPublishedProducts,
+  ['published-products'],
+  { tags: [PRODUCTS_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedProductBySlug = unstable_cache(
+  findPublishedProductBySlug,
+  ['published-product'],
+  { tags: [PRODUCTS_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedPublishedProductSlugs = unstable_cache(
+  listPublishedProductSlugs,
+  ['published-product-slugs'],
+  { tags: [PRODUCTS_TAG], revalidate: CACHE_SECONDS },
 );
 
 export const getCachedSiteChrome = unstable_cache(loadSiteChrome, ['site-chrome'], {

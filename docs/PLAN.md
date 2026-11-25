@@ -202,10 +202,10 @@
 - **Commit:** `checkpoint(CP-5.2): locations with unique content gate`
 
 ### CP-5.3 — Products and pricing
-- [ ] `products` with pack sizes, PKR rate, discount (percent or fixed), start and end dates, stock status, safety documents
-- [ ] One tested pricing function (`src/lib/pricing.ts`); discounts apply on dates in Asia/Karachi
-- [ ] `price-history` written by hooks on every price or discount change
-- [ ] Product detail page: images, price, discount, pack size, description, how to use, safety info, Order on WhatsApp, Add to Quote
+- [x] `products` with pack sizes, PKR rate, discount (percent or fixed), start and end dates, stock status, safety documents (2026-11-26; Super Admin/Product Manager write, Editor/Sales read, drafts + schedule + trash; discount validated on save — percent 1–90, fixed below the cheapest pack, end not before start. Images are optional so a product can be saved before photos arrive)
+- [x] One tested pricing function (`src/lib/pricing.ts`); discounts apply on dates in Asia/Karachi (2026-11-26; inclusive date windows evaluated with `Intl` in `Asia/Karachi`; percent rounds to whole rupees, fixed never goes below zero; 16 unit tests include the UTC/Karachi midnight boundary)
+- [x] `price-history` written by hooks on every price or discount change (2026-11-26; one row per changed pack on a published save, opening rates on create, `oldDiscount`/`newDiscount` snapshots, plus one `price_change` audit entry; create-only and readable by Super Admin/Product Manager only)
+- [x] Product detail page: images, price, discount, pack size, description, how to use, safety info, Order on WhatsApp, Add to Quote (2026-11-26; `/products` index and `/products/[slug]` SSG with 300 s ISR, a client pack selector showing the active-only discount and stock status, a WhatsApp order link prefilled with the product, pack and URL, and Add to Quote linking to `/get-a-quote` with the product and pack — the basket itself is CP-6.4). `services.productsUsed` is now registered and rendered
 - **Commit:** `checkpoint(CP-5.3): products, pricing function and price history`
 
 ### CP-5.4 — Product CSV import and export

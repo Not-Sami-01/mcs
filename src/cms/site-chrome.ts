@@ -28,6 +28,7 @@ export type FooterColumn = {
 
 export type SiteChrome = {
   companyName: string;
+  siteUrl: string;
   navItems: NavLink[];
   footerColumns: FooterColumn[];
   legalLinks: NavLink[];
@@ -36,6 +37,8 @@ export type SiteChrome = {
   address: string | null;
   hours: string | null;
   whatsapp: { href: string } | null;
+  /** Digits-only international WhatsApp number, for per-product messages. */
+  whatsappNumber: string | null;
 };
 
 type RawLink = {
@@ -130,8 +133,11 @@ export async function loadSiteChrome(): Promise<SiteChrome> {
     '',
   );
 
+  const whatsappNumber = (settings.whatsappNumber ?? '').replace(/\D/g, '') || null;
+
   return {
     companyName: settings.companyName?.trim() || 'Malaysian Care System',
+    siteUrl,
     navItems: navItems.length > 0 ? navItems : fallbackNavItems(),
     footerColumns: footerColumns.length > 0 ? footerColumns : fallbackFooterColumns(),
     legalLinks: legalLinks.length > 0 ? legalLinks : fallbackLegalLinks(),
@@ -146,5 +152,6 @@ export async function loadSiteChrome(): Promise<SiteChrome> {
       );
       return href ? { href } : null;
     })(),
+    whatsappNumber,
   };
 }

@@ -7,6 +7,7 @@ import type {
 import {
   revalidateLocations,
   revalidatePages,
+  revalidateProducts,
   revalidateServices,
   revalidateSiteChrome,
 } from './revalidate';
@@ -51,6 +52,20 @@ export const revalidateLocationsAfterChange: CollectionAfterChangeHook = async (
 export const revalidateLocationsAfterDelete: CollectionAfterDeleteHook = async () => {
   await revalidateLocations();
   await revalidateServices();
+};
+
+/**
+ * A product change affects its own page and every featured-products block, so
+ * the pages tag is cleared too.
+ */
+export const revalidateProductsAfterChange: CollectionAfterChangeHook = async () => {
+  await revalidateProducts();
+  await revalidatePages();
+};
+
+export const revalidateProductsAfterDelete: CollectionAfterDeleteHook = async () => {
+  await revalidateProducts();
+  await revalidatePages();
 };
 
 export const revalidateChromeAfterChange: GlobalAfterChangeHook = async () => {

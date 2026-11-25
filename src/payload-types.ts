@@ -73,6 +73,8 @@ export interface Config {
     pages: Page;
     services: Service;
     locations: Location;
+    products: Product;
+    'price-history': PriceHistory;
     'audit-logs': AuditLog;
     'totp-rate-limits': TotpRateLimit;
     'payload-kv': PayloadKv;
@@ -89,6 +91,8 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     locations: LocationsSelect<false> | LocationsSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    'price-history': PriceHistorySelect<false> | PriceHistorySelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'totp-rate-limits': TotpRateLimitsSelect<false> | TotpRateLimitsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -820,6 +824,10 @@ export interface Service {
    * Optional. Published locations that appear on this service page.
    */
   areasServed?: (number | Location)[] | null;
+  /**
+   * Optional. Products that appear on this service page.
+   */
+  productsUsed?: (number | Product)[] | null;
   faqs?:
     | {
         /**
@@ -1312,6 +1320,167 @@ export interface Location {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  /**
+   * Max 80 characters.
+   */
+  title: string;
+  /**
+   * Lowercase letters, numbers and hyphens. Used in the URL.
+   */
+  slug: string;
+  /**
+   * Optional. Used for grouping in the admin panel.
+   */
+  category?: (number | null) | Category;
+  /**
+   * Optional. Alt text lives on each image.
+   */
+  images?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * One paragraph per row. Limited text, no HTML.
+   */
+  description?:
+    | {
+        /**
+         * Max 600 characters.
+         */
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  howToUse?:
+    | {
+        /**
+         * Max 600 characters.
+         */
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Accurate safety instructions supplied by the client.
+   */
+  safetyInfo?:
+    | {
+        /**
+         * Max 600 characters.
+         */
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  packSizes?:
+    | {
+        /**
+         * Max 100 characters.
+         */
+        label: string;
+        /**
+         * Optional internal code. Used to match CSV rows and price history.
+         */
+        sku?: string | null;
+        /**
+         * Whole rupees.
+         */
+        rate: number;
+        stockStatus: 'in_stock' | 'low' | 'out' | 'preorder';
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Applies to every pack while the date window is open (Karachi dates).
+   */
+  discount?: {
+    type?: ('percent' | 'fixed') | null;
+    /**
+     * Percent (1–90) or whole rupees, depending on the type.
+     */
+    value?: number | null;
+    /**
+     * Optional. Inclusive.
+     */
+    startsAt?: string | null;
+    /**
+     * Optional. Inclusive.
+     */
+    endsAt?: string | null;
+  };
+  /**
+   * Optional PDFs (safety data sheets, labels).
+   */
+  safetyDocuments?: (number | Media)[] | null;
+  featured?: boolean | null;
+  seo?: {
+    /**
+     * Max 60 characters.
+     */
+    metaTitle?: string | null;
+    /**
+     * Max 160 characters.
+     */
+    metaDescription?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Read-only. Written automatically whenever a published price or discount changes.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "price-history".
+ */
+export interface PriceHistory {
+  id: number;
+  product: number | Product;
+  /**
+   * The pack SKU, or its label when no SKU is set.
+   */
+  packSku: string;
+  /**
+   * Empty for the opening price.
+   */
+  oldRate?: number | null;
+  newRate: number;
+  oldDiscount?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  newDiscount?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Empty for scheduled or system saves.
+   */
+  changedBy?: (number | null) | User;
+  changedAt: string;
+  source: 'admin' | 'inline' | 'csv';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Read-only. Written automatically by the server; never edited.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1513,6 +1682,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'locations';
         value: number | Location;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'price-history';
+        value: number | PriceHistory;
       } | null)
     | ({
         relationTo: 'audit-logs';
@@ -1990,6 +2167,7 @@ export interface ServicesSelect<T extends boolean = true> {
   startingPrice?: T;
   priceUnit?: T;
   areasServed?: T;
+  productsUsed?: T;
   faqs?:
     | T
     | {
@@ -2265,6 +2443,85 @@ export interface LocationsSelect<T extends boolean = true> {
   createdAt?: T;
   deletedAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  category?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  description?:
+    | T
+    | {
+        body?: T;
+        id?: T;
+      };
+  howToUse?:
+    | T
+    | {
+        body?: T;
+        id?: T;
+      };
+  safetyInfo?:
+    | T
+    | {
+        body?: T;
+        id?: T;
+      };
+  packSizes?:
+    | T
+    | {
+        label?: T;
+        sku?: T;
+        rate?: T;
+        stockStatus?: T;
+        id?: T;
+      };
+  discount?:
+    | T
+    | {
+        type?: T;
+        value?: T;
+        startsAt?: T;
+        endsAt?: T;
+      };
+  safetyDocuments?: T;
+  featured?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "price-history_select".
+ */
+export interface PriceHistorySelect<T extends boolean = true> {
+  product?: T;
+  packSku?: T;
+  oldRate?: T;
+  newRate?: T;
+  oldDiscount?: T;
+  newDiscount?: T;
+  changedBy?: T;
+  changedAt?: T;
+  source?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2647,6 +2904,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'locations';
           value: number | Location;
+        } | null)
+      | ({
+          relationTo: 'products';
+          value: number | Product;
         } | null);
     global?: string | null;
     user?: {

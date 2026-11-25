@@ -5,6 +5,8 @@ import { Categories } from './Categories';
 import { Locations } from './Locations';
 import { Media } from './Media';
 import { Pages } from './Pages';
+import { PriceHistory } from './PriceHistory';
+import { Products } from './Products';
 import { Services } from './Services';
 import { Users } from './Users';
 
@@ -19,5 +21,7 @@ export const COLLECTIONS: CollectionConfig[] = [
   Pages,
   Services,
   Locations,
+  Products,
+  PriceHistory,
   AuditLogs,
 ];

@@ -1,6 +1,6 @@
 # DATABASE — Collections, Access and Migrations
 
-> **Status:** `users` (including two-factor columns), `media`, `categories`, `pages`, `audit-logs`, `site-settings` and `navigation` are implemented (CP-1.3–CP-2.3); other collections are designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
+> **Status:** `users` (including two-factor columns), `media`, `categories`, `pages`, `services`, `locations`, `products`, `price-history`, `audit-logs`, `site-settings` and `navigation` are implemented (CP-1.3–CP-5.3); `posts`, `reviews`, `leads`, `lead-photos` and `redirects` are designed, not implemented. Update this file in the same commit as any schema change (`AGENTS.md` section 3).
 > Payload defines the schema from collection configs and generates the PostgreSQL tables (Drizzle). Field shapes below are the intended design. Verify exact option names against the installed Payload version.
 
 ---
@@ -55,26 +55,26 @@ Auth (two-factor, implemented CP-2.2, ADR-008):
 `title`, `slug`, `category` (relation, optional), `path` (computed, unique), `template` (`standard`, `landing`, `legal`, `form`), `isLegal` (boolean, Super Admin publish only), `layout` (blocks, 1–30), `seo` group, `noindex`, `publishedAt`. Drafts, versions, scheduled publish, trash.
 
 ### `services`
-`title`, `slug`, `category`, `icon`, `shortDescription` (`cardBody`), `heroImage`, `signs[]` (3–10), `treatmentSteps[]` (3–8: title, body), `startingPrice` (rupees, optional), `priceUnit`, `areasServed` (optional relation to `locations`, max 24), `faqs[]` (3–8), `layout` (optional extra blocks, 0–30; no hero or services grid), `seo`, `order`. Drafts, versions, scheduled publish, trash. **Deferred:** `productsUsed` (relation to products, max 6) lands with CP-5.3; Payload cannot register a relation to a collection that does not exist.
+`title`, `slug`, `category`, `icon`, `shortDescription` (`cardBody`), `heroImage`, `signs[]` (3–10), `treatmentSteps[]` (3–8: title, body), `startingPrice` (rupees, optional), `priceUnit`, `areasServed` (optional relation to `locations`, max 24), `productsUsed` (optional relation to products, max 6, added CP-5.3), `faqs[]` (3–8), `layout` (optional extra blocks, 0–30; no hero or services grid), `seo`, `order`. Drafts, versions, scheduled publish, trash.
 
 ### `locations` (nested, implemented CP-5.2)
 `name`, `slug`, `type` (`city`, `area`), `parent` (city for an area), `intro`, `localNotes` (400–1,500 characters), `neighbourhoods[]` (0–12, min 3 to publish), `commonPests[]` (0–12, min 2 to publish), `servicesAvailable` (relation to services, max 24, min 1 to publish), `faqs[]` (0–8, min 3 to publish), `nearbyAreas` (relation, max 8), `geo` (latitude, longitude, optional), `seo`, `similarityWarning` (read-only sidebar text). Drafts, versions, scheduled publish, trash. A city cannot have a parent; an area must have an existing city parent — enforced on every save. Publish gates: `docs/CONTENT.md` section 7.4. The similarity hook compares `localNotes` three-word shingles with siblings (other cities, or other areas in the same city): 60%+ writes the sidebar warning, 80%+ refuses the publish. List minimums are 0 on the fields so incomplete drafts can be saved.
 
-### `products`
+### `products` (implemented CP-5.3)
 | Field | Notes |
 |---|---|
-| `title`, `slug`, `category` | |
-| `images[]` | 1–6, each with alt |
-| `description`, `howToUse`, `safetyInfo` | Limited text (`paragraph` lists) |
-| `packSizes[]` | 1–8: `label`, `sku`, `rate` (rupees), `stockStatus` (`in_stock`, `low`, `out`, `preorder`) |
+| `title`, `slug`, `category` | Category is optional, for admin grouping |
+| `images[]` | 0–6, each with alt (optional so a product can be saved before photos arrive; the page renders cleanly with none) |
+| `description`, `howToUse`, `safetyInfo` | Lists of limited-text paragraphs (0–8 each) |
+| `packSizes[]` | 1–8: `label`, `sku` (optional), `rate` (integer rupees), `stockStatus` (`in_stock`, `low`, `out`, `preorder`) |
 | `discount` group | `type` (`percent`, `fixed`), `value`, `startsAt`, `endsAt` (ADR-013) |
-| `safetyDocuments[]` | Relation to media (PDF) |
+| `safetyDocuments[]` | Relation to media (PDF), 0–8 |
 | `featured` | boolean |
 | `seo` | |
-Hooks: validate discount (percent 1–90, fixed less than the lowest rate, end after start); write `price-history`.
+Access: Super Admin and Product Manager write; Editor and Sales and Support read; the public reads published products only. Drafts, versions, scheduled publish and trash are on. Hooks: validate the discount on every save (percent 1–90, fixed positive and lower than the cheapest pack rate, end date on or after the start date); write `price-history` and one `price_change` audit entry when a **published** save changes a rate or the discount (draft edits are recorded when published).
 
-### `price-history` (create-only, no edits)
-`product`, `packSku`, `oldRate`, `newRate`, `oldDiscount` (json), `newDiscount` (json), `changedBy`, `changedAt`, `source` (`admin`, `inline`, `csv`).
+### `price-history` (create-only, implemented CP-5.3)
+`product` (required), `packSku` (the SKU, or the pack label when no SKU), `oldRate` (empty for an opening price), `newRate`, `oldDiscount` (json), `newDiscount` (json), `changedBy`, `changedAt`, `source` (`admin`, `inline`, `csv`). No HTTP caller may create, update or delete an entry; the products hook writes them with `overrideAccess: true`. Super Admin and Product Manager read.
 
 ### `posts` (Pest Library)
 `title`, `slug`, `excerpt`, `coverImage`, `category`, `body` (restricted Lexical, cap `postBody`), `author` (relation to users, display name), `relatedServices`, `relatedLocations`, `publishedAt`, `seo`. Drafts, trash.
@@ -118,7 +118,7 @@ Payload upload collection on the Filebase **public** bucket: `alt` (required, `a
 | `ipHash` | Salted HMAC of the request address (`IP_HASH_SALT`); absent when no request or salt |
 | `createdAt` | Automatic |
 
-Access: **no HTTP writes at all** (`create`, `update`, `delete` return false); wrote only by server hooks with `overrideAccess: true`. Read: Super Admin only. Hooks live in `src/audit/hooks.ts`; the TOTP plugin reports through `onAuditEvent` (`src/audit/log.ts`). Price/export events arrive with products and CSV (CP-5.3/CP-5.4).
+Access: **no HTTP writes at all** (`create`, `update`, `delete` return false); wrote only by server hooks with `overrideAccess: true`. Read: Super Admin only. Hooks live in `src/audit/hooks.ts`; the TOTP plugin reports through `onAuditEvent` (`src/audit/log.ts`). `price_change` is written by the products hook (CP-5.3); `export` arrives with CSV (CP-5.4).
 
 ### `rate_limits` (internal table, ADR-009)
 `key`, `windowStart`, `count`. Cleaned by a scheduled job.
@@ -183,6 +183,7 @@ Add one entry per applied migration. Include how to roll back and what to check.
 | 2026-11-24 | `20261124_070719` | CP-2.3: `audit_logs` (action enum, collection/document, actor relation, summary, ip hash) plus its locked-documents relation. | Generated with `payload migrate:create`; applied fifth on a fresh scratch DB 2026-11-24, after which the full suite (116 tests) passed. Down drops the table, relation column and enum; audit history is lost, so never run it where the trail matters. |
 | 2026-11-26 | `20261125_214628_cp51_services` | CP-5.1: `services` (+ signs, treatment steps, FAQs, layout block tables), versions, drafts, scheduled publish, trash, plus the CP-4.2 `hidden` columns on `pages` and blocks that had never been migrated. | Generated with `payload migrate:create`; all 6 migrations were applied in order on a database rebuilt from migrations only, because dev-mode schema push had been ahead of the migration list. Down drops the services tables and the `hidden` columns; never run it where data matters. |
 | 2026-11-26 | `20261125_223245_cp52_locations` | CP-5.2: `locations` (cities and areas, own + version tables), neighbourhoods/common pests/FAQs arrays, `locations_rels` for services and nearby areas, and `services_rels` for the new `services.areasServed` relation. 47 statements including 4 enums. | Generated with `payload migrate:create` against a database migrated from the 6 existing migrations only, then applied and exercised by the locations integration test (6/6). Down drops the locations tables, the services relation tables and the enums; never run it where data matters. |
+| 2026-11-26 | `20261125_233557_cp53_products` | CP-5.3: `products` (own + version tables), images/description/howToUse/safetyInfo/packSizes arrays, `products_rels` (category, safety documents), and `price_history`; plus `services_rels.products_id` for `services.productsUsed`. 67 statements including 7 enums. | Generated with `payload migrate:create` against a database migrated from the 7 existing migrations only, then applied cleanly and exercised by the products integration test (5/5). Down drops the products/price-history tables, the services product relation and the enums; never run it where data matters. |
 | 2026-11-23 | `20261123_105317` | CP-2.2: two-factor schema — `users.totp_enabled`, `totp_secret`, `totp_last_counter`, `users_totp_backup_codes` (hash + used), and `payload_totp_rate_limits` for the plugin's attempt locking. | Generated with `payload migrate:create`; applied in order with the other three on a fresh scratch DB 2026-11-24, after which the full suite (including 5 TOTP integration tests) passed. Down drops the three columns and two tables; enrolment data is lost, so never run it against a live database. |
 
 ### Rules

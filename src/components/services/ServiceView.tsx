@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import type { SiteChrome } from '@/cms/site-chrome';
 import { messages } from '@/messages';
-import type { Location, Service } from '@/payload-types';
+import type { Location, Product, Service } from '@/payload-types';
 
 import { BlockAction, resolveAction } from '../blocks/BlockAction';
 import { Faq } from '../blocks/Faq';
@@ -34,6 +34,9 @@ export function ServiceView({ service, chrome }: { service: Service; chrome: Sit
   const faqs = service.faqs ?? [];
   const areas = (service.areasServed ?? []).flatMap((entry) =>
     typeof entry === 'object' && entry !== null && 'name' in entry ? [entry as Location] : [],
+  );
+  const productsUsed = (service.productsUsed ?? []).flatMap((entry) =>
+    typeof entry === 'object' && entry !== null && 'title' in entry ? [entry as Product] : [],
   );
 
   return (
@@ -98,6 +101,24 @@ export function ServiceView({ service, chrome }: { service: Service; chrome: Sit
               </li>
             ))}
           </ol>
+        </Section>
+      ) : null}
+
+      {productsUsed.length > 0 ? (
+        <Section tone="alt">
+          <SectionHeading>{messages.servicesPage.productsUsed}</SectionHeading>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {productsUsed.map((product) => (
+              <li key={product.id}>
+                <Link
+                  href={`/products/${product.slug}`}
+                  className="inline-block rounded-full border border-line bg-surface px-4 py-2 text-sm text-ink transition-colors hover:border-brand-primary"
+                >
+                  {product.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </Section>
       ) : null}
 

@@ -16,9 +16,9 @@ import { validateSlug } from '../cms/slugs';
  * is a typed document rendered at `/services/[slug]`: signs, treatment steps,
  * a starting price and FAQs, plus an optional extra block layout.
  *
- * `productsUsed` from the data-model table is deliberately absent until the
- * `products` collection exists (CP-5.3); Payload rejects relations to
- * collections that are not registered. `areasServed` arrived with CP-5.2.
+ * `areasServed` arrived with CP-5.2 and `productsUsed` with CP-5.3, once the
+ * `products` collection existed (Payload rejects relations to unregistered
+ * collections).
  */
 export const Services: CollectionConfig = {
   slug: 'services',
@@ -108,6 +108,15 @@ export const Services: CollectionConfig = {
       minRows: 0,
       maxRows: 24,
       admin: { description: 'Optional. Published locations that appear on this service page.' },
+    },
+    {
+      name: 'productsUsed',
+      label: 'Products used',
+      type: 'relationship',
+      relationTo: 'products',
+      hasMany: true,
+      ...rows('productsUsed'),
+      admin: { description: 'Optional. Products that appear on this service page.' },
     },
     {
       name: 'faqs',

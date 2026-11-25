@@ -58,11 +58,36 @@
     "startingPrice": "Starting price",
     "fromPrice": "From Rs {price}",
     "faqs": "Questions about this service",
+    "productsUsed": "Products we use for this service",
     "areasServed": "Areas we serve for this service",
     "ctaTitle": "Book an inspection",
     "ctaBody": "Tell us what you are seeing and we will inspect the property.",
     "notFoundTitle": "Service not found",
     "notFoundBody": "This service may have moved, or it is not published yet."
+  },
+  "productsPage": {
+    "indexTitle": "Products",
+    "indexIntro": "Browse the products we use and recommend. Prices are in Pakistani rupees.",
+    "indexEmpty": "Products are being prepared. Please check back soon.",
+    "viewProduct": "View product",
+    "fromPrice": "From Rs {price}",
+    "packSize": "Pack size",
+    "discountPercent": "{value}% off",
+    "discountAmount": "Rs {amount} off",
+    "stock": "Availability",
+    "stockInStock": "In stock",
+    "stockLow": "Low stock",
+    "stockOut": "Out of stock",
+    "stockPreorder": "Available on pre-order",
+    "orderOnWhatsApp": "Order on WhatsApp",
+    "addToQuote": "Add to Quote",
+    "description": "About this product",
+    "howToUse": "How to use",
+    "safetyInfo": "Safety information",
+    "safetyDocuments": "Safety documents",
+    "viewDocument": "Open document",
+    "notFoundTitle": "Product not found",
+    "notFoundBody": "This product may have moved, or it is not published yet."
   },
   "locationsPage": {
     "indexTitle": "Areas we serve",
@@ -168,7 +193,8 @@
     "retry": "Try again"
   },
   "whatsapp": {
-    "greeting": "Hi MCS, I would like help with pest control."
+    "greeting": "Hi MCS, I would like help with pest control.",
+    "order": "Hi MCS, I would like to order: {item}. {url}"
   },
   "a11y": {
     "primaryNav": "Primary navigation",

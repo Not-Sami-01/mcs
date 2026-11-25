@@ -45,6 +45,17 @@ export const isSuperAdmin: Access = ({ req }) => hasRole(req.user, 'super-admin'
 /** Super Admin + Editor may write content (docs/DATABASE.md §4: categories/pages CRUD). */
 export const writeContent: Access = ({ req }) => hasAnyRole(req.user, ['super-admin', 'editor']);
 
+/**
+ * Products are owned by Super Admin and Product Manager (docs/DATABASE.md §4).
+ * Editors may read them but not change prices or stock.
+ */
+export const writeProducts: Access = ({ req }) =>
+  hasAnyRole(req.user, ['super-admin', 'product-manager']);
+
+/** Price history is visible to Super Admin and Product Manager only. */
+export const readPriceHistory: Access = ({ req }) =>
+  hasAnyRole(req.user, ['super-admin', 'product-manager']);
+
 /** Super Admin + Editor may update navigation; no other staff role may. */
 export const writeNavigation: Access = ({ req }) => hasAnyRole(req.user, ['super-admin', 'editor']);
 

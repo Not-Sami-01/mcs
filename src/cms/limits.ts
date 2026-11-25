@@ -76,8 +76,11 @@ export const COUNT_LIMITS = {
   serviceSigns: { label: 'Service signs', min: 3, max: 10 },
   serviceTreatmentSteps: { label: 'Service treatment steps', min: 3, max: 8 },
   serviceFaqs: { label: 'Service FAQs', min: 3, max: 8 },
-  productImages: { label: 'Product images', min: 1, max: 6 },
+  productImages: { label: 'Product images', min: 0, max: 6 },
   productPackSizes: { label: 'Product pack sizes', min: 1, max: 8 },
+  productParagraphs: { label: 'Product paragraphs', min: 0, max: 8 },
+  productsUsed: { label: 'Products used', min: 0, max: 6 },
+  productSafetyDocuments: { label: 'Product safety documents', min: 0, max: 8 },
   // Added for blocks whose catalogue row states the cap inline (docs/CONTENT.md
   // section 6); rows added to the section 5 table to match.
   textBlockParagraphs: { label: 'Text block paragraphs', min: 1, max: 8 },

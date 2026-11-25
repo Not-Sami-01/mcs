@@ -22,11 +22,13 @@ const media = {
 
 const chrome = {
   companyName: 'Malaysian Care System',
+  siteUrl: 'http://localhost:3000',
   navItems: [],
   footerColumns: [],
   legalLinks: [],
   phone: { href: 'tel:+923001234567', display: '+92 300 123 4567' },
   whatsapp: { href: 'https://wa.me/923001234567' },
+  whatsappNumber: '923001234567',
   email: null,
   address: null,
   hours: null,

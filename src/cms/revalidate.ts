@@ -1,4 +1,10 @@
-import { LOCATIONS_TAG, PAGES_TAG, SERVICES_TAG, SITE_CHROME_TAG } from './cache-tags';
+import {
+  LOCATIONS_TAG,
+  PAGES_TAG,
+  PRODUCTS_TAG,
+  SERVICES_TAG,
+  SITE_CHROME_TAG,
+} from './cache-tags';
 
 /**
  * Invalidate the public caches from Payload hooks.
@@ -30,6 +36,15 @@ export async function revalidateLocations(): Promise<void> {
   try {
     const { revalidateTag } = await import('next/cache');
     revalidateTag(LOCATIONS_TAG, 'max');
+  } catch {
+    // Outside a Next request (CLI/tests) there is nothing to invalidate.
+  }
+}
+
+export async function revalidateProducts(): Promise<void> {
+  try {
+    const { revalidateTag } = await import('next/cache');
+    revalidateTag(PRODUCTS_TAG, 'max');
   } catch {
     // Outside a Next request (CLI/tests) there is nothing to invalidate.
   }
