@@ -129,6 +129,7 @@ Canonical values live in `src/cms/limits.ts`. They are starting points. Tune the
 | CTA buttons | 1 | 3 |
 | Service signs | 3 | 10 |
 | Service treatment steps | 3 | 8 |
+| Service FAQs | 3 | 8 |
 | Product images | 1 | 6 |
 | Product pack sizes | 1 | 8 |
 | Text block paragraphs | 1 | 8 |

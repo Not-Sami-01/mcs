@@ -1,5 +1,6 @@
 import { PAGE_BLOCKS } from '@/blocks/allowed';
 import type { SiteChrome } from '@/cms/site-chrome';
+import type { Service } from '@/payload-types';
 import { getEditableSchema, getInitialValues } from '@/edit/registry';
 import { AddSection, BlockTools } from '../edit/BlockTools';
 import { Editable } from '../edit/Editable';
@@ -13,6 +14,7 @@ import { Hero } from './Hero';
 import { HowItWorks } from './HowItWorks';
 import { InspectionForm } from './InspectionForm';
 import { OurDifference } from './OurDifference';
+import { ServicesGrid } from './ServicesGrid';
 import { TextBlocks } from './TextBlocks';
 import { TrustStrip } from './TrustStrip';
 import { WarrantyPromise } from './WarrantyPromise';
@@ -28,10 +30,13 @@ import type { PageBlock } from './types';
 export function BlockRenderer({
   blocks,
   chrome,
+  services = [],
   edit,
 }: {
   blocks: PageBlock[] | null | undefined;
   chrome: SiteChrome;
+  /** Published services for auto/manual grids; resolved once per page. */
+  services?: Service[];
   edit?: { pageId: number | string; updatedAt?: string | null };
 }) {
   const blockTypes = PAGE_BLOCKS.map((block) => ({
@@ -46,7 +51,7 @@ export function BlockRenderer({
         if (block.hidden && !edit) return null;
 
         const key = block.id ?? `${block.blockType}-${index}`;
-        const rendered = renderBlock(block, chrome, key);
+        const rendered = renderBlock(block, chrome, services, key);
         const schema = edit ? getEditableSchema(block.blockType) : [];
 
         if (!edit || schema.length === 0) return rendered;
@@ -99,12 +104,14 @@ function blockLabel(blockType: string): string {
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
-function renderBlock(block: PageBlock, chrome: SiteChrome, key: string) {
+function renderBlock(block: PageBlock, chrome: SiteChrome, services: Service[], key: string) {
   switch (block.blockType) {
     case 'hero':
       return <Hero key={key} block={block} chrome={chrome} />;
     case 'trustStrip':
       return <TrustStrip key={key} block={block} />;
+    case 'servicesGrid':
+      return <ServicesGrid key={key} block={block} services={services} />;
     case 'whyChoose':
       return <WhyChoose key={key} block={block} />;
     case 'ourDifference':

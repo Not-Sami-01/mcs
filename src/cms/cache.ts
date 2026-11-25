@@ -1,7 +1,12 @@
 import { unstable_cache } from 'next/cache';
 
-import { CACHE_SECONDS, PAGES_TAG, SITE_CHROME_TAG } from './cache-tags';
+import { CACHE_SECONDS, PAGES_TAG, SERVICES_TAG, SITE_CHROME_TAG } from './cache-tags';
 import { findPublishedPage, listPublishedPagePaths } from './pages';
+import {
+  findPublishedServiceBySlug,
+  listPublishedServiceSlugs,
+  listPublishedServices,
+} from './services';
 import { loadSiteChrome } from './site-chrome';
 
 /**
@@ -22,6 +27,24 @@ export const getCachedPublishedPagePaths = unstable_cache(
   listPublishedPagePaths,
   ['published-page-paths'],
   { tags: [PAGES_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedPublishedServices = unstable_cache(
+  listPublishedServices,
+  ['published-services'],
+  { tags: [SERVICES_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedServiceBySlug = unstable_cache(
+  findPublishedServiceBySlug,
+  ['published-service'],
+  { tags: [SERVICES_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedPublishedServiceSlugs = unstable_cache(
+  listPublishedServiceSlugs,
+  ['published-service-slugs'],
+  { tags: [SERVICES_TAG], revalidate: CACHE_SECONDS },
 );
 
 export const getCachedSiteChrome = unstable_cache(loadSiteChrome, ['site-chrome'], {

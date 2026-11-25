@@ -94,27 +94,31 @@ export const auditUserDelete: AfterDelete = async ({ doc, req }) => {
  * Logs only a status transition, so ordinary draft saves do not flood the log.
  * Runs for both manual and scheduled publishing.
  */
-export const auditPublish: AfterChange = async ({ doc, previousDoc, req }) => {
-  const before = previousDoc?._status;
-  const after = doc._status;
-  if (before === after) return doc;
+export function auditPublishFor(collectionSlug: string, noun: string): AfterChange {
+  return async ({ doc, previousDoc, req }) => {
+    const before = previousDoc?._status;
+    const after = doc._status;
+    if (before === after) return doc;
 
-  const action = after === 'published' ? 'publish' : before === 'published' ? 'unpublish' : null;
-  if (!action) return doc;
+    const action = after === 'published' ? 'publish' : before === 'published' ? 'unpublish' : null;
+    if (!action) return doc;
 
-  await writeAuditLog({
-    payload: req.payload,
-    req,
-    action,
-    collectionSlug: 'pages',
-    documentId: String(doc.id),
-    actorId: req.user?.id,
-    summary: `${action === 'publish' ? 'Published' : 'Unpublished'} page #${doc.id}`,
-    ipHash: hashIp(req.headers),
-  });
+    await writeAuditLog({
+      payload: req.payload,
+      req,
+      action,
+      collectionSlug,
+      documentId: String(doc.id),
+      actorId: req.user?.id,
+      summary: `${action === 'publish' ? 'Published' : 'Unpublished'} ${noun} #${doc.id}`,
+      ipHash: hashIp(req.headers),
+    });
 
-  return doc;
-};
+    return doc;
+  };
+}
+
+export const auditPublish = auditPublishFor('pages', 'page');
 
 /** A delete entry for any collection that has one. */
 export function auditDelete(collectionSlug: string): AfterDelete {

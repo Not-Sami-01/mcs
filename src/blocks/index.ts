@@ -69,6 +69,50 @@ export const trustStrip: Block = {
   ],
 };
 
+/**
+ * Auto (published services, ordered) or manual cards (docs/CONTENT.md §6).
+ * The manual picker is validated at 4–12 because the field is optional in
+ * auto mode; `servicesGridCards` in the limits registry states the bound.
+ */
+export const servicesGrid: Block = {
+  slug: 'servicesGrid',
+  fields: [
+    textField({ name: 'headline', label: 'Headline', preset: 'headline', required: true }),
+    textareaField({ name: 'intro', label: 'Intro', preset: 'shortParagraph' }),
+    {
+      name: 'mode',
+      label: 'Cards',
+      type: 'select',
+      required: true,
+      defaultValue: 'auto',
+      options: [
+        { label: 'Automatically: every published service', value: 'auto' },
+        { label: 'Manually pick services', value: 'manual' },
+      ],
+    },
+    {
+      name: 'services',
+      label: 'Services',
+      type: 'relationship',
+      relationTo: 'services',
+      hasMany: true,
+      admin: {
+        condition: (data) => (data as { mode?: string } | undefined)?.mode === 'manual',
+        description: 'Pick 4 to 12 services. Cards follow this order.',
+      },
+      validate: (value: unknown, { data }: { data?: unknown }) => {
+        const selected = Array.isArray(value) ? value : value ? [value] : [];
+        const manual = (data as { mode?: string } | undefined)?.mode === 'manual';
+        if (selected.length > 12) return 'Choose at most 12 services.';
+        if (manual && (selected.length < 4 || selected.length > 12)) {
+          return 'Choose 4 to 12 services when picking manually.';
+        }
+        return true;
+      },
+    },
+  ],
+};
+
 export const whyChoose: Block = {
   slug: 'whyChoose',
   fields: [
@@ -316,6 +360,7 @@ const hiddenField: Field = {
 export const BLOCKS: Block[] = [
   hero,
   trustStrip,
+  servicesGrid,
   whyChoose,
   ourDifference,
   howItWorks,
@@ -332,7 +377,6 @@ export const BLOCKS: Block[] = [
 
 /** Blocks in docs/CONTENT.md §6 that wait on CP-5 collections. */
 export const DEFERRED_BLOCK_SLUGS = [
-  'servicesGrid',
   'featureSpotlight',
   'pricingGuide',
   'areasServed',

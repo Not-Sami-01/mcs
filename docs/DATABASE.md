@@ -55,7 +55,7 @@ Auth (two-factor, implemented CP-2.2, ADR-008):
 `title`, `slug`, `category` (relation, optional), `path` (computed, unique), `template` (`standard`, `landing`, `legal`, `form`), `isLegal` (boolean, Super Admin publish only), `layout` (blocks, 1–30), `seo` group, `noindex`, `publishedAt`. Drafts, versions, scheduled publish, trash.
 
 ### `services`
-`title`, `slug`, `category`, `icon`, `shortDescription` (`cardBody`), `heroImage`, `signs[]` (3–10), `treatmentSteps[]` (3–8: title, body), `productsUsed` (relation to products, max 6), `startingPrice` (rupees, optional), `priceUnit`, `areasServed` (relation to locations), `faqs[]` (3–8), `layout` (optional extra blocks), `seo`, `order`. Drafts, trash.
+`title`, `slug`, `category`, `icon`, `shortDescription` (`cardBody`), `heroImage`, `signs[]` (3–10), `treatmentSteps[]` (3–8: title, body), `startingPrice` (rupees, optional), `priceUnit`, `faqs[]` (3–8), `layout` (optional extra blocks, 0–30; no hero or services grid), `seo`, `order`. Drafts, versions, scheduled publish, trash. **Deferred:** `productsUsed` (relation to products, max 6) lands with CP-5.3 and `areasServed` (relation to locations) with CP-5.2; Payload cannot register a relation to a collection that does not exist.
 
 ### `locations` (nested)
 `name`, `slug`, `type` (`city`, `area`), `parent` (city for an area), `intro`, `localNotes` (400–1,500 characters), `neighbourhoods[]` (min 3), `commonPests[]` (min 2), `servicesAvailable` (relation), `faqs[]` (min 3), `nearbyAreas` (relation), `geo` (latitude, longitude, optional), `seo`. Publish gates in `docs/CONTENT.md` section 7.4. Similarity check hook compares `localNotes` with siblings.

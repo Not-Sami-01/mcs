@@ -1,4 +1,4 @@
-import { PAGES_TAG, SITE_CHROME_TAG } from './cache-tags';
+import { PAGES_TAG, SERVICES_TAG, SITE_CHROME_TAG } from './cache-tags';
 
 /**
  * Invalidate the public caches from Payload hooks.
@@ -12,6 +12,15 @@ export async function revalidatePages(): Promise<void> {
   try {
     const { revalidateTag } = await import('next/cache');
     revalidateTag(PAGES_TAG, 'max');
+  } catch {
+    // Outside a Next request (CLI/tests) there is nothing to invalidate.
+  }
+}
+
+export async function revalidateServices(): Promise<void> {
+  try {
+    const { revalidateTag } = await import('next/cache');
+    revalidateTag(SERVICES_TAG, 'max');
   } catch {
     // Outside a Next request (CLI/tests) there is nothing to invalidate.
   }

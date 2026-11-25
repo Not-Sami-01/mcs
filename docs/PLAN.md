@@ -191,8 +191,9 @@
 ## Phase 5 — Services, locations, products, blog
 
 ### CP-5.1 — Services
-- [ ] `services` collection and detail template: signs, treatment steps, products used, starting price, areas served, FAQs
-- [ ] Services index and grid block (auto and manual)
+- [x] `services` collection and detail template: signs, treatment steps, products used, starting price, areas served, FAQs (2026-11-26; title, slug, category, icon, short description, hero image, 3–10 signs, 3–8 treatment steps, 3–8 FAQs, optional price + unit, optional extra blocks, SEO, order; drafts + scheduled publish + trash. **`productsUsed` and `areasServed` deferred** until the products (CP-5.3) and locations (CP-5.2) collections exist — Payload rejects relations to unregistered collections)
+- [x] Services index and grid block (auto and manual) (2026-11-26; `/services` lists published services; `servicesGrid` renders auto or a 4–12 manual pick, drops unpublished ids, and renders nothing when empty. `/services/[slug]` is SSG with per-service metadata and a not-found 404)
+- **Exit:** a published service is reachable at `/services/[slug]`; drafts stay 404 (2026-11-26; integration test proves draft invisibility, publish, list order and stable published content, plus role denial and list-minimum rejection; live smoke returned 200/200/404)
 - **Commit:** `checkpoint(CP-5.1): services collection and pages`
 
 ### CP-5.2 — Locations

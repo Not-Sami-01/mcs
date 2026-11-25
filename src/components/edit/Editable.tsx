@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 
 import { saveDraftAction } from '@/app/(edit)/actions/save-draft';
 import type { EditNode } from '@/edit/registry';
@@ -43,13 +43,15 @@ export function Editable({
   // Keep the newest saved timestamp here, not only inside the drawer: closing
   // and reopening a box must not fall back to the page-load version.
   const [version, setVersion] = useState<string | null>(expectedUpdatedAt);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [lastProp, setLastProp] = useState<string | null>(expectedUpdatedAt);
   // A server refresh (for example after a block toolbar action) brings a new
-  // base version; adopt it unless the box is carrying a newer local save.
-  useEffect(() => {
+  // base version. Adjust during render instead of an effect so the box never
+  // opens with a stale timestamp.
+  if (expectedUpdatedAt !== lastProp) {
+    setLastProp(expectedUpdatedAt);
     setVersion(expectedUpdatedAt);
-  }, [expectedUpdatedAt]);
-
+  }
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const editLabel = messages.edit.editSection.replace('{label}', label);
 
   function close() {

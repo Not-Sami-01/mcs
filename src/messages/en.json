@@ -45,7 +45,23 @@
     "contactPhone": "Phone",
     "contactEmail": "Email",
     "contactAddress": "Address",
-    "contactHours": "Working hours"
+    "contactHours": "Working hours",
+    "learnMore": "Learn more",
+    "servicesGridLabel": "Services"
+  },
+  "servicesPage": {
+    "indexTitle": "Services",
+    "indexIntro": "Choose a service to see the signs, treatment steps and questions we hear most.",
+    "indexEmpty": "Services are being prepared. Please check back soon.",
+    "signs": "Signs of an infestation",
+    "treatmentSteps": "How we treat it",
+    "startingPrice": "Starting price",
+    "fromPrice": "From Rs {price}",
+    "faqs": "Questions about this service",
+    "ctaTitle": "Book an inspection",
+    "ctaBody": "Tell us what you are seeing and we will inspect the property.",
+    "notFoundTitle": "Service not found",
+    "notFoundBody": "This service may have moved, or it is not published yet."
   },
   "edit": {
     "staffBar": "Editing tools",

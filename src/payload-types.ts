@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     categories: Category;
     pages: Page;
+    services: Service;
     'audit-logs': AuditLog;
     'totp-rate-limits': TotpRateLimit;
     'payload-kv': PayloadKv;
@@ -85,6 +86,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'totp-rate-limits': TotpRateLimitsSelect<false> | TotpRateLimitsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -363,6 +365,473 @@ export interface Page {
             blockName?: string | null;
             blockType: 'hero';
           }
+        | {
+            items?:
+              | {
+                  /**
+                   * Max 12 characters.
+                   */
+                  statValue: string;
+                  /**
+                   * Max 40 characters.
+                   */
+                  statLabel: string;
+                  /**
+                   * Internal note: where this number comes from. Never rendered.
+                   */
+                  proofNote: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'trustStrip';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Max 400 characters.
+             */
+            intro?: string | null;
+            mode: 'auto' | 'manual';
+            /**
+             * Pick 4 to 12 services. Cards follow this order.
+             */
+            services?: (number | Service)[] | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesGrid';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            items?:
+              | {
+                  /**
+                   * Max 80 characters.
+                   */
+                  icon: string;
+                  /**
+                   * Max 60 characters.
+                   */
+                  cardTitle: string;
+                  /**
+                   * Max 160 characters.
+                   */
+                  cardBody: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whyChoose';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Max 400 characters.
+             */
+            shortParagraph: string;
+            points?:
+              | {
+                  /**
+                   * Max 100 characters.
+                   */
+                  point: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Internal note: what proves this. Never rendered.
+             */
+            proofNote: string;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ourDifference';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            steps?:
+              | {
+                  /**
+                   * Max 60 characters.
+                   */
+                  cardTitle: string;
+                  /**
+                   * Max 160 characters.
+                   */
+                  cardBody: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howItWorks';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Max 400 characters.
+             */
+            shortParagraph: string;
+            highlights?:
+              | {
+                  /**
+                   * Max 100 characters.
+                   */
+                  highlight: string;
+                  id?: string | null;
+                }[]
+              | null;
+            link: {
+              /**
+               * Max 24 characters.
+               */
+              label: string;
+              kind: 'call' | 'whatsapp' | 'inspection' | 'link';
+              /**
+               * Max 200 characters.
+               */
+              href: string;
+            };
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'warrantyPromise';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            items?:
+              | {
+                  /**
+                   * Max 60 characters.
+                   */
+                  title: string;
+                  /**
+                   * Max 160 characters.
+                   */
+                  cardBody: string;
+                  link: {
+                    /**
+                     * Max 24 characters.
+                     */
+                    label: string;
+                    kind: 'call' | 'whatsapp' | 'inspection' | 'link';
+                    /**
+                     * Max 200 characters.
+                     */
+                    href: string;
+                  };
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'whoWeServe';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            pairs?:
+              | {
+                  before: number | Media;
+                  after: number | Media;
+                  /**
+                   * Max 100 characters.
+                   */
+                  caption?: string | null;
+                  /**
+                   * Max 100 characters.
+                   */
+                  area?: string | null;
+                  consentConfirmed: boolean;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'beforeAfter';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            items?:
+              | {
+                  image: number | Media;
+                  /**
+                   * Max 60 characters.
+                   */
+                  title: string;
+                  /**
+                   * Max 60 characters.
+                   */
+                  issuer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'certificates';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Form fields themselves are fixed (docs/CONTENT.md §6).
+             */
+            shortParagraph: string;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'inspectionForm';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            items?:
+              | {
+                  /**
+                   * Max 120 characters.
+                   */
+                  question: string;
+                  /**
+                   * Max 600 characters.
+                   */
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faq';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Max 160 characters.
+             */
+            cardBody: string;
+            buttons?:
+              | {
+                  /**
+                   * Max 24 characters.
+                   */
+                  label: string;
+                  kind: 'call' | 'whatsapp' | 'inspection' | 'link';
+                  /**
+                   * Max 200 characters.
+                   */
+                  href: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            paragraphs?:
+              | {
+                  /**
+                   * Max 600 characters.
+                   */
+                  paragraph: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'textBlocks';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contactDetails';
+          }
+      )[]
+    | null;
+  seo?: {
+    /**
+     * Max 60 characters.
+     */
+    metaTitle?: string | null;
+    /**
+     * Max 160 characters.
+     */
+    metaDescription?: string | null;
+  };
+  noindex?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  /**
+   * Max 80 characters.
+   */
+  title: string;
+  /**
+   * Lowercase letters, numbers and hyphens. Used in the URL.
+   */
+  slug: string;
+  /**
+   * Optional. Used for grouping in the admin panel.
+   */
+  category?: (number | null) | Category;
+  /**
+   * Optional icon name used by cards, for example "termite".
+   */
+  icon?: string | null;
+  /**
+   * One or two lines for cards and the service hero.
+   */
+  shortDescription: string;
+  heroImage?: (number | null) | Media;
+  signs?:
+    | {
+        /**
+         * Max 100 characters.
+         */
+        sign: string;
+        id?: string | null;
+      }[]
+    | null;
+  treatmentSteps?:
+    | {
+        /**
+         * Max 60 characters.
+         */
+        title: string;
+        /**
+         * Max 600 characters.
+         */
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Whole rupees. Leave empty when the client has not confirmed a price.
+   */
+  startingPrice?: number | null;
+  /**
+   * For example "per room" or "per inspection".
+   */
+  priceUnit?: string | null;
+  faqs?:
+    | {
+        /**
+         * Max 120 characters.
+         */
+        question: string;
+        /**
+         * Max 600 characters.
+         */
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. The service content above is always shown first.
+   */
+  layout?:
+    | (
         | {
             items?:
               | {
@@ -726,8 +1195,10 @@ export interface Page {
      */
     metaDescription?: string | null;
   };
-  noindex?: boolean | null;
-  publishedAt?: string | null;
+  /**
+   * Lower numbers appear first in automatic lists.
+   */
+  order?: number | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -927,6 +1398,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
       } | null)
     | ({
         relationTo: 'audit-logs';
@@ -1164,6 +1639,17 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        servicesGrid?:
+          | T
+          | {
+              headline?: T;
+              intro?: T;
+              mode?: T;
+              services?: T;
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
         whyChoose?:
           | T
           | {
@@ -1361,6 +1847,258 @@ export interface PagesSelect<T extends boolean = true> {
       };
   noindex?: T;
   publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  category?: T;
+  icon?: T;
+  shortDescription?: T;
+  heroImage?: T;
+  signs?:
+    | T
+    | {
+        sign?: T;
+        id?: T;
+      };
+  treatmentSteps?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  startingPrice?: T;
+  priceUnit?: T;
+  faqs?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  layout?:
+    | T
+    | {
+        trustStrip?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    statValue?: T;
+                    statLabel?: T;
+                    proofNote?: T;
+                    id?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whyChoose?:
+          | T
+          | {
+              headline?: T;
+              items?:
+                | T
+                | {
+                    icon?: T;
+                    cardTitle?: T;
+                    cardBody?: T;
+                    id?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ourDifference?:
+          | T
+          | {
+              headline?: T;
+              shortParagraph?: T;
+              points?:
+                | T
+                | {
+                    point?: T;
+                    id?: T;
+                  };
+              proofNote?: T;
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        howItWorks?:
+          | T
+          | {
+              headline?: T;
+              steps?:
+                | T
+                | {
+                    cardTitle?: T;
+                    cardBody?: T;
+                    id?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        warrantyPromise?:
+          | T
+          | {
+              headline?: T;
+              shortParagraph?: T;
+              highlights?:
+                | T
+                | {
+                    highlight?: T;
+                    id?: T;
+                  };
+              link?:
+                | T
+                | {
+                    label?: T;
+                    kind?: T;
+                    href?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        whoWeServe?:
+          | T
+          | {
+              headline?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    cardBody?: T;
+                    link?:
+                      | T
+                      | {
+                          label?: T;
+                          kind?: T;
+                          href?: T;
+                        };
+                    id?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        beforeAfter?:
+          | T
+          | {
+              headline?: T;
+              pairs?:
+                | T
+                | {
+                    before?: T;
+                    after?: T;
+                    caption?: T;
+                    area?: T;
+                    consentConfirmed?: T;
+                    id?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        certificates?:
+          | T
+          | {
+              headline?: T;
+              items?:
+                | T
+                | {
+                    image?: T;
+                    title?: T;
+                    issuer?: T;
+                    id?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        inspectionForm?:
+          | T
+          | {
+              headline?: T;
+              shortParagraph?: T;
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faq?:
+          | T
+          | {
+              headline?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              headline?: T;
+              cardBody?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    kind?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        textBlocks?:
+          | T
+          | {
+              headline?: T;
+              paragraphs?:
+                | T
+                | {
+                    paragraph?: T;
+                    id?: T;
+                  };
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactDetails?:
+          | T
+          | {
+              headline?: T;
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -1735,10 +2473,15 @@ export interface TaskSchedulePublish {
   input: {
     type?: ('publish' | 'unpublish') | null;
     locale?: string | null;
-    doc?: {
-      relationTo: 'pages';
-      value: number | Page;
-    } | null;
+    doc?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'services';
+          value: number | Service;
+        } | null);
     global?: string | null;
     user?: {
       relationTo: 'users';
