@@ -7,5 +7,6 @@
  */
 export const PAGES_TAG = 'pages';
 export const SERVICES_TAG = 'services';
+export const LOCATIONS_TAG = 'locations';
 export const SITE_CHROME_TAG = 'site-chrome';
 export const CACHE_SECONDS = 300;

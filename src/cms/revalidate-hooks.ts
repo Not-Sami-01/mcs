@@ -4,7 +4,12 @@ import type {
   GlobalAfterChangeHook,
 } from 'payload';
 
-import { revalidatePages, revalidateServices, revalidateSiteChrome } from './revalidate';
+import {
+  revalidateLocations,
+  revalidatePages,
+  revalidateServices,
+  revalidateSiteChrome,
+} from './revalidate';
 
 /**
  * Cache-invalidation hooks (CP-3.2). Pages, categories and media all change
@@ -32,6 +37,20 @@ export const revalidateServicesAfterChange: CollectionAfterChangeHook = async ()
 export const revalidateServicesAfterDelete: CollectionAfterDeleteHook = async () => {
   await revalidateServices();
   await revalidatePages();
+};
+
+/**
+ * A location change affects its own pages and every service page that lists
+ * areas served, so the services tag is cleared too.
+ */
+export const revalidateLocationsAfterChange: CollectionAfterChangeHook = async () => {
+  await revalidateLocations();
+  await revalidateServices();
+};
+
+export const revalidateLocationsAfterDelete: CollectionAfterDeleteHook = async () => {
+  await revalidateLocations();
+  await revalidateServices();
 };
 
 export const revalidateChromeAfterChange: GlobalAfterChangeHook = async () => {

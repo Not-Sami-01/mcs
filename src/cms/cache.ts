@@ -1,6 +1,20 @@
 import { unstable_cache } from 'next/cache';
 
-import { CACHE_SECONDS, PAGES_TAG, SERVICES_TAG, SITE_CHROME_TAG } from './cache-tags';
+import {
+  CACHE_SECONDS,
+  LOCATIONS_TAG,
+  PAGES_TAG,
+  SERVICES_TAG,
+  SITE_CHROME_TAG,
+} from './cache-tags';
+import {
+  findPublishedArea,
+  findPublishedCityBySlug,
+  listPublishedAreaParams,
+  listPublishedAreasInCity,
+  listPublishedCities,
+  listPublishedCitySlugs,
+} from './locations';
 import { findPublishedPage, listPublishedPagePaths } from './pages';
 import {
   findPublishedServiceBySlug,
@@ -45,6 +59,39 @@ export const getCachedPublishedServiceSlugs = unstable_cache(
   listPublishedServiceSlugs,
   ['published-service-slugs'],
   { tags: [SERVICES_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedPublishedCities = unstable_cache(listPublishedCities, ['published-cities'], {
+  tags: [LOCATIONS_TAG],
+  revalidate: CACHE_SECONDS,
+});
+
+export const getCachedCityBySlug = unstable_cache(findPublishedCityBySlug, ['published-city'], {
+  tags: [LOCATIONS_TAG],
+  revalidate: CACHE_SECONDS,
+});
+
+export const getCachedPublishedAreasInCity = unstable_cache(
+  listPublishedAreasInCity,
+  ['published-areas-in-city'],
+  { tags: [LOCATIONS_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedArea = unstable_cache(findPublishedArea, ['published-area'], {
+  tags: [LOCATIONS_TAG],
+  revalidate: CACHE_SECONDS,
+});
+
+export const getCachedPublishedCitySlugs = unstable_cache(
+  listPublishedCitySlugs,
+  ['published-city-slugs'],
+  { tags: [LOCATIONS_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedPublishedAreaParams = unstable_cache(
+  listPublishedAreaParams,
+  ['published-area-params'],
+  { tags: [LOCATIONS_TAG], revalidate: CACHE_SECONDS },
 );
 
 export const getCachedSiteChrome = unstable_cache(loadSiteChrome, ['site-chrome'], {

@@ -197,8 +197,8 @@
 - **Commit:** `checkpoint(CP-5.1): services collection and pages`
 
 ### CP-5.2 — Locations
-- [ ] `locations` (city, area, nested), unique-local-content publish gate, similarity warning
-- [ ] City and area routes; optional city × service pages
+- [x] `locations` (city, area, nested), unique-local-content publish gate, similarity warning (2026-11-26; city/area tree with a parent-city rule, publish gate on 400+ characters of local notes, 3 neighbourhoods, 2 pests, 1 service and 3 FAQs; 60% similarity writes a sidebar warning and 80% refuses the publish. `.drafts`, scheduled publish and trash on)
+- [x] City and area routes; optional city × service pages (2026-11-26; `/locations` static index, `/locations/[city]` and `/locations/[city]/[area]` SSG with per-page metadata and a 404 for drafts; a city page lists its published areas. City × service pages come from the service's new `areasServed` relation, rendered on the service page and the location page's services list, so no separate route is needed)
 - **Commit:** `checkpoint(CP-5.2): locations with unique content gate`
 
 ### CP-5.3 — Products and pricing

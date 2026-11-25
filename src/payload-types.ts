@@ -72,6 +72,7 @@ export interface Config {
     categories: Category;
     pages: Page;
     services: Service;
+    locations: Location;
     'audit-logs': AuditLog;
     'totp-rate-limits': TotpRateLimit;
     'payload-kv': PayloadKv;
@@ -87,6 +88,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
+    locations: LocationsSelect<false> | LocationsSelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'totp-rate-limits': TotpRateLimitsSelect<false> | TotpRateLimitsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -814,6 +816,10 @@ export interface Service {
    * For example "per room" or "per inspection".
    */
   priceUnit?: string | null;
+  /**
+   * Optional. Published locations that appear on this service page.
+   */
+  areasServed?: (number | Location)[] | null;
   faqs?:
     | {
         /**
@@ -1205,6 +1211,107 @@ export interface Service {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations".
+ */
+export interface Location {
+  id: number;
+  /**
+   * Max 60 characters.
+   */
+  name: string;
+  /**
+   * Lowercase letters, numbers and hyphens. Used in the URL.
+   */
+  slug: string;
+  /**
+   * An area always belongs to one city.
+   */
+  type: 'city' | 'area';
+  /**
+   * Required for an area. Leave empty for a city.
+   */
+  parent?: (number | null) | Location;
+  /**
+   * One short paragraph for cards and the top of the page.
+   */
+  intro?: string | null;
+  /**
+   * Unique local content: at least 400 characters to publish.
+   */
+  localNotes?: string | null;
+  /**
+   * Set automatically by the unique-content check on save.
+   */
+  similarityWarning?: string | null;
+  /**
+   * At least 3 to publish.
+   */
+  neighbourhoods?:
+    | {
+        /**
+         * Max 100 characters.
+         */
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * At least 2 to publish.
+   */
+  commonPests?:
+    | {
+        /**
+         * Max 100 characters.
+         */
+        pest: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * At least 1 to publish.
+   */
+  servicesAvailable?: (number | Service)[] | null;
+  /**
+   * At least 3 to publish.
+   */
+  faqs?:
+    | {
+        /**
+         * Max 120 characters.
+         */
+        question: string;
+        /**
+         * Max 600 characters.
+         */
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  nearbyAreas?: (number | Location)[] | null;
+  /**
+   * Optional. Used for maps; never invented.
+   */
+  geo?: {
+    latitude?: number | null;
+    longitude?: number | null;
+  };
+  seo?: {
+    /**
+     * Max 60 characters.
+     */
+    metaTitle?: string | null;
+    /**
+     * Max 160 characters.
+     */
+    metaDescription?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * Read-only. Written automatically by the server; never edited.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1402,6 +1509,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'services';
         value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'locations';
+        value: number | Location;
       } | null)
     | ({
         relationTo: 'audit-logs';
@@ -1878,6 +1989,7 @@ export interface ServicesSelect<T extends boolean = true> {
       };
   startingPrice?: T;
   priceUnit?: T;
+  areasServed?: T;
   faqs?:
     | T
     | {
@@ -2099,6 +2211,56 @@ export interface ServicesSelect<T extends boolean = true> {
         metaDescription?: T;
       };
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations_select".
+ */
+export interface LocationsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  type?: T;
+  parent?: T;
+  intro?: T;
+  localNotes?: T;
+  similarityWarning?: T;
+  neighbourhoods?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  commonPests?:
+    | T
+    | {
+        pest?: T;
+        id?: T;
+      };
+  servicesAvailable?: T;
+  faqs?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  nearbyAreas?: T;
+  geo?:
+    | T
+    | {
+        latitude?: T;
+        longitude?: T;
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2481,6 +2643,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'services';
           value: number | Service;
+        } | null)
+      | ({
+          relationTo: 'locations';
+          value: number | Location;
         } | null);
     global?: string | null;
     user?: {

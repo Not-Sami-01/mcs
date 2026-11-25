@@ -4,6 +4,7 @@ import * as migration_20261120_114629_add_globals from './20261120_114629_add_gl
 import * as migration_20261123_105317 from './20261123_105317';
 import * as migration_20261124_070719 from './20261124_070719';
 import * as migration_20261125_214628_cp51_services from './20261125_214628_cp51_services';
+import * as migration_20261125_223245_cp52_locations from './20261125_223245_cp52_locations';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20261125_214628_cp51_services.up,
     down: migration_20261125_214628_cp51_services.down,
-    name: '20261125_214628_cp51_services'
+    name: '20261125_214628_cp51_services',
+  },
+  {
+    up: migration_20261125_223245_cp52_locations.up,
+    down: migration_20261125_223245_cp52_locations.down,
+    name: '20261125_223245_cp52_locations'
   },
 ];

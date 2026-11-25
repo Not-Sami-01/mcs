@@ -1,6 +1,8 @@
+import Link from 'next/link';
+
 import type { SiteChrome } from '@/cms/site-chrome';
 import { messages } from '@/messages';
-import type { Service } from '@/payload-types';
+import type { Location, Service } from '@/payload-types';
 
 import { BlockAction, resolveAction } from '../blocks/BlockAction';
 import { Faq } from '../blocks/Faq';
@@ -30,6 +32,9 @@ export function ServiceView({ service, chrome }: { service: Service; chrome: Sit
   const signs = service.signs ?? [];
   const steps = service.treatmentSteps ?? [];
   const faqs = service.faqs ?? [];
+  const areas = (service.areasServed ?? []).flatMap((entry) =>
+    typeof entry === 'object' && entry !== null && 'name' in entry ? [entry as Location] : [],
+  );
 
   return (
     <>
@@ -93,6 +98,33 @@ export function ServiceView({ service, chrome }: { service: Service; chrome: Sit
               </li>
             ))}
           </ol>
+        </Section>
+      ) : null}
+
+      {areas.length > 0 ? (
+        <Section tone="alt">
+          <SectionHeading>{messages.servicesPage.areasServed}</SectionHeading>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {areas.map((area) => {
+              const parent =
+                typeof area.parent === 'object' && area.parent !== null ? area.parent : null;
+              const href =
+                area.type === 'area' && parent?.slug
+                  ? `/locations/${parent.slug}/${area.slug}`
+                  : `/locations/${area.slug}`;
+
+              return (
+                <li key={area.id}>
+                  <Link
+                    href={href}
+                    className="inline-block rounded-full border border-line bg-surface px-4 py-2 text-sm text-ink transition-colors hover:border-brand-primary"
+                  >
+                    {area.name}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </Section>
       ) : null}
 

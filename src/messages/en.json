@@ -58,10 +58,27 @@
     "startingPrice": "Starting price",
     "fromPrice": "From Rs {price}",
     "faqs": "Questions about this service",
+    "areasServed": "Areas we serve for this service",
     "ctaTitle": "Book an inspection",
     "ctaBody": "Tell us what you are seeing and we will inspect the property.",
     "notFoundTitle": "Service not found",
     "notFoundBody": "This service may have moved, or it is not published yet."
+  },
+  "locationsPage": {
+    "indexTitle": "Areas we serve",
+    "indexIntro": "Choose a city to see the areas we cover and the local problems we treat.",
+    "indexEmpty": "Locations are being prepared. Please check back soon.",
+    "breadcrumb": "Location",
+    "neighbourhoods": "Neighbourhoods and landmarks",
+    "commonPests": "Common pests in this area",
+    "areasInCity": "Areas in this city",
+    "servicesAvailable": "Services available here",
+    "faqs": "Local questions",
+    "nearbyAreas": "Nearby areas",
+    "ctaTitle": "Pest control in {place}",
+    "ctaBody": "Tell us what you are seeing and we will inspect the property.",
+    "notFoundTitle": "Location not found",
+    "notFoundBody": "This location may have moved, or it is not published yet."
   },
   "edit": {
     "staffBar": "Editing tools",
