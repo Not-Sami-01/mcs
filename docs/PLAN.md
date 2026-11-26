@@ -123,7 +123,7 @@
 - **Commit:** `checkpoint(CP-2.2): two-factor login with recovery codes`
 
 ### CP-2.3 — Audit log and role tests
-- [~] `audit-logs` collection written by hooks (login, failed login, 2FA events, user changes, publish, delete, price change, export) (2026-11-24; create-only collection, Super Admin read, salted IP hash, no personal data. Login, failed login, 2FA setup/verify/recovery/re-enrol/lockout, user create/update/delete, publish/unpublish and delete are wired and tested. **Missing:** `price_change` and `export` actions exist in the schema but have no source yet — wire them with products/CSV in CP-5.3/CP-5.4. Failed-login detection runs on REST/GraphQL `afterError`; Local API login errors do not fire that hook)
+- [x] `audit-logs` collection written by hooks (login, failed login, 2FA events, user changes, publish, delete, price change, export) (2026-11-24, completed CP-5.4 2026-11-26; create-only collection, Super Admin read, salted IP hash, no personal data. Login, failed login, 2FA setup/verify/recovery/re-enrol/lockout, user create/update/delete, publish/unpublish, delete, `price_change` (products and CSV saves) and `export` (product CSV) are all wired and tested. Failed-login detection runs on REST/GraphQL `afterError`; Local API login errors do not fire that hook)
 - [x] Access test matrix generated from `docs/DATABASE.md` roles table: every role against every collection and operation (2026-11-24; `src/access/matrix.test.ts` parses §4 and covers all implemented collections, globals and anonymous reads)
 - **Exit:** role tests pass; audit entries appear for the listed events (2026-11-24; 116/116 tests, audit integration 4/4, matrix 13/13; price/export deferred as noted)
 - **Commit:** `checkpoint(CP-2.3): audit log and role access tests`
@@ -209,8 +209,8 @@
 - **Commit:** `checkpoint(CP-5.3): products, pricing function and price history`
 
 ### CP-5.4 — Product CSV import and export
-- [ ] Export; import with dry-run preview, row-level errors, size caps, role check, history entries
-- [ ] Evaluate the official import-export plugin first; build custom only if it cannot meet the rules
+- [x] Export; import with dry-run preview, row-level errors, size caps, role check, history entries (2026-11-26; `/api/staff/products/export` and `/api/staff/products/import`, one row per pack grouped by slug. Super Admin/Product Manager only, enrolled accounts must have completed 2FA, browser requests must be same-origin. Caps 1 MB / 500 rows; dry-run writes nothing; commit applies only when every row is valid (fail closed). Export is formula-injection safe and writes an `export` audit entry; imports record `price-history` with `source: csv` and one `price_change` audit entry per save. 20 new tests: parser/serialiser 7, planner/export 10, apply integration 3)
+- [x] Evaluate the official import-export plugin first; build custom only if it cannot meet the rules (2026-11-26; `@payloadcms/plugin-import-export` v3.94.1 evaluated. Its preview is field mapping, not a synchronous row-level dry run; imports write in job batches; it adds S3-backed `exports`/`imports` upload collections. ADR-017 records the custom decision)
 - **Commit:** `checkpoint(CP-5.4): product CSV import and export`
 
 ### CP-5.5 — Blog (Pest Library) and reviews

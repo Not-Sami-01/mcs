@@ -74,7 +74,7 @@ Auth (two-factor, implemented CP-2.2, ADR-008):
 Access: Super Admin and Product Manager write; Editor and Sales and Support read; the public reads published products only. Drafts, versions, scheduled publish and trash are on. Hooks: validate the discount on every save (percent 1–90, fixed positive and lower than the cheapest pack rate, end date on or after the start date); write `price-history` and one `price_change` audit entry when a **published** save changes a rate or the discount (draft edits are recorded when published).
 
 ### `price-history` (create-only, implemented CP-5.3)
-`product` (required), `packSku` (the SKU, or the pack label when no SKU), `oldRate` (empty for an opening price), `newRate`, `oldDiscount` (json), `newDiscount` (json), `changedBy`, `changedAt`, `source` (`admin`, `inline`, `csv`). No HTTP caller may create, update or delete an entry; the products hook writes them with `overrideAccess: true`. Super Admin and Product Manager read.
+`product` (required), `packSku` (the SKU, or the pack label when no SKU), `oldRate` (empty for an opening price), `newRate`, `oldDiscount` (json), `newDiscount` (json), `changedBy`, `changedAt`, `source` (`admin`, `inline`, `csv`). No HTTP caller may create, update or delete an entry; the products hook writes them with `overrideAccess: true`. Super Admin and Product Manager read. CSV imports pass `priceHistorySource: csv` through the request context, so those rows are marked `csv`; admin and inline saves are `admin`.
 
 ### `posts` (Pest Library)
 `title`, `slug`, `excerpt`, `coverImage`, `category`, `body` (restricted Lexical, cap `postBody`), `author` (relation to users, display name), `relatedServices`, `relatedLocations`, `publishedAt`, `seo`. Drafts, trash.
@@ -118,7 +118,7 @@ Payload upload collection on the Filebase **public** bucket: `alt` (required, `a
 | `ipHash` | Salted HMAC of the request address (`IP_HASH_SALT`); absent when no request or salt |
 | `createdAt` | Automatic |
 
-Access: **no HTTP writes at all** (`create`, `update`, `delete` return false); wrote only by server hooks with `overrideAccess: true`. Read: Super Admin only. Hooks live in `src/audit/hooks.ts`; the TOTP plugin reports through `onAuditEvent` (`src/audit/log.ts`). `price_change` is written by the products hook (CP-5.3); `export` arrives with CSV (CP-5.4).
+Access: **no HTTP writes at all** (`create`, `update`, `delete` return false); wrote only by server hooks with `overrideAccess: true`. Read: Super Admin only. Hooks live in `src/audit/hooks.ts`; the TOTP plugin reports through `onAuditEvent` (`src/audit/log.ts`). `price_change` is written by the products hook (CP-5.3) and `export` by the product CSV export route (CP-5.4).
 
 ### `rate_limits` (internal table, ADR-009)
 `key`, `windowStart`, `count`. Cleaned by a scheduled job.

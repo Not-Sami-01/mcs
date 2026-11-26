@@ -92,6 +92,13 @@ Request (JSON):
 | `/api/staff/products/import` | POST | Super Admin, Product Manager | `?mode=dry-run` returns row-level results; `?mode=commit` applies. Size and row caps. Writes `price-history` |
 | `/api/staff/redirects/import` | POST | Super Admin | CSV of `from,to,type` with validation and loop detection |
 
+Product CSV (CP-5.4, `src/csv/`):
+
+- **Format:** one row per pack, grouped by `slug`. Columns: `slug, title, pack_label, pack_sku, rate, stock_status, discount_type, discount_value, discount_starts, discount_ends, featured, status`. Discount and product settings repeat on every row of one product and must agree; `title` is required only for a new slug.
+- **Export:** every product, one row per pack, `text/csv` attachment. Every cell is formula-injection safe (`=`, `+`, `-`, `@` prefixed with `'`). The export writes an `export` audit entry.
+- **Import:** `mode=dry-run` (default) validates and returns `{ ok, valid, totalRows, creates, updates, rows[] }` with one entry per row (`row`, `slug`, `packLabel`, `action`, `errors`); nothing is written. `mode=commit` applies only when **every** row is valid — one bad row returns `422` with the same row results and writes nothing. Caps: 1 MB and 500 rows (`413`). Matching is by `slug`, so a price-list import updates products instead of duplicating them; published products stay published unless the file sets `status`, and the products hook records `price-history` with `source: csv` plus one `price_change` audit entry per save.
+- **Errors:** `400` bad mode, `401` signed out, `403` wrong role, cross-origin request or second factor not completed, `413` too large, `422` invalid CSV or rows.
+
 There is **no public revalidation endpoint**. Content hooks call `revalidateTag` directly.
 
 ---

@@ -1,6 +1,6 @@
 import { getPayload, type Payload } from 'payload';
 
-import { hasAnyRole } from '@/access/roles';
+import { hasAnyRole, type UserRole } from '@/access/roles';
 
 /**
  * Server-side staff check shared by the edit route and every edit action
@@ -35,7 +35,10 @@ function jwtIssuedAt(token: string | null): number | undefined {
   }
 }
 
-export async function getEditSession(requestHeaders: Headers): Promise<EditSession> {
+export async function getRoleSession(
+  requestHeaders: Headers,
+  roles: readonly UserRole[],
+): Promise<EditSession> {
   // Imported lazily so rendering paths and unit tests that only reach this
   // module do not load the full Payload config (and its admin CSS bundle).
   const { default: config } = await import('@payload-config');
@@ -49,7 +52,7 @@ export async function getEditSession(requestHeaders: Headers): Promise<EditSessi
   const { user } = await payload.auth({ headers: requestHeaders });
 
   if (!user) return { status: 'anonymous' };
-  if (!hasAnyRole(user, ['super-admin', 'editor'])) return { status: 'forbidden' };
+  if (!hasAnyRole(user, roles)) return { status: 'forbidden' };
 
   const cookieHeader = requestHeaders.get('cookie');
   const redirectTo = getTOTPRedirectPath({
@@ -68,4 +71,9 @@ export async function getEditSession(requestHeaders: Headers): Promise<EditSessi
     payload,
     user: user as Extract<EditSession, { status: 'ok' }>['user'],
   };
+}
+
+/** The edit UI and its server actions allow Editor and Super Admin only. */
+export function getEditSession(requestHeaders: Headers): Promise<EditSession> {
+  return getRoleSession(requestHeaders, ['super-admin', 'editor']);
 }

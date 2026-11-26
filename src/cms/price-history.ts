@@ -54,6 +54,7 @@ export async function recordPriceChanges({
   const oldPacks = previousDoc?.packSizes ?? [];
   const oldByKey = new Map(oldPacks.map((pack, index) => [packKey(pack, index), pack]));
 
+  const source = req.context?.priceHistorySource === 'csv' ? ('csv' as const) : ('admin' as const);
   const oldDiscount = discountSnapshot(previousDoc?.discount);
   const newDiscount = discountSnapshot(doc.discount);
   const discountChanged = JSON.stringify(oldDiscount) !== JSON.stringify(newDiscount);
@@ -73,7 +74,7 @@ export async function recordPriceChanges({
         newDiscount,
         changedBy: req.user?.id ?? null,
         changedAt: new Date().toISOString(),
-        source: 'admin' as const,
+        source,
       },
     ];
   });

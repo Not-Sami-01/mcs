@@ -106,6 +106,12 @@
 - **Why:** Filebase direct is edge-cached, has no egress fee and needs no server of ours (probe: signed GET 200; anonymous 403 only because the bucket is still private — Q13). The Payload route works today with a private bucket but streams every hit through a serverless function and sends no `Cache-Control`. The Next optimizer rejects Payload's `?prefix=` URLs under Next 16's default `localPatterns` (400; gotcha 23) and would be metered on Vercel (ADR-012). Cloudflare has no domain to sit in front of yet (Q9), and Filebase already caches public buckets.
 - **Consequences:** `FILEBASE_PUBLIC_BASE_URL` stays empty until the bucket is public; when set to `https://vaultifier.s3.filebase.io`, the per-collection `generateFileURL` in `src/payload.config.ts` rewrites media and size URLs on read — an env-only flip, no re-upload. Upload keeps generating fixed variants (WebP + AVIF), so responsive images work without an optimizer. Revisit if on-demand widths, observed Filebase latency, or an actual domain change the picture.
 
+### ADR-017 — Custom product CSV instead of the import-export plugin
+- **Status:** Accepted (CP-5.4, 2026-11-26)
+- **Decision:** Product export and import live in two small staff routes (`/api/staff/products/export`, `/api/staff/products/import`) backed by `src/csv/`, not `@payloadcms/plugin-import-export`.
+- **Why:** the official plugin (v3.94.1, out of beta) was evaluated first. Its "preview" is a field-mapping screen, not a synchronous dry run with row-level validation results; imports run through the jobs queue and write as batches complete; and it registers its own S3-backed `exports`/`imports` upload collections. CP-5.4 needs a dry run that writes nothing, per-row errors, hard byte/row caps, a role check on the route and an audited export. One row per pack is a small, well-understood format, so roughly 300 lines of tested code meet the contract without extra collections or an admin-only workflow.
+- **Consequences:** the custom routes fail closed — any invalid row rejects the whole file, so half a price list is never applied. Revisit if staff need an in-admin CSV screen, JSON import, or asynchronous files beyond the 1 MB / 500 row caps. `price-history.source = csv` is set through the request context by the import; admin and inline saves keep `admin`.
+
 ---
 
 ## Part B. Open questions for management
