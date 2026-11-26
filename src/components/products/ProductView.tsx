@@ -72,8 +72,8 @@ export function ProductView({ product, chrome }: { product: Product; chrome: Sit
   return (
     <>
       <Section>
-        <div className="grid gap-8 md:grid-cols-2">
-          <div className="grid gap-3">
+        <div className="grid gap-10 md:grid-cols-2 md:items-start">
+          <div className="grid gap-3 overflow-hidden rounded-[1.5rem] border border-line bg-surface-alt">
             {images.map((image, index) => (
               <SiteImage
                 key={image.id ?? index}
@@ -86,7 +86,10 @@ export function ProductView({ product, chrome }: { product: Product; chrome: Sit
           </div>
 
           <div>
-            <h1 className="content-text text-3xl font-semibold tracking-tight text-ink md:text-4xl">
+            <p className="text-xs font-semibold tracking-[0.14em] text-brand-primary uppercase">
+              Product
+            </p>
+            <h1 className="content-text mt-3 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
               {product.title}
             </h1>
             {fromPrice !== null && packs.length > 1 ? (

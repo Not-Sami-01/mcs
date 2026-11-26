@@ -5,19 +5,24 @@ export function Faq({ block }: { block: BlockOf<'faq'> }) {
   return (
     <Section>
       <SectionHeading>{block.headline}</SectionHeading>
-      <div className="mt-8 max-w-3xl divide-y divide-line border-y border-line">
+      <div className="mt-10 max-w-3xl overflow-hidden rounded-[1.5rem] border border-line bg-surface">
         {(block.items ?? []).map((item, index) => (
-          <details key={item.id ?? `faq-${index}`} className="group py-2">
-            <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-4 py-2 text-base font-semibold text-ink">
+          <details
+            key={item.id ?? `faq-${index}`}
+            className="group border-b border-line px-5 last:border-b-0 md:px-7"
+          >
+            <summary className="flex min-h-14 cursor-pointer items-center justify-between gap-4 py-3 text-base font-semibold text-ink">
               <span className="content-text">{item.question}</span>
               <span
                 aria-hidden="true"
-                className="shrink-0 text-xl leading-none text-brand-primary group-open:rotate-45"
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-surface-alt text-lg leading-none text-brand-primary transition group-open:rotate-45 group-open:bg-brand-accent group-open:text-brand-accent-ink"
               >
                 +
               </span>
             </summary>
-            <p className="content-text pb-4 text-sm text-ink-muted">{item.answer}</p>
+            <p className="content-text pb-5 text-sm leading-relaxed text-ink-muted">
+              {item.answer}
+            </p>
           </details>
         ))}
       </div>

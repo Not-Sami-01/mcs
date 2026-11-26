@@ -116,6 +116,7 @@ describe('anonymous access (docs/DATABASE.md §4: published public reads only)',
     services: 'published',
     locations: 'published',
     products: 'published',
+    posts: 'published',
     'price-history': false,
     'audit-logs': false,
   };

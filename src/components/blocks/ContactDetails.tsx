@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import type { SiteChrome } from '@/cms/site-chrome';
 import { messages } from '@/messages';
 
@@ -14,51 +16,47 @@ export function ContactDetails({
 }) {
   const hasFacts = Boolean(chrome.phone || chrome.email || chrome.address || chrome.hours);
 
+  const rows = [
+    chrome.phone && {
+      label: messages.blocks.contactPhone,
+      value: (
+        <a href={chrome.phone.href} className="text-brand-primary hover:underline">
+          {chrome.phone.display}
+        </a>
+      ),
+    },
+    chrome.email && {
+      label: messages.blocks.contactEmail,
+      value: (
+        <a href={chrome.email.href} className="break-all text-brand-primary hover:underline">
+          {chrome.email.display}
+        </a>
+      ),
+    },
+    chrome.address && { label: messages.blocks.contactAddress, value: chrome.address },
+    chrome.hours && { label: messages.blocks.contactHours, value: chrome.hours },
+  ].filter(Boolean) as { label: string; value: ReactNode }[];
+
   return (
     <Section>
-      <SectionHeading>{block.headline}</SectionHeading>
+      <div className="grid gap-8 md:grid-cols-[0.7fr_1.3fr]">
+        <SectionHeading>{block.headline}</SectionHeading>
 
-      {hasFacts ? (
-        <dl className="mt-6 grid gap-4 text-sm sm:grid-cols-2">
-          {chrome.phone ? (
-            <div>
-              <dt className="font-semibold text-ink">{messages.blocks.contactPhone}</dt>
-              <dd className="mt-1">
-                <a href={chrome.phone.href} className="text-brand-primary hover:underline">
-                  {chrome.phone.display}
-                </a>
-              </dd>
-            </div>
-          ) : null}
-          {chrome.email ? (
-            <div>
-              <dt className="font-semibold text-ink">{messages.blocks.contactEmail}</dt>
-              <dd className="mt-1">
-                <a
-                  href={chrome.email.href}
-                  className="break-all text-brand-primary hover:underline"
-                >
-                  {chrome.email.display}
-                </a>
-              </dd>
-            </div>
-          ) : null}
-          {chrome.address ? (
-            <div>
-              <dt className="font-semibold text-ink">{messages.blocks.contactAddress}</dt>
-              <dd className="content-text mt-1 text-ink-muted">{chrome.address}</dd>
-            </div>
-          ) : null}
-          {chrome.hours ? (
-            <div>
-              <dt className="font-semibold text-ink">{messages.blocks.contactHours}</dt>
-              <dd className="content-text mt-1 text-ink-muted">{chrome.hours}</dd>
-            </div>
-          ) : null}
-        </dl>
-      ) : (
-        <p className="mt-4 text-sm text-ink-muted">{messages.blocks.contactEmpty}</p>
-      )}
+        {hasFacts ? (
+          <dl className="grid gap-4 sm:grid-cols-2">
+            {rows.map((row) => (
+              <div key={row.label} className="rounded-[1.25rem] border border-line bg-surface p-5">
+                <dt className="text-[11px] font-semibold tracking-[0.12em] text-ink-muted uppercase">
+                  {row.label}
+                </dt>
+                <dd className="content-text mt-2 text-sm font-medium text-ink">{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : (
+          <p className="text-sm text-ink-muted">{messages.blocks.contactEmpty}</p>
+        )}
+      </div>
     </Section>
   );
 }

@@ -1,6 +1,7 @@
 import {
   LOCATIONS_TAG,
   PAGES_TAG,
+  POSTS_TAG,
   PRODUCTS_TAG,
   SERVICES_TAG,
   SITE_CHROME_TAG,
@@ -45,6 +46,15 @@ export async function revalidateProducts(): Promise<void> {
   try {
     const { revalidateTag } = await import('next/cache');
     revalidateTag(PRODUCTS_TAG, 'max');
+  } catch {
+    // Outside a Next request (CLI/tests) there is nothing to invalidate.
+  }
+}
+
+export async function revalidatePosts(): Promise<void> {
+  try {
+    const { revalidateTag } = await import('next/cache');
+    revalidateTag(POSTS_TAG, 'max');
   } catch {
     // Outside a Next request (CLI/tests) there is nothing to invalidate.
   }

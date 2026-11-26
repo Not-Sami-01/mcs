@@ -14,17 +14,22 @@ export function WhoWeServe({
   return (
     <Section>
       <SectionHeading>{block.headline}</SectionHeading>
-      <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-10 grid gap-px overflow-hidden rounded-[1.5rem] border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
         {(block.items ?? []).map((item, index) => (
           <li
             key={item.id ?? `audience-${index}`}
-            className="flex h-full flex-col rounded-card border border-line bg-surface p-5"
+            className="group flex h-full flex-col bg-surface p-6 transition hover:bg-surface-alt"
           >
-            <h3 className="content-text line-clamp-2 text-lg font-semibold text-ink">
+            <span className="text-xs font-semibold tracking-[0.12em] text-brand-primary/70 uppercase">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h3 className="content-text mt-3 line-clamp-2 text-lg font-semibold text-ink">
               {item.title}
             </h3>
-            <p className="content-text mt-2 line-clamp-4 text-sm text-ink-muted">{item.cardBody}</p>
-            <div className="mt-auto pt-4">
+            <p className="content-text mt-2 line-clamp-4 text-sm leading-relaxed text-ink-muted">
+              {item.cardBody}
+            </p>
+            <div className="mt-auto pt-5">
               <BlockAction action={resolveAction(item.link, chrome)} variant="outline" />
             </div>
           </li>

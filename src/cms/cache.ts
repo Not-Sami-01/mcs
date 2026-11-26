@@ -4,6 +4,7 @@ import {
   CACHE_SECONDS,
   LOCATIONS_TAG,
   PAGES_TAG,
+  POSTS_TAG,
   PRODUCTS_TAG,
   SERVICES_TAG,
   SITE_CHROME_TAG,
@@ -17,6 +18,7 @@ import {
   listPublishedCitySlugs,
 } from './locations';
 import { findPublishedPage, listPublishedPagePaths } from './pages';
+import { findPublishedPostBySlug, listPublishedPostSlugs, listPublishedPosts } from './posts';
 import {
   findPublishedProductBySlug,
   listPublishedProductSlugs,
@@ -116,6 +118,22 @@ export const getCachedPublishedProductSlugs = unstable_cache(
   listPublishedProductSlugs,
   ['published-product-slugs'],
   { tags: [PRODUCTS_TAG], revalidate: CACHE_SECONDS },
+);
+
+export const getCachedPublishedPosts = unstable_cache(listPublishedPosts, ['published-posts'], {
+  tags: [POSTS_TAG],
+  revalidate: CACHE_SECONDS,
+});
+
+export const getCachedPostBySlug = unstable_cache(findPublishedPostBySlug, ['published-post'], {
+  tags: [POSTS_TAG],
+  revalidate: CACHE_SECONDS,
+});
+
+export const getCachedPublishedPostSlugs = unstable_cache(
+  listPublishedPostSlugs,
+  ['published-post-slugs'],
+  { tags: [POSTS_TAG], revalidate: CACHE_SECONDS },
 );
 
 export const getCachedSiteChrome = unstable_cache(loadSiteChrome, ['site-chrome'], {

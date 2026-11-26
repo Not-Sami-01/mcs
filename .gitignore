@@ -39,3 +39,7 @@ test-results/
 
 # Payload generated pieces that are environment-specific
 .pnpm-store/
+
+# Local seed/smoke output
+seed.log
+home.html

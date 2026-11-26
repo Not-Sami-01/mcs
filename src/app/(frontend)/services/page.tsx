@@ -22,19 +22,24 @@ export default async function ServicesIndexPage() {
 
   return (
     <Section>
-      <h1 className="text-3xl font-semibold tracking-tight text-ink md:text-4xl">
-        {messages.servicesPage.indexTitle}
-      </h1>
-      <p className="content-text mt-4 max-w-3xl text-ink-muted">
-        {messages.servicesPage.indexIntro}
-      </p>
+      <div className="max-w-3xl">
+        <p className="text-xs font-semibold tracking-[0.14em] text-brand-primary uppercase">
+          Services
+        </p>
+        <h1 className="mt-4 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
+          {messages.servicesPage.indexTitle}
+        </h1>
+        <p className="content-text mt-5 text-base leading-relaxed text-ink-muted md:text-lg">
+          {messages.servicesPage.indexIntro}
+        </p>
+      </div>
 
       {services.length === 0 ? (
-        <p className="mt-8 text-ink-muted">{messages.servicesPage.indexEmpty}</p>
+        <p className="mt-10 text-ink-muted">{messages.servicesPage.indexEmpty}</p>
       ) : (
-        <ul role="list" className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map((service) => (
-            <ServiceCard key={service.id} service={service} />
+        <ul role="list" className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {services.map((service, index) => (
+            <ServiceCard key={service.id} service={service} index={index} />
           ))}
         </ul>
       )}

@@ -89,6 +89,20 @@
     "notFoundTitle": "Product not found",
     "notFoundBody": "This product may have moved, or it is not published yet."
   },
+  "postsPage": {
+    "indexTitle": "Pest Library",
+    "indexIntro": "Practical guides to the pests we see most often in Lahore homes and businesses.",
+    "indexEmpty": "Guides are being prepared. Please check back soon.",
+    "readArticle": "Read article",
+    "publishedOn": "Published {date}",
+    "relatedServices": "Related services",
+    "relatedLocations": "Related areas",
+    "ctaTitle": "Not sure what you are dealing with?",
+    "ctaBody": "Book a free inspection and a technician will identify the pest and explain the options.",
+    "backToLibrary": "Back to the Pest Library",
+    "notFoundTitle": "Article not found",
+    "notFoundBody": "This article may have moved, or it is not published yet."
+  },
   "locationsPage": {
     "indexTitle": "Areas we serve",
     "indexIntro": "Choose a city to see the areas we cover and the local problems we treat.",

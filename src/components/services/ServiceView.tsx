@@ -44,7 +44,10 @@ export function ServiceView({ service, chrome }: { service: Service; chrome: Sit
       <Section>
         <div className="grid gap-8 md:grid-cols-2 md:items-center">
           <div>
-            <h1 className="content-text text-3xl font-semibold tracking-tight text-ink md:text-4xl">
+            <p className="text-xs font-semibold tracking-[0.14em] text-brand-primary uppercase">
+              Service
+            </p>
+            <h1 className="content-text mt-3 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
               {service.title}
             </h1>
             <p className="content-text mt-4 text-lg text-ink-muted">{service.shortDescription}</p>
@@ -68,7 +71,7 @@ export function ServiceView({ service, chrome }: { service: Service; chrome: Sit
               image={service.heroImage}
               priority
               sizes="(max-width: 767px) 100vw, 50vw"
-              className="w-full rounded-card object-cover"
+              className="aspect-[4/3] w-full rounded-[1.5rem] object-cover"
             />
           ) : null}
         </div>

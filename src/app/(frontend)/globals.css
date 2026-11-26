@@ -5,14 +5,17 @@
  * until the client supplies Q6; changing a value here updates every component.
  */
 :root {
-  --brand-primary: #0f6b3e;
+  --brand-primary: #0b5c3f;
+  --brand-deep: #072a20;
   --brand-primary-contrast: #ffffff;
-  --brand-accent: #f59e0b;
+  --brand-accent: #c9f27a;
+  --brand-accent-ink: #14351f;
   --surface: #ffffff;
-  --surface-alt: #f4f7f5;
-  --ink: #0b1f17;
-  --ink-muted: #44554c;
-  --line: #d5ded9;
+  --surface-alt: #f1f7f2;
+  --surface-soft: #e7f1e9;
+  --ink: #0a1f16;
+  --ink-muted: #4b5f55;
+  --line: #dbe7de;
   --success: #15803d;
   --warning: #b45309;
   --danger: #b91c1c;
@@ -33,10 +36,13 @@
   --font-sans: var(--font-body);
 
   --color-brand-primary: var(--brand-primary);
+  --color-brand-deep: var(--brand-deep);
   --color-brand-primary-contrast: var(--brand-primary-contrast);
   --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-ink: var(--brand-accent-ink);
   --color-surface: var(--surface);
   --color-surface-alt: var(--surface-alt);
+  --color-surface-soft: var(--surface-soft);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-line: var(--line);
@@ -46,9 +52,11 @@
   --color-whatsapp: var(--whatsapp);
   --color-focus: var(--focus);
 
-  --radius-input: 0.5rem;
-  --radius-card: 0.75rem;
-  --shadow-card: 0 1px 2px rgb(11 31 23 / 6%), 0 8px 24px rgb(11 31 23 / 6%);
+  --radius-input: 0.75rem;
+  --radius-card: 1.25rem;
+  --radius-panel: 2rem;
+  --shadow-card: 0 1px 2px rgb(7 42 32 / 4%), 0 12px 32px -12px rgb(7 42 32 / 12%);
+  --shadow-lift: 0 2px 4px rgb(7 42 32 / 5%), 0 24px 48px -20px rgb(7 42 32 / 22%);
 }
 
 @layer base {
@@ -62,6 +70,11 @@
     color: var(--ink);
     font-family: var(--font-body);
     text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--brand-accent);
+    color: var(--brand-accent-ink);
   }
 
   h1,
@@ -102,4 +115,55 @@
   /* Worst-case CMS content must never widen the layout (docs/DESIGNS.md §8). */
   overflow-wrap: anywhere;
   hyphens: auto;
+}
+
+/* Long-form Pest Library articles (CP-5.5). */
+.article-body {
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.article-body h2 {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.article-body h3 {
+  margin-top: 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.article-body p,
+.article-body ul,
+.article-body ol {
+  margin-top: 1rem;
+}
+
+.article-body ul,
+.article-body ol {
+  padding-inline-start: 1.4rem;
+  list-style-position: outside;
+}
+
+.article-body ul {
+  list-style-type: disc;
+}
+
+.article-body ol {
+  list-style-type: decimal;
+}
+
+.article-body a {
+  color: var(--brand-primary);
+  text-decoration: underline;
+}
+
+.article-body blockquote {
+  margin-top: 1.25rem;
+  border-inline-start: 4px solid var(--line);
+  padding-inline-start: 1rem;
+  color: var(--ink-muted);
 }

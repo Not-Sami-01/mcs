@@ -130,7 +130,7 @@ Canonical values live in `src/cms/limits.ts`. They are starting points. Tune the
 | Service signs            |   3 |  10 |
 | Service treatment steps  |   3 |   8 |
 | Service FAQs             |   3 |   8 |
-| Product images | 0 | 6 |
+| Product images           |   0 |   6 |
 | Product pack sizes       |   1 |   8 |
 | Product paragraphs       |   0 |   8 |
 | Products used            |   0 |   6 |
@@ -304,3 +304,15 @@ Candidate lists to confirm with the client. Do not publish a page for a service 
 - Editors write in the admin panel or inline. **Draft → preview → publish**, or schedule.
 - Super Admin publishes legal pages and any block with a proof gate they own.
 - **A page is done when:** it has a unique meta title and description within limits; every image has alt text; there is a clear CTA; internal links point to at least one related service and one location or post; no `TODO(client)` remains; claims have proof notes; it reads well at 360 px width.
+
+---
+
+## 13. Demo content seed (2026-11-26)
+
+`pnpm seed:site` rebuilds the browsable demo site described in `content-plan.md`: 8 published pages (home, about, warranty, contact, quote, free inspection, terms, privacy), 8 services, Lahore plus four area pages, 6 products and 6 Pest Library articles. It is for development and staging only and refuses production.
+
+- Copy is original and claim-light: no years in business, customer counts, certifications, "non-toxic", "eco-friendly" or "24/7" claims.
+- Contact facts (`0300 0000000`, `hello@example.com`, sample address) and product rates are **placeholders**. Replace them in Site Settings and the products collection before launch.
+- Legal pages are sample policies, published so the demo has complete routes. They still need the lawyer-reviewed text; publishing a real legal page remains Super Admin only.
+- Images are branded `placehold.co` placeholders uploaded to the media collection and served by Payload's media route. Replace them with real photographs one for one.
+- Every article links to a service and a location, and every page has a unique meta title and description.

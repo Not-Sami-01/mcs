@@ -74,6 +74,7 @@ export interface Config {
     services: Service;
     locations: Location;
     products: Product;
+    posts: Post;
     'price-history': PriceHistory;
     'audit-logs': AuditLog;
     'totp-rate-limits': TotpRateLimit;
@@ -92,6 +93,7 @@ export interface Config {
     services: ServicesSelect<false> | ServicesSelect<true>;
     locations: LocationsSelect<false> | LocationsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
     'price-history': PriceHistorySelect<false> | PriceHistorySelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'totp-rate-limits': TotpRateLimitsSelect<false> | TotpRateLimitsSelect<true>;
@@ -1436,6 +1438,69 @@ export interface Product {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  /**
+   * Max 80 characters.
+   */
+  title: string;
+  /**
+   * Lowercase letters, numbers and hyphens. Used in the URL.
+   */
+  slug: string;
+  /**
+   * One or two lines for the Pest Library cards and search results.
+   */
+  excerpt: string;
+  coverImage?: (number | null) | Media;
+  /**
+   * Optional. Used for grouping in the admin panel.
+   */
+  category?: (number | null) | Category;
+  /**
+   * Long-form copy, capped at 20000 characters.
+   */
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Optional. Shown as the display name on the article.
+   */
+  author?: (number | null) | User;
+  relatedServices?: (number | Service)[] | null;
+  relatedLocations?: (number | Location)[] | null;
+  publishedAt?: string | null;
+  seo?: {
+    /**
+     * Max 60 characters.
+     */
+    metaTitle?: string | null;
+    /**
+     * Max 160 characters.
+     */
+    metaDescription?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * Read-only. Written automatically whenever a published price or discount changes.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1686,6 +1751,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
       } | null)
     | ({
         relationTo: 'price-history';
@@ -2495,6 +2564,32 @@ export interface ProductsSelect<T extends boolean = true> {
       };
   safetyDocuments?: T;
   featured?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  coverImage?: T;
+  category?: T;
+  body?: T;
+  author?: T;
+  relatedServices?: T;
+  relatedLocations?: T;
+  publishedAt?: T;
   seo?:
     | T
     | {

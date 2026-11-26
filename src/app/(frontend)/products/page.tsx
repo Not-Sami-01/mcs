@@ -22,17 +22,22 @@ export default async function ProductsIndexPage() {
 
   return (
     <Section>
-      <h1 className="text-3xl font-semibold tracking-tight text-ink md:text-4xl">
-        {messages.productsPage.indexTitle}
-      </h1>
-      <p className="content-text mt-4 max-w-3xl text-ink-muted">
-        {messages.productsPage.indexIntro}
-      </p>
+      <div className="max-w-3xl">
+        <p className="text-xs font-semibold tracking-[0.14em] text-brand-primary uppercase">
+          Catalogue
+        </p>
+        <h1 className="mt-4 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
+          {messages.productsPage.indexTitle}
+        </h1>
+        <p className="content-text mt-5 text-base leading-relaxed text-ink-muted md:text-lg">
+          {messages.productsPage.indexIntro}
+        </p>
+      </div>
 
       {products.length === 0 ? (
         <p className="mt-8 text-ink-muted">{messages.productsPage.indexEmpty}</p>
       ) : (
-        <ul role="list" className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul role="list" className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

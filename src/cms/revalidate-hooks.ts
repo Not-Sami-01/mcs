@@ -7,6 +7,7 @@ import type {
 import {
   revalidateLocations,
   revalidatePages,
+  revalidatePosts,
   revalidateProducts,
   revalidateServices,
   revalidateSiteChrome,
@@ -66,6 +67,15 @@ export const revalidateProductsAfterChange: CollectionAfterChangeHook = async ()
 export const revalidateProductsAfterDelete: CollectionAfterDeleteHook = async () => {
   await revalidateProducts();
   await revalidatePages();
+};
+
+/** A Pest Library change clears the Pest Library tag (index and article pages). */
+export const revalidatePostsAfterChange: CollectionAfterChangeHook = async () => {
+  await revalidatePosts();
+};
+
+export const revalidatePostsAfterDelete: CollectionAfterDeleteHook = async () => {
+  await revalidatePosts();
 };
 
 export const revalidateChromeAfterChange: GlobalAfterChangeHook = async () => {

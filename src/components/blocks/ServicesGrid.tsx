@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { messages } from '@/messages';
 import type { Service } from '@/payload-types';
 
@@ -35,17 +37,30 @@ export function ServicesGrid({
 
   return (
     <Section>
-      <SectionHeading>{block.headline}</SectionHeading>
-      {block.intro ? (
-        <p className="content-text mt-4 max-w-3xl text-ink-muted">{block.intro}</p>
-      ) : null}
+      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <SectionHeading className="md:max-w-md">{block.headline}</SectionHeading>
+        <div className="max-w-md md:pb-1">
+          {block.intro ? (
+            <p className="content-text text-sm leading-relaxed text-ink-muted md:text-base">
+              {block.intro}
+            </p>
+          ) : null}
+          <Link
+            href="/services"
+            className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:underline"
+          >
+            {messages.footer.allServices}
+            <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+      </div>
       <ul
         role="list"
         aria-label={messages.blocks.servicesGridLabel}
-        className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
-        {cards.map((service) => (
-          <ServiceCard key={service.id} service={service} />
+        {cards.map((service, index) => (
+          <ServiceCard key={service.id} service={service} index={index} />
         ))}
       </ul>
     </Section>

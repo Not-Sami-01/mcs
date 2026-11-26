@@ -76,8 +76,11 @@ export function LocationView({
           </nav>
         ) : null}
 
-        <h1 className="content-text text-3xl font-semibold tracking-tight text-ink md:text-4xl">
-          {location.name}
+        <p className="text-xs font-semibold tracking-[0.14em] text-brand-primary uppercase">
+          {location.type === 'city' ? 'City coverage' : 'Local coverage'}
+        </p>
+        <h1 className="content-text mt-3 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
+          Pest control in {location.name}
         </h1>
         {location.intro ? (
           <p className="content-text mt-4 max-w-3xl text-lg text-ink-muted">{location.intro}</p>
@@ -197,18 +200,20 @@ export function LocationView({
         </Section>
       ) : null}
 
-      <Section tone="brand">
-        <div className="max-w-2xl">
-          <h2 className="content-text text-2xl font-semibold tracking-tight md:text-3xl">
-            {messages.locationsPage.ctaTitle.replace('{place}', location.name)}
-          </h2>
-          <p className="content-text mt-3 text-brand-primary-contrast/90">
-            {messages.locationsPage.ctaBody}
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <BlockAction action={inspection} variant="on-brand" />
-            <BlockAction action={call} variant="on-brand-outline" />
-            <BlockAction action={whatsapp} variant="on-brand-outline" />
+      <Section>
+        <div className="relative overflow-hidden rounded-[2rem] bg-brand-deep px-6 py-12 text-brand-primary-contrast md:px-14">
+          <div className="max-w-2xl">
+            <h2 className="content-text text-3xl font-semibold tracking-tight md:text-4xl">
+              {messages.locationsPage.ctaTitle.replace('{place}', location.name)}
+            </h2>
+            <p className="content-text mt-3 text-brand-primary-contrast/80">
+              {messages.locationsPage.ctaBody}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <BlockAction action={inspection} variant="on-brand" />
+              <BlockAction action={call} variant="on-brand-outline" />
+              <BlockAction action={whatsapp} variant="on-brand-outline" />
+            </div>
           </div>
         </div>
       </Section>

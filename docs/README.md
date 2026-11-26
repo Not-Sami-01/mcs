@@ -64,6 +64,7 @@ docker compose up -d db       # local PostgreSQL
 pnpm payload migrate          # apply migrations
 pnpm seed:admin               # first Super Admin (follow the prompt)
 pnpm seed                     # optional draft samples + TODO starter pages (dev/staging only)
+pnpm seed:site                # rebuild the full demo site (pages, services, locations, products, Pest Library)
 pnpm dev                      # http://localhost:3000, admin at /admin
 ```
 
