@@ -46,7 +46,7 @@ Decide in CP-0.3 whether to keep GraphQL at all. Default: off.
 | Route | Method | Purpose | Notes |
 |---|---|---|---|
 | `/api/health` | GET | Liveness and database ping | Returns `{ "ok": true }` with 200 when PostgreSQL responds to `select 1`; otherwise `{ "ok": false }` with 503. `Cache-Control: no-store`. No versions, errors or env |
-| `/api/public/leads` | POST | Create a lead (`contact`, `quote`, `inspection`) | Zod, Turnstile token, honeypot, rate limit, payload cap |
+| `/api/public/leads` | POST | Create a lead (`contact`, `quote`, `inspection`) | **Planned (CP-6.2).** Zod, Turnstile token, honeypot, rate limit, payload cap |
 | `/api/public/leads/photos` | POST | Upload up to 3 photos for a pending lead | See section 5 |
 
 ### `POST /api/public/leads`
@@ -77,7 +77,7 @@ Request (JSON):
 
 - `website` is the honeypot. Non-empty means a bot: respond as if accepted, store nothing.
 - Response `201`: `{ "ok": true }`. Never echo the lead.
-- Side effects: row in `leads`, email alert to configured recipients, audit entry. Email failure does not fail the request; it is retried by a job and surfaced in the inbox.
+- Side effects: row in `leads` (retention and consent stamped), email alert to configured recipients, audit entry. Email failure does not fail the request; the error is recorded on the lead and shown in the inbox (`alertError`). Route not built yet (CP-6.2).
 - Errors: `400 VALIDATION`, `403 SPAM`, `413 TOO_LARGE`, `429 RATE_LIMITED`.
 
 ---
@@ -86,11 +86,13 @@ Request (JSON):
 
 | Route | Method | Roles | Purpose |
 |---|---|---|---|
-| `/api/staff/leads/export` | GET | Super Admin, Sales and Support | CSV of filtered leads. Audited. Formula-injection safe (prefix cells starting with `= + - @`) |
+| `/api/staff/leads/export` | GET | Super Admin, Sales and Support | **Implemented (CP-6.1).** CSV of filtered leads (`?leadStatus=`, `?assignedTo=`). Audited. Formula-injection safe (prefix cells starting with `= + - @`) |
 | `/api/staff/lead-photos/[id]` | GET | Super Admin, Sales and Support | Fetch, decrypt, stream. `Cache-Control: private, no-store`, `Content-Disposition` inline for images only |
 | `/api/staff/products/export` | GET | Super Admin, Product Manager | CSV export |
 | `/api/staff/products/import` | POST | Super Admin, Product Manager | `?mode=dry-run` returns row-level results; `?mode=commit` applies. Size and row caps. Writes `price-history` |
 | `/api/staff/redirects/import` | POST | Super Admin | CSV of `from,to,type` with validation and loop detection |
+
+Lead CSV (CP-6.1, `src/csv/leads.ts`): one row per lead, newest first, with the quote basket flattened into a readable `quote_items` cell. Enrolled accounts must have completed 2FA and browser requests must be same-origin. `Cache-Control: private, no-store`; the response is a `text/csv` attachment named `leads-<date>.csv`. The export writes an `export` audit entry containing only the count, never names or phone numbers.
 
 Product CSV (CP-5.4, `src/csv/`):
 

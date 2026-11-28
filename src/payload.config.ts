@@ -49,8 +49,17 @@ const siteURL = (process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3
   /\/+$/,
   '',
 );
+// Non-production also accepts both loopback spellings: opening the panel at
+// 127.0.0.1 while only localhost is allowlisted makes every write fail with
+// "You are not allowed to perform this action." (Payload's CSRF check), which
+// looks like a role bug. Production keeps the configured origin only.
 const allowedOrigins = Array.from(
-  new Set([siteURL, ...(getSiteEnvironment() === 'production' ? [] : ['http://localhost:3000'])]),
+  new Set([
+    siteURL,
+    ...(getSiteEnvironment() === 'production'
+      ? []
+      : ['http://localhost:3000', 'http://127.0.0.1:3000']),
+  ]),
 );
 
 export default buildConfig({

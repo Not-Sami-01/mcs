@@ -49,6 +49,8 @@ Copy `.env.example` to `.env`. Never commit `.env`. The app validates required v
 | `EMAIL_FROM` | Sender address on the authenticated MCS domain |
 | `LEADS_ALERT_TO` | Fallback recipients (settings global holds the live list) |
 
+Lead alerts (CP-6.1) use Payload's email adapter. With no adapter configured the message is written to the console, so a real `EMAIL_PROVIDER`/`EMAIL_API_KEY`/`EMAIL_FROM` set is required before launch or nobody is emailed. Recipients come from Site Settings → Lead alert recipients; `LEADS_ALERT_TO` is read only when that list is empty. A failed send never loses the lead — the inbox shows it under `alertError`.
+
 ### Analytics and chat
 `NEXT_PUBLIC_GA4_ID`, `NEXT_PUBLIC_CHAT_PROVIDER`, `NEXT_PUBLIC_CHAT_ID`
 

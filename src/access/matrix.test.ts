@@ -108,7 +108,7 @@ describe('role access matrix (generated from docs/DATABASE.md §4)', () => {
 });
 
 describe('anonymous access (docs/DATABASE.md §4: published public reads only)', () => {
-  const publicReads: Record<string, true | 'published' | false> = {
+  const publicReads: Record<string, true | 'published' | 'verified' | false> = {
     users: false,
     media: true,
     categories: true,
@@ -117,6 +117,8 @@ describe('anonymous access (docs/DATABASE.md §4: published public reads only)',
     locations: 'published',
     products: 'published',
     posts: 'published',
+    reviews: 'verified',
+    leads: false,
     'price-history': false,
     'audit-logs': false,
   };
@@ -136,6 +138,8 @@ describe('anonymous access (docs/DATABASE.md §4: published public reads only)',
         expect(read).toBe(true);
       } else if (expected === 'published') {
         expect(read).toEqual({ _status: { equals: 'published' } });
+      } else if (expected === 'verified') {
+        expect(read).toEqual({ verified: { equals: true } });
       } else {
         expect(read).toBe(false);
       }

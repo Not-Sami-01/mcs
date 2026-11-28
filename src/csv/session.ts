@@ -53,11 +53,7 @@ export async function staffCsvAccess(
 }
 
 export function productsCsvAccess(request: Request): Promise<StaffAccess> {
-  return staffCsvAccess(
-    request,
-    PRODUCTS_CSV_ROLES,
-    'This role cannot import or export products.',
-  );
+  return staffCsvAccess(request, PRODUCTS_CSV_ROLES, 'This role cannot import or export products.');
 }
 
 export function jsonResponse(body: unknown, status = 200): Response {

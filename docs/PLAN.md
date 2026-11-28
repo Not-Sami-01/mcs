@@ -22,7 +22,7 @@
 | 3     | Public site shell and blocks                                    | 2           | IN PROGRESS |
 | 4     | Inline editing (click-to-edit content box)                      | 3           | NOT STARTED |
 | 5     | Services, locations, products, blog, reviews                    | 3–4         | COMPLETE    |
-| 6     | Leads, forms, WhatsApp, live chat, tracking                     | 4           | NOT STARTED |
+| 6     | Leads, forms, WhatsApp, live chat, tracking                     | 4           | IN PROGRESS |
 | 7     | SEO, redirects, analytics                                       | 5           | NOT STARTED |
 | 8     | Hardening: tests, accessibility, performance, security, backups | 5           | NOT STARTED |
 | 9     | Content load, UAT, launch, handover                             | 6           | NOT STARTED |
@@ -246,8 +246,8 @@
 
 ### CP-6.1 — Leads inbox
 
-- [ ] `leads` collection, statuses, notes, assignment, CSV export, email alert on new lead
-- [ ] Access: Sales and Support and Super Admin only
+- [x] `leads` collection, statuses, notes, assignment, CSV export, email alert on new lead (2026-11-28; contact/quote/inspection types, six statuses, notes with author/time, assignee, quote items, consent + retention stamps. `/api/staff/leads/export` is role-gated, filterable and formula-safe. New leads email the settings recipients (env fallback); delivery or failure is recorded on the lead. Photos wait for CP-6.3)
+- [x] Access: Sales and Support and Super Admin only (2026-11-28; matrix test covers all roles; only a Super Admin may delete)
 - **Commit:** `checkpoint(CP-6.1): leads inbox with status, notes and email alerts`
 
 ### CP-6.2 — Public forms
