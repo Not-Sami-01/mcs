@@ -45,10 +45,8 @@ export function ContactDetails({
         {hasFacts ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             {rows.map((row) => (
-              <div key={row.label} className="rounded-[1.25rem] border border-line bg-surface p-5">
-                <dt className="text-[11px] font-semibold tracking-[0.12em] text-ink-muted uppercase">
-                  {row.label}
-                </dt>
+              <div key={row.label} className="rounded-card border border-line bg-surface p-5">
+                <dt className="text-[11px] font-medium text-ink-muted ">{row.label}</dt>
                 <dd className="content-text mt-2 text-sm font-medium text-ink">{row.value}</dd>
               </div>
             ))}

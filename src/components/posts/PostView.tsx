@@ -40,10 +40,8 @@ export function PostView({ post, chrome }: { post: Post; chrome: SiteChrome }) {
     <>
       <Section>
         <article className="max-w-3xl">
-          <p className="text-sm font-semibold tracking-wide text-brand-primary uppercase">
-            {messages.postsPage.indexTitle}
-          </p>
-          <h1 className="content-text mt-3 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
+          <p className="text-sm font-medium text-ink-muted">{messages.postsPage.indexTitle}</p>
+          <h1 className="content-text mt-4 text-[2.4rem] leading-[1.1] text-ink md:text-5xl">
             {post.title}
           </h1>
           {date ? (
@@ -59,7 +57,7 @@ export function PostView({ post, chrome }: { post: Post; chrome: SiteChrome }) {
                 image={post.coverImage}
                 priority
                 sizes="(max-width: 767px) 100vw, 768px"
-                className="aspect-[16/9] w-full rounded-[1.5rem] object-cover"
+                className="aspect-[16/9] w-full rounded-panel object-cover"
               />
             </div>
           ) : null}
@@ -70,15 +68,13 @@ export function PostView({ post, chrome }: { post: Post; chrome: SiteChrome }) {
 
           {relatedServices.length > 0 ? (
             <nav aria-label={messages.postsPage.relatedServices} className="mt-10">
-              <h2 className="text-lg font-semibold text-ink">
-                {messages.postsPage.relatedServices}
-              </h2>
+              <h2 className="text-lg font-medium text-ink">{messages.postsPage.relatedServices}</h2>
               <ul role="list" className="mt-3 flex flex-wrap gap-2">
                 {relatedServices.map((service) => (
                   <li key={service.id}>
                     <Link
                       href={`/services/${service.slug}`}
-                      className="inline-block rounded-full border border-line px-4 py-2 text-sm font-semibold text-brand-primary hover:border-brand-primary"
+                      className="inline-block rounded-input border border-line px-4 py-2 text-sm font-medium text-brand-primary hover:border-brand-primary"
                     >
                       {service.title}
                     </Link>
@@ -90,7 +86,7 @@ export function PostView({ post, chrome }: { post: Post; chrome: SiteChrome }) {
 
           {relatedLocations.length > 0 ? (
             <nav aria-label={messages.postsPage.relatedLocations} className="mt-8">
-              <h2 className="text-lg font-semibold text-ink">
+              <h2 className="text-lg font-medium text-ink">
                 {messages.postsPage.relatedLocations}
               </h2>
               <ul role="list" className="mt-3 flex flex-wrap gap-2">
@@ -102,7 +98,7 @@ export function PostView({ post, chrome }: { post: Post; chrome: SiteChrome }) {
                           ? `/locations/${location.slug}`
                           : `/locations/${typeof location.parent === 'object' && location.parent ? location.parent.slug : ''}/${location.slug}`
                       }
-                      className="inline-block rounded-full border border-line px-4 py-2 text-sm font-semibold text-brand-primary hover:border-brand-primary"
+                      className="inline-block rounded-input border border-line px-4 py-2 text-sm font-medium text-brand-primary hover:border-brand-primary"
                     >
                       {location.name}
                     </Link>
@@ -114,7 +110,7 @@ export function PostView({ post, chrome }: { post: Post; chrome: SiteChrome }) {
 
           <Link
             href="/pest-library"
-            className="mt-10 inline-block text-sm font-semibold text-brand-primary hover:underline"
+            className="mt-10 inline-block text-sm font-medium text-brand-primary hover:underline"
           >
             {messages.postsPage.backToLibrary}
           </Link>

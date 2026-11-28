@@ -73,23 +73,30 @@ export function ProductView({ product, chrome }: { product: Product; chrome: Sit
     <>
       <Section>
         <div className="grid gap-10 md:grid-cols-2 md:items-start">
-          <div className="grid gap-3 overflow-hidden rounded-[1.5rem] border border-line bg-surface-alt">
-            {images.map((image, index) => (
-              <SiteImage
-                key={image.id ?? index}
-                image={image}
-                priority={index === 0}
-                sizes="(max-width: 767px) 100vw, 50vw"
-                className="w-full rounded-card object-cover"
-              />
-            ))}
-          </div>
+          {images.length > 0 ? (
+            <div className="grid gap-3 overflow-hidden rounded-panel border border-line bg-surface-alt">
+              {images.map((image, index) => (
+                <SiteImage
+                  key={image.id ?? index}
+                  image={image}
+                  priority={index === 0}
+                  sizes="(max-width: 767px) 100vw, 50vw"
+                  className="w-full object-cover"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="grid aspect-[4/3] place-items-center rounded-panel border border-line bg-surface-alt p-6 text-center text-sm text-ink-muted">
+              {messages.productsPage.photoPending}
+            </div>
+          )}
 
           <div>
-            <p className="text-xs font-semibold tracking-[0.14em] text-brand-primary uppercase">
+            <p className="flex items-center gap-2 text-sm font-medium text-ink-muted">
+              <span aria-hidden="true" className="h-2 w-2 bg-brand-accent" />
               Product
             </p>
-            <h1 className="content-text mt-3 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
+            <h1 className="content-text mt-4 text-[2.4rem] leading-[1.1] text-ink md:text-5xl">
               {product.title}
             </h1>
             {fromPrice !== null && packs.length > 1 ? (
@@ -147,7 +154,7 @@ export function ProductView({ product, chrome }: { product: Product; chrome: Sit
 
           {documents.length > 0 ? (
             <div className="mt-6">
-              <h3 className="text-sm font-semibold text-ink">
+              <h3 className="text-sm font-medium text-ink">
                 {messages.productsPage.safetyDocuments}
               </h3>
               <ul role="list" className="mt-3 flex flex-wrap gap-2">
@@ -157,7 +164,7 @@ export function ProductView({ product, chrome }: { product: Product; chrome: Sit
                       <a
                         href={document.url}
                         rel="noopener noreferrer"
-                        className="inline-block rounded-full border border-line bg-surface px-4 py-2 text-sm text-ink transition-colors hover:border-brand-primary"
+                        className="inline-block rounded-input border border-line bg-surface px-4 py-2 text-sm text-ink transition-colors hover:border-brand-primary"
                       >
                         {document.filename ?? messages.productsPage.viewDocument}
                       </a>

@@ -14,7 +14,7 @@ export function OurDifference({ block }: { block: BlockOf<'ourDifference'> }) {
               <li key={item.id ?? `point-${index}`} className="flex gap-3">
                 <span
                   aria-hidden="true"
-                  className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-primary"
+                  className="mt-2 h-2 w-2 shrink-0 rounded-sm bg-brand-primary"
                 />
                 <span className="content-text">{item.point}</span>
               </li>

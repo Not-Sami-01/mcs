@@ -1,3 +1,4 @@
+import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 
 import type { NavLink } from '@/cms/site-chrome';
@@ -8,10 +9,10 @@ import { MobileMenu } from './MobileMenu';
 import { NavAnchor } from './NavAnchor';
 
 const primaryAction =
-  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-brand-primary px-5 text-sm font-semibold text-brand-primary-contrast shadow-sm transition hover:bg-brand-deep';
+  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-input bg-brand-primary px-5 text-sm font-medium text-brand-primary-contrast transition-colors hover:bg-brand-deep';
 
 const outlineAction =
-  'inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm font-semibold text-ink transition hover:bg-surface-alt';
+  'inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-input px-3 text-sm font-medium text-ink transition-colors hover:bg-surface-alt';
 
 export function Header({
   companyName,
@@ -32,7 +33,7 @@ export function Header({
         >
           <span
             aria-hidden="true"
-            className="relative grid h-10 w-10 place-items-center rounded-2xl bg-brand-deep text-brand-accent"
+            className="grid h-10 w-10 place-items-center rounded-input bg-brand-deep text-brand-accent"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor">
               <path
@@ -41,25 +42,22 @@ export function Header({
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="absolute -end-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-brand-accent" />
           </span>
           <span className="leading-tight">
-            <span className="block text-base font-semibold tracking-tight whitespace-nowrap text-ink">
-              MCS
-            </span>
-            <span className="hidden text-[11px] font-medium tracking-wide whitespace-nowrap text-ink-muted uppercase sm:block">
+            <span className="block text-base font-medium whitespace-nowrap text-ink">MCS</span>
+            <span className="hidden text-xs whitespace-nowrap text-ink-muted sm:block">
               Malaysian Care System
             </span>
           </span>
         </Link>
 
         <nav aria-label={messages.a11y.primaryNav} className="mx-auto hidden xl:block">
-          <ul className="flex items-center gap-0.5 rounded-full border border-line/80 bg-surface-alt/70 p-1">
+          <ul className="flex items-center gap-1">
             {items.map((item) => (
               <li key={`${item.href}-${item.label}`}>
                 <NavAnchor
                   href={item.href}
-                  className="inline-flex min-h-9 items-center rounded-full px-3.5 text-[13px] font-semibold whitespace-nowrap text-ink-muted transition hover:bg-surface hover:text-ink hover:shadow-sm"
+                  className="inline-flex min-h-9 items-center rounded-input px-3 text-sm font-medium whitespace-nowrap text-ink-muted transition-colors hover:bg-surface-alt hover:text-ink"
                 >
                   {item.label}
                 </NavAnchor>
@@ -72,7 +70,7 @@ export function Header({
           {phone ? (
             <a
               href={phone.href}
-              className="hidden min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold whitespace-nowrap text-ink transition hover:bg-surface-alt 2xl:inline-flex"
+              className="hidden min-h-11 items-center gap-2 rounded-full px-3 text-sm font-medium whitespace-nowrap text-ink transition hover:bg-surface-alt 2xl:inline-flex"
             >
               <PhoneIcon />
               {phone.display}
@@ -83,14 +81,14 @@ export function Header({
           </Link>
           <Link href="/free-inspection" className={`hidden sm:inline-flex ${primaryAction}`}>
             {messages.cta.freeInspection}
-            <span aria-hidden="true">→</span>
+            <ArrowUpRight aria-hidden="true" className="h-4 w-4" strokeWidth={1.5} />
           </Link>
 
           {phone ? (
             <a
               href={phone.href}
               aria-label={messages.a11y.call}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-line text-ink sm:hidden"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-input border border-line text-ink sm:hidden"
             >
               <PhoneIcon />
             </a>

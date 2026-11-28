@@ -53,11 +53,9 @@ export function resolveAction(
 }
 
 const styles = {
-  primary:
-    'bg-brand-primary text-brand-primary-contrast shadow-sm hover:bg-brand-deep focus-visible:outline-brand-primary',
-  outline:
-    'border border-line bg-surface/60 text-ink hover:border-brand-primary hover:text-brand-primary',
-  whatsapp: 'bg-whatsapp text-ink hover:bg-brand-primary hover:text-brand-primary-contrast',
+  primary: 'bg-brand-primary text-brand-primary-contrast hover:bg-brand-deep',
+  outline: 'border border-line bg-surface text-ink hover:border-brand-primary',
+  whatsapp: 'border border-line bg-surface text-ink hover:border-brand-primary',
   'on-brand': 'bg-brand-accent text-brand-accent-ink hover:bg-surface',
   'on-brand-outline':
     'border border-brand-primary-contrast/40 text-brand-primary-contrast hover:border-brand-accent hover:text-brand-accent',
@@ -74,7 +72,7 @@ export function BlockAction({
 }) {
   if (!action) return null;
 
-  const className = `inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition ${styles[variant]}`;
+  const className = `inline-flex min-h-11 items-center justify-center gap-2 rounded-input px-5 text-sm font-medium transition-colors ${styles[variant]}`;
 
   const content = (
     <>

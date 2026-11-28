@@ -4,13 +4,10 @@ import {
   BookOpen,
   ExternalLink,
   FilePlus2,
-  FileText,
-  Image,
   ImagePlus,
   MapPin,
   Package,
   Wrench,
-  type LucideIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
@@ -25,16 +22,12 @@ import React from 'react';
  * hidden instead of bypassed.
  */
 
-type StatTone = 'green' | 'lime' | 'sand' | 'slate';
-
 type Stat = {
   collection: string;
   href: string;
-  icon: LucideIcon;
   label: string;
   published?: number;
   total: number;
-  tone: StatTone;
 };
 
 type ContentItem = {
@@ -70,20 +63,6 @@ function formatToday(): string {
   }).format(new Date());
 }
 
-function greeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 18) return 'Good afternoon';
-  return 'Good evening';
-}
-
-function displayName(email?: null | string): string {
-  const local = email?.split('@')[0]?.trim();
-  if (!local) return 'there';
-
-  return local.charAt(0).toUpperCase() + local.slice(1);
-}
-
 const ACTION_LABELS: Record<string, string> = {
   delete: 'Deleted content',
   export: 'Exported products',
@@ -113,7 +92,7 @@ function actionTone(action: string): string {
 }
 
 export default async function Dashboard(props: AdminViewServerProps) {
-  const { initPageResult, payload, permissions, user } = props;
+  const { initPageResult, payload, permissions } = props;
   const req = initPageResult.req;
 
   const allowed = (collection: string, action: 'create' | 'read' = 'read') =>
@@ -156,54 +135,42 @@ export default async function Dashboard(props: AdminViewServerProps) {
     {
       collection: 'pages',
       href: '/admin/collections/pages',
-      icon: FileText,
       label: 'Pages',
       published: pagesPublished.totalDocs,
-      tone: 'green',
       total: pages.totalDocs,
     },
     {
       collection: 'posts',
       href: '/admin/collections/posts',
-      icon: BookOpen,
       label: 'Pest Library articles',
       published: postsPublished.totalDocs,
-      tone: 'lime',
       total: posts.totalDocs,
     },
     {
       collection: 'services',
       href: '/admin/collections/services',
-      icon: Wrench,
       label: 'Services',
       published: servicesPublished.totalDocs,
-      tone: 'green',
       total: services.totalDocs,
     },
     {
       collection: 'locations',
       href: '/admin/collections/locations',
-      icon: MapPin,
       label: 'Locations',
       published: locationsPublished.totalDocs,
-      tone: 'sand',
       total: locations.totalDocs,
     },
     {
       collection: 'products',
       href: '/admin/collections/products',
-      icon: Package,
       label: 'Products',
       published: productsPublished.totalDocs,
-      tone: 'slate',
       total: products.totalDocs,
     },
     {
       collection: 'media',
       href: '/admin/collections/media',
-      icon: Image,
       label: 'Media files',
-      tone: 'lime',
       total: media.totalDocs,
     },
   ];
@@ -344,13 +311,10 @@ export default async function Dashboard(props: AdminViewServerProps) {
       <header className="mcs-dash__hero">
         <div className="mcs-dash__hero-copy">
           <p className="mcs-dash__eyebrow">{formatToday()}</p>
-          <h1 className="mcs-dash__title">
-            {greeting()}, {displayName(user?.email)}.
-          </h1>
+          <h1 className="mcs-dash__title">Content overview</h1>
           <p className="mcs-dash__subtitle">
-            Here is the state of the MCS site. {formatCount(drafts)} draft
-            {drafts === 1 ? '' : 's'} waiting, {formatCount(staff.totalDocs)} staff account
-            {staff.totalDocs === 1 ? '' : 's'}.
+            {formatCount(drafts)} draft{drafts === 1 ? '' : 's'} waiting ·{' '}
+            {formatCount(staff.totalDocs)} staff account{staff.totalDocs === 1 ? '' : 's'}
           </p>
         </div>
         <div className="mcs-dash__hero-actions">
@@ -378,20 +342,9 @@ export default async function Dashboard(props: AdminViewServerProps) {
         {stats.map((stat) => {
           const draftsForStat =
             typeof stat.published === 'number' ? stat.total - stat.published : null;
-          const Icon = stat.icon;
 
           return (
-            <Link
-              className={`mcs-dash__stat mcs-dash__stat--${stat.tone}`}
-              href={stat.href}
-              key={stat.label}
-            >
-              <span
-                aria-hidden="true"
-                className={`mcs-dash__stat-icon mcs-dash__stat-icon--${stat.tone}`}
-              >
-                <Icon size={18} strokeWidth={1.8} />
-              </span>
+            <Link className="mcs-dash__stat" href={stat.href} key={stat.label}>
               <span className="mcs-dash__stat-label">{stat.label}</span>
               <span className="mcs-dash__stat-value">{formatCount(stat.total)}</span>
               <span className="mcs-dash__stat-meta">

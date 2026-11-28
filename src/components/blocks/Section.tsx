@@ -24,7 +24,7 @@ export function Section({
 
   return (
     <section aria-label={label} className={`relative ${tones[tone]} ${className}`}>
-      <div className="mx-auto w-full max-w-6xl px-5 py-14 md:px-8 md:py-20">{children}</div>
+      <div className="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-24">{children}</div>
     </section>
   );
 }
@@ -40,12 +40,13 @@ export function SectionHeading({
 }) {
   return (
     <h2
-      className={`content-text max-w-3xl text-3xl leading-[1.1] font-semibold tracking-tight md:text-4xl ${
+      className={`content-text flex max-w-3xl items-start gap-3 text-3xl leading-[1.15] md:text-4xl ${
         tone === 'on-brand' ? 'text-brand-primary-contrast' : 'text-ink'
       } ${className}`}
     >
-      <span aria-hidden="true" className="mb-4 block h-1.5 w-10 rounded-full bg-brand-accent" />
-      {children}
+      {/* Signature: the lime treatment marker, used before section headings only. */}
+      <span aria-hidden="true" className="mt-[0.7em] h-2 w-2 shrink-0 bg-brand-accent" />
+      <span>{children}</span>
     </h2>
   );
 }

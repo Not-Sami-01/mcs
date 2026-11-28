@@ -14,7 +14,7 @@ import type { PageVersionSummary, PublishProblem } from '@/edit/publish';
 import { messages } from '@/messages';
 
 const button =
-  'inline-flex min-h-11 items-center rounded-input border border-brand-primary-contrast/40 px-3 text-xs font-semibold hover:bg-brand-primary hover:text-brand-primary-contrast disabled:opacity-50';
+  'inline-flex min-h-11 items-center rounded-input border border-brand-primary-contrast/40 px-3 text-xs font-medium hover:bg-brand-primary hover:text-brand-primary-contrast disabled:opacity-50';
 
 /**
  * Publish / discard / version history for the open page (CP-4.3). Publishing is
@@ -177,7 +177,7 @@ export function PublishControls({
             void schedule();
           }}
         >
-          <label className="flex flex-col gap-1 font-semibold">
+          <label className="flex flex-col gap-1 font-medium">
             {messages.edit.publishAt}
             <input
               type="datetime-local"
@@ -187,7 +187,7 @@ export function PublishControls({
               className="min-h-11 rounded-input border border-line bg-surface px-2 text-sm font-normal"
             />
           </label>
-          <label className="flex flex-col gap-1 font-semibold">
+          <label className="flex flex-col gap-1 font-medium">
             {messages.edit.unpublishAt}
             <input
               type="datetime-local"
@@ -211,14 +211,14 @@ export function PublishControls({
       ) : null}
 
       {message ? (
-        <p role="status" aria-live="polite" className="text-xs font-semibold text-brand-accent">
+        <p role="status" aria-live="polite" className="text-xs font-medium text-brand-accent">
           {message}
         </p>
       ) : null}
 
       {problems.length > 0 ? (
         <div role="alert" className="w-full rounded-input border border-brand-accent p-3 text-xs">
-          <p className="font-semibold">{messages.edit.publishGates}</p>
+          <p className="font-medium">{messages.edit.publishGates}</p>
           <ul className="mt-1 list-inside list-disc">
             {problems.map((problem) => (
               <li key={`${problem.field}-${problem.message}`}>{problem.message}</li>
@@ -238,11 +238,11 @@ export function PublishControls({
           className="fixed inset-x-4 top-24 z-50 mx-auto max-h-[70vh] max-w-lg overflow-y-auto rounded-card border border-line bg-surface p-4 text-ink shadow-xl"
         >
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold">{messages.edit.versionHistory}</h2>
+            <h2 className="text-lg font-medium">{messages.edit.versionHistory}</h2>
             <button
               type="button"
               onClick={() => setVersions(null)}
-              className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-sm font-semibold"
+              className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-sm font-medium"
             >
               {messages.edit.close}
             </button>
@@ -269,7 +269,7 @@ export function PublishControls({
                     type="button"
                     disabled={busy}
                     onClick={() => void restore(version.id)}
-                    className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-xs font-semibold hover:border-brand-primary disabled:opacity-50"
+                    className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-xs font-medium hover:border-brand-primary disabled:opacity-50"
                   >
                     {messages.edit.restore}
                   </button>

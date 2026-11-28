@@ -6,6 +6,8 @@ const config = [
     ignores: [
       '.next/**',
       'node_modules/**',
+      'temp/**',
+      '.agents/**',
       'next-env.d.ts',
       'src/payload-types.ts',
       '**/migrations/**',

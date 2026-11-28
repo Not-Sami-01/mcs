@@ -10,9 +10,9 @@ export function WhatsAppButton({ whatsapp }: { whatsapp: { href: string } | null
     <a
       href={whatsapp.href}
       aria-label={messages.a11y.chatOnWhatsApp}
-      className="fixed end-6 bottom-6 z-[45] hidden h-14 w-14 items-center justify-center rounded-full bg-whatsapp text-ink shadow-card lg:inline-flex"
+      className="fixed end-6 bottom-6 z-40 hidden h-12 w-12 items-center justify-center rounded-input bg-brand-deep text-brand-primary-contrast shadow-card transition-colors hover:bg-brand-primary lg:inline-flex"
     >
-      <WhatsAppIcon className="h-7 w-7" />
+      <WhatsAppIcon className="h-5 w-5" />
     </a>
   );
 }

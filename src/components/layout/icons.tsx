@@ -1,6 +1,6 @@
 type IconProps = { className?: string };
 
-const base = 'h-5 w-5 shrink-0';
+const base = 'h-4 w-4 shrink-0';
 
 export function PhoneIcon({ className = base }: IconProps) {
   return (
@@ -9,7 +9,7 @@ export function PhoneIcon({ className = base }: IconProps) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
@@ -41,7 +41,7 @@ export function MenuIcon({ className = base }: IconProps) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.5"
       strokeLinecap="round"
       aria-hidden="true"
       focusable="false"

@@ -1,3 +1,4 @@
+import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { messages } from '@/messages';
@@ -47,10 +48,10 @@ export function ServicesGrid({
           ) : null}
           <Link
             href="/services"
-            className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:underline"
+            className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-brand-primary hover:underline"
           >
             {messages.footer.allServices}
-            <span aria-hidden="true">→</span>
+            <ArrowUpRight aria-hidden="true" className="h-4 w-4" strokeWidth={1.5} />
           </Link>
         </div>
       </div>
@@ -59,8 +60,8 @@ export function ServicesGrid({
         aria-label={messages.blocks.servicesGridLabel}
         className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
-        {cards.map((service, index) => (
-          <ServiceCard key={service.id} service={service} index={index} />
+        {cards.map((service) => (
+          <ServiceCard key={service.id} service={service} />
         ))}
       </ul>
     </Section>

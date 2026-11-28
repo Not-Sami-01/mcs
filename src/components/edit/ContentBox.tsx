@@ -206,17 +206,15 @@ export function ContentBox({
     >
       <div className="flex items-start justify-between gap-4 border-b border-line p-4">
         <div>
-          <p className="text-xs font-semibold tracking-wide text-brand-primary uppercase">
-            {messages.edit.contentBox}
-          </p>
-          <h2 id={headingId} className="mt-1 text-lg font-semibold text-ink">
+          <p className="text-xs font-medium text-ink-muted">{messages.edit.contentBox}</p>
+          <h2 id={headingId} className="mt-1 text-lg font-medium text-ink">
             {label}
           </h2>
         </div>
         <button
           type="button"
           onClick={() => void close()}
-          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-input border border-line px-3 text-sm font-semibold text-ink hover:border-brand-primary hover:text-brand-primary"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-input border border-line px-3 text-sm font-medium text-ink hover:border-brand-primary hover:text-brand-primary"
         >
           {messages.edit.close}
         </button>
@@ -234,20 +232,20 @@ export function ContentBox({
 
       {conflict ? (
         <div role="alert" className="border-t border-line bg-surface-alt p-4 text-sm text-ink">
-          <p className="font-semibold">{messages.edit.conflict}</p>
+          <p className="font-medium">{messages.edit.conflict}</p>
           <p className="mt-1 text-xs text-ink-muted">{messages.edit.conflictHelp}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => onReload?.()}
-              className="inline-flex min-h-11 items-center rounded-input border border-line px-4 text-sm font-semibold text-ink hover:border-brand-primary"
+              className="inline-flex min-h-11 items-center rounded-input border border-line px-4 text-sm font-medium text-ink hover:border-brand-primary"
             >
               {messages.edit.reloadTheirs}
             </button>
             <button
               type="button"
               onClick={() => void save(conflict.serverUpdatedAt)}
-              className="inline-flex min-h-11 items-center rounded-input bg-brand-primary px-4 text-sm font-semibold text-brand-primary-contrast hover:bg-ink"
+              className="inline-flex min-h-11 items-center rounded-input bg-brand-primary px-4 text-sm font-medium text-brand-primary-contrast hover:bg-ink"
             >
               {messages.edit.keepMine}
             </button>
@@ -255,7 +253,7 @@ export function ContentBox({
               type="button"
               aria-expanded={showDiff}
               onClick={() => setShowDiff((current) => !current)}
-              className="inline-flex min-h-11 items-center rounded-input border border-line px-4 text-sm font-semibold text-ink hover:border-brand-primary"
+              className="inline-flex min-h-11 items-center rounded-input border border-line px-4 text-sm font-medium text-ink hover:border-brand-primary"
             >
               {messages.edit.seeDifferences}
             </button>
@@ -271,7 +269,7 @@ export function ContentBox({
                 )
                 .map((node) => (
                   <div key={node.name} className="rounded-input border border-line p-2">
-                    <dt className="font-semibold">{node.label}</dt>
+                    <dt className="font-medium">{node.label}</dt>
                     <dd className="mt-1">
                       {messages.edit.yours}: {shownValue(values[node.name])}
                     </dd>
@@ -302,7 +300,7 @@ export function ContentBox({
             <button
               type="button"
               onClick={() => void close()}
-              className="inline-flex min-h-11 items-center rounded-input border border-line px-4 text-sm font-semibold text-ink hover:border-brand-primary"
+              className="inline-flex min-h-11 items-center rounded-input border border-line px-4 text-sm font-medium text-ink hover:border-brand-primary"
             >
               {messages.edit.close}
             </button>
@@ -310,7 +308,7 @@ export function ContentBox({
               type="button"
               onClick={() => void save()}
               disabled={!dirty || status === 'saving'}
-              className="inline-flex min-h-11 items-center rounded-input bg-brand-primary px-4 text-sm font-semibold text-brand-primary-contrast hover:bg-ink disabled:opacity-50"
+              className="inline-flex min-h-11 items-center rounded-input bg-brand-primary px-4 text-sm font-medium text-brand-primary-contrast hover:bg-ink disabled:opacity-50"
             >
               {status === 'saving' ? messages.edit.saving : saveLabel}
             </button>

@@ -64,9 +64,7 @@ export function ProductPurchase({
     <div className="mt-6">
       {packs.length > 1 ? (
         <fieldset>
-          <legend className="text-sm font-semibold text-ink">
-            {messages.productsPage.packSize}
-          </legend>
+          <legend className="text-sm font-medium text-ink">{messages.productsPage.packSize}</legend>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {packs.map((pack) => (
               <label
@@ -84,7 +82,7 @@ export function ProductPurchase({
                   className="mt-1 accent-brand-primary"
                 />
                 <span className="flex flex-col">
-                  <span className="font-semibold text-ink">{pack.label}</span>
+                  <span className="font-medium text-ink">{pack.label}</span>
                   <span className="text-ink-muted">
                     {pack.discountActive ? rupees(pack.finalRate) : rupees(pack.rate)}
                   </span>
@@ -97,13 +95,13 @@ export function ProductPurchase({
 
       <div className="mt-5">
         <p className="flex flex-wrap items-baseline gap-3">
-          <span className="text-3xl font-semibold text-brand-primary">
+          <span className="text-3xl font-medium text-brand-primary">
             {rupees(selected.finalRate)}
           </span>
           {selected.discountActive ? (
             <>
               <s className="text-sm text-ink-muted">{rupees(selected.rate)}</s>
-              <span className="rounded-full bg-surface-alt px-2 py-1 text-xs font-semibold text-brand-primary">
+              <span className="rounded-input bg-surface-alt px-2 py-1 text-xs font-medium text-brand-primary">
                 {discountLabel}
               </span>
             </>
@@ -112,7 +110,7 @@ export function ProductPurchase({
         <p className="mt-2 text-sm text-ink-muted">
           {messages.productsPage.stock}:{' '}
           <span
-            className={selected.stockStatus === 'out' ? 'text-ink-muted' : 'font-semibold text-ink'}
+            className={selected.stockStatus === 'out' ? 'text-ink-muted' : 'font-medium text-ink'}
           >
             {STOCK_LABELS[selected.stockStatus]}
           </span>
@@ -124,7 +122,7 @@ export function ProductPurchase({
           <a
             href={selected.orderHref}
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-input bg-whatsapp px-5 text-sm font-semibold text-ink hover:bg-brand-primary hover:text-brand-primary-contrast"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-input bg-whatsapp px-5 text-sm font-medium text-ink hover:bg-brand-primary hover:text-brand-primary-contrast"
           >
             <WhatsAppIcon />
             {messages.productsPage.orderOnWhatsApp}
@@ -132,7 +130,7 @@ export function ProductPurchase({
         ) : null}
         <Link
           href={selected.quoteHref}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-input border border-line px-5 text-sm font-semibold text-ink hover:border-brand-primary hover:text-brand-primary"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-input border border-line px-5 text-sm font-medium text-ink hover:border-brand-primary hover:text-brand-primary"
         >
           {messages.productsPage.addToQuote}
         </Link>

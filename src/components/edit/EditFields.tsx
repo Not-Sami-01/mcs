@@ -61,7 +61,7 @@ function ScalarControl({
       <div>
         <label
           htmlFor={id}
-          className="flex min-h-11 items-center gap-3 text-sm font-semibold text-ink"
+          className="flex min-h-11 items-center gap-3 text-sm font-medium text-ink"
         >
           <input
             id={id}
@@ -97,7 +97,7 @@ function ScalarControl({
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3">
-        <label htmlFor={id} className="text-sm font-semibold text-ink">
+        <label htmlFor={id} className="text-sm font-medium text-ink">
           {node.label}
           {node.required ? <span className="text-ink-muted"> *</span> : null}
         </label>
@@ -248,7 +248,7 @@ function ImageControl({
 
   return (
     <div>
-      <label htmlFor={id} className="text-sm font-semibold text-ink">
+      <label htmlFor={id} className="text-sm font-medium text-ink">
         {node.label}
         {node.required ? <span className="text-ink-muted"> *</span> : null}
       </label>
@@ -282,7 +282,7 @@ function ImageControl({
       </div>
 
       <div className="mt-3 rounded-input border border-dashed border-line p-3">
-        <label htmlFor={`${id}-alt`} className="text-xs font-semibold text-ink">
+        <label htmlFor={`${id}-alt`} className="text-xs font-medium text-ink">
           {messages.edit.altText}
         </label>
         <input
@@ -336,7 +336,7 @@ function GroupControl({
 
   return (
     <fieldset className="rounded-input border border-line p-3">
-      <legend className="px-1 text-sm font-semibold text-ink">
+      <legend className="px-1 text-sm font-medium text-ink">
         {node.label}
         {node.required ? <span className="text-ink-muted"> *</span> : null}
       </legend>
@@ -380,7 +380,7 @@ function ArrayControl({
   return (
     <div className="rounded-input border border-line p-3">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-sm font-semibold text-ink">{node.label}</p>
+        <p className="text-sm font-medium text-ink">{node.label}</p>
         <p className="text-xs tabular-nums text-ink-muted">
           {items.length} / {node.maxRows}
         </p>
@@ -395,7 +395,7 @@ function ArrayControl({
               key={typeof item.id === 'string' ? item.id : rowPath}
               className="rounded-input border border-line p-3"
             >
-              <legend className="px-1 text-xs font-semibold text-ink-muted">
+              <legend className="px-1 text-xs font-medium text-ink-muted">
                 {node.label} {index + 1}
               </legend>
               <div className="space-y-4">
@@ -417,7 +417,7 @@ function ArrayControl({
                     [next[index - 1], next[index]] = [next[index], next[index - 1]];
                     replace(next);
                   }}
-                  className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-xs font-semibold text-ink hover:border-brand-primary disabled:opacity-40"
+                  className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-xs font-medium text-ink hover:border-brand-primary disabled:opacity-40"
                 >
                   {messages.edit.moveUp}
                 </button>
@@ -429,7 +429,7 @@ function ArrayControl({
                     [next[index], next[index + 1]] = [next[index + 1], next[index]];
                     replace(next);
                   }}
-                  className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-xs font-semibold text-ink hover:border-brand-primary disabled:opacity-40"
+                  className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-xs font-medium text-ink hover:border-brand-primary disabled:opacity-40"
                 >
                   {messages.edit.moveDown}
                 </button>
@@ -438,7 +438,7 @@ function ArrayControl({
                   disabled={atMin}
                   title={atMin ? messages.edit.minimumReached : undefined}
                   onClick={() => replace(items.filter((_, position) => position !== index))}
-                  className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-xs font-semibold text-red-700 hover:border-red-700 disabled:opacity-40"
+                  className="inline-flex min-h-11 items-center rounded-input border border-line px-3 text-xs font-medium text-red-700 hover:border-red-700 disabled:opacity-40"
                 >
                   {messages.edit.remove}
                 </button>
@@ -453,7 +453,7 @@ function ArrayControl({
         disabled={atMax}
         title={atMax ? messages.edit.limitReached : undefined}
         onClick={() => replace([...items, defaultsFor(node.fields)])}
-        className="mt-3 inline-flex min-h-11 items-center rounded-input border border-line px-3 text-sm font-semibold text-ink hover:border-brand-primary disabled:opacity-40"
+        className="mt-3 inline-flex min-h-11 items-center rounded-input border border-line px-3 text-sm font-medium text-ink hover:border-brand-primary disabled:opacity-40"
       >
         {atMax ? messages.edit.limitReached : `${messages.edit.add} ${node.label}`}
       </button>

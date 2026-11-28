@@ -18,7 +18,7 @@ export function Certificates({ block }: { block: BlockOf<'certificates'> }) {
                 className="h-full w-full object-contain"
               />
             </div>
-            <h3 className="content-text mt-3 line-clamp-2 text-base font-semibold text-ink">
+            <h3 className="content-text mt-3 line-clamp-2 text-base font-medium text-ink">
               {item.title}
             </h3>
             <p className="content-text mt-1 text-sm text-ink-muted">

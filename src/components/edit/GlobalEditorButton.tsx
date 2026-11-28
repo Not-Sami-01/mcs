@@ -40,7 +40,7 @@ export function GlobalEditorButton({
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="inline-flex min-h-11 items-center rounded-input border border-brand-primary-contrast/40 px-3 text-xs font-semibold hover:bg-brand-primary hover:text-brand-primary-contrast"
+        className="inline-flex min-h-11 items-center rounded-input border border-brand-primary-contrast/40 px-3 text-xs font-medium hover:bg-brand-primary hover:text-brand-primary-contrast"
       >
         {label}
       </button>

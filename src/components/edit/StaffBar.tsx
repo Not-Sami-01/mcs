@@ -42,10 +42,10 @@ export function StaffBar({
     >
       <div className="mx-auto flex min-h-11 w-full max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="rounded-full bg-brand-accent px-2 py-0.5 text-xs font-semibold text-ink">
+          <span className="rounded-full bg-brand-accent px-2 py-0.5 text-xs font-medium text-ink">
             {messages.edit.mode}
           </span>
-          <span className="truncate text-sm font-semibold">{pageTitle}</span>
+          <span className="truncate text-sm font-medium">{pageTitle}</span>
           <span className="hidden text-xs text-brand-primary-contrast/80 sm:inline">
             {messages.edit.draftPreview}
           </span>
@@ -61,13 +61,13 @@ export function StaffBar({
           <Link
             href={previewUrl}
             prefetch={false}
-            className="inline-flex min-h-11 items-center rounded-input border border-brand-primary-contrast/40 px-3 text-xs font-semibold hover:bg-brand-primary hover:text-brand-primary-contrast"
+            className="inline-flex min-h-11 items-center rounded-input border border-brand-primary-contrast/40 px-3 text-xs font-medium hover:bg-brand-primary hover:text-brand-primary-contrast"
           >
             {messages.edit.viewAsVisitor}
           </Link>
           <Link
             href="/admin"
-            className="inline-flex min-h-11 items-center rounded-input bg-surface px-3 text-xs font-semibold text-ink hover:bg-surface-alt"
+            className="inline-flex min-h-11 items-center rounded-input bg-surface px-3 text-xs font-medium text-ink hover:bg-surface-alt"
           >
             {messages.edit.admin}
           </Link>

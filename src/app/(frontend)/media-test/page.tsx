@@ -35,10 +35,8 @@ export default async function MediaTestPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-16">
-      <p className="text-sm font-medium tracking-wide text-neutral-500 uppercase">
-        Malaysian Care System
-      </p>
-      <h1 className="text-3xl font-semibold text-neutral-900">Media delivery test</h1>
+      <p className="text-sm font-medium text-neutral-500 ">Malaysian Care System</p>
+      <h1 className="text-3xl font-medium text-neutral-900">Media delivery test</h1>
       <p className="mt-4 text-neutral-600">
         Every image below was uploaded through the admin panel, stored in Filebase and is served
         through <span className="font-medium">{delivery}</span>. Alt text is required before an

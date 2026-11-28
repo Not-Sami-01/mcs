@@ -27,38 +27,40 @@ Defined as CSS variables and mapped in the Tailwind theme. Colours in OKLCH or h
 
 | Token                                  | Placeholder                | Use                                                                    |
 | -------------------------------------- | -------------------------- | ---------------------------------------------------------------------- |
-| `--brand-primary`                      | deep green `#0B5C3F`       | Primary buttons, links, accents                                        |
-| `--brand-deep`                         | near-black green `#072A20` | Hero panels, footer, dark CTA                                          |
-| `--brand-primary-contrast`             | `#FFFFFF`                  | Text on primary/deep                                                   |
-| `--brand-accent`                       | lime `#C9F27A`             | Highlights, dark-panel buttons (always with `--brand-accent-ink` text) |
-| `--brand-accent-ink`                   | `#14351F`                  | Text on the lime accent                                                |
-| `--surface`                            | `#FFFFFF`                  | Page and card background                                               |
-| `--surface-alt`                        | `#F1F7F2`                  | Alternating sections                                                   |
-| `--surface-soft`                       | `#E7F1E9`                  | Hero and decorative gradients                                          |
-| `--ink`                                | `#0A1F16`                  | Body text                                                              |
-| `--ink-muted`                          | `#4B5F55`                  | Secondary text (check contrast)                                        |
-| `--border`                             | `#DBE7DE`                  | Lines, inputs                                                          |
+| `--brand-primary`                      | deep green `#0D4A35`       | Primary buttons, links, accents                                        |
+| `--brand-deep`                         | near-black green `#0A2A1F` | Hero panels, footer, dark CTA                                          |
+| `--brand-primary-contrast`             | limewash `#FBFAF4`         | Text on primary/deep                                                   |
+| `--brand-accent`                       | lime `#CDE36F`             | The treatment marker, dark-panel buttons, small checks                 |
+| `--brand-accent-ink`                   | `#1B2F18`                  | Text on the lime accent                                                |
+| `--surface`                            | limewash `#FBFAF4`         | Page and card background                                               |
+| `--surface-alt`                        | warm sand `#F2EFE4`        | Alternating sections, quiet panels                                     |
+| `--surface-soft`                       | `#E8ECDD`                  | Inputs and soft fills (no gradients)                                   |
+| `--ink`                                | `#16211B`                  | Body text                                                              |
+| `--ink-muted`                          | `#59655C`                  | Secondary text (check contrast)                                        |
+| `--border` / `--line`                  | `#DDD9CB`                  | Lines, inputs (hairlines)                                              |
 | `--success` / `--warning` / `--danger` | green / amber / red        | Status and form feedback                                               |
-| `--whatsapp`                           | `#25D366`                  | WhatsApp button background only, with dark text to pass contrast       |
-| `--focus`                              | high-contrast ring colour  | 2 px outline plus offset                                               |
+| `--whatsapp`                           | muted leaf `#D8E9D2`       | Secondary WhatsApp tint only; the glyph stays neutral                  |
+| `--focus`                              | high-contrast blue         | 2 px outline plus offset                                               |
 
 ### Typography
 
-- **Interim:** system font stack via the `--font-body` CSS variable (no network request, no layout shift). Switch to `next/font/local` with brand files when Q6 is answered; **max two families**, `display: swap`, subset to Latin now. For Urdu later, add a Nastaliq or Naskh font only on Urdu pages.
-- Scale (mobile / desktop): H1 32/48, H2 26/36, H3 20/26, body 16/18, small 14. Line height 1.5 for body, 1.2 for headings.
+- **Display (2026-11-28):** a local serif stack via `--font-display` (Iowan Old Style, Palatino, Georgia) for every `h1`–`h6`. It gives the established, careful tone the direction calls for without a network request; switch to `next/font/local` with brand files when Q6 is answered.
+- **Body:** system stack via `--font-body`. Two families total; Urdu gets its own Nastaliq/Naskh face later.
+- Weights: 400 and 500 only, with 600 reserved for rare emphasis. Hierarchy comes from size and colour, never from 700.
+- Scale (mobile / desktop): H1 38/56, H2 30/40, H3 20/26, body 16/18, small 14. Line height 1.5 for body, 1.15 for headings.
 - Minimum body size 16 px. Never lower body text on mobile.
-- `text-wrap: balance` on headings where supported.
+- `text-wrap: balance` on headings where supported. Sentence case everywhere; no uppercase tracked labels; no negative tracking.
 
 ### Spacing, radius, shadow
 
 - 4 px base unit. Section padding 48 px mobile, 80 px desktop. Container max width about 1200 px with side padding 16 px mobile.
-- Radius (2026-11-26 refresh): 12 px inputs, 20 px cards, 32 px dark panels, full for pills and buttons.
-- Shadows: `--shadow-card` for resting cards, `--shadow-lift` on hover and for the hero image. Cards use borders at rest and lift on hover; the layout stays calm rather than decorative.
-- **2026-11-26 layout note:** the public shell now uses a sticky blurred pill header with nowrap nav, a split hero (text + image card), a raised stat band, numbered service/why-choose cards, a connected five-step timeline, contained dark CTA panels, and a dark footer. Section rhythm is 56/80 px. Every page keeps one H1; the accent is used for large display elements and never for small text on white.
+- Radius (2026-11-28): 8 px inputs and buttons, 12 px cards, 16 px panels. Pills are reserved for the header menu button and nothing else.
+- Shadows: `--shadow-card` only, neutral and barely visible. Cards rest on hairlines and change border colour on hover; nothing lifts or scales.
+- **2026-11-28 layout note (unslop pass):** a quiet sticky header (no pill nav), a split hero whose visual is an inspection note built from facts already on the page, flat deep-green CTA panels, and a four-column footer. The signature is one 8 px lime square before section headings and step lists. Section rhythm is 64/96 px. Gradients, glows, numbered badges and arrow glyphs are gone; the accent marks the primary action, the marker and nothing else.
 
 ### Z-index scale
 
-`base 0`, `sticky header 40`, `mobile sticky bar 40`, `floating WhatsApp 45`, `drawer/content box 60`, `modal 70`, `toast 80`.
+`base 0`, `sticky header 40`, `mobile sticky bar 40`, `floating WhatsApp 40`, `drawer/content box 60`, `modal 70`, `toast 80`.
 
 ---
 
@@ -101,7 +103,8 @@ Each block in `docs/CONTENT.md` section 6 has one renderer and at most two layou
 
 ## 6. Icons and imagery
 
-- Icon set: small inline SVGs in `src/components/layout/icons.tsx` (no icon dependency added). Decorative icons are `aria-hidden` and not focusable; icon-only controls carry an accessible name.
+- Icon set: **lucide-react** (direct dependency since 2026-11-28) at 16 px with a 1.5 stroke, coloured by its text role. Contact glyphs still come from `src/components/layout/icons.tsx`. Decorative icons are `aria-hidden` and not focusable; icon-only controls carry an accessible name.
+- Imagery: one real photograph or none. Seed placeholders are quiet limewash panels with a small label, never a giant repeated page title. `ProductCard` and `ProductView` show “Photo to follow” instead of a gradient tile when a product has no image.
 - Real photography of MCS work and team. Avoid generic stock where it undermines trust. Provide alt text.
 - Image budgets in `docs/QUALITY.md`.
 

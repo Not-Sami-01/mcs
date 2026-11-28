@@ -76,10 +76,10 @@ export function LocationView({
           </nav>
         ) : null}
 
-        <p className="text-xs font-semibold tracking-[0.14em] text-brand-primary uppercase">
+        <p className="text-xs font-medium text-ink-muted">
           {location.type === 'city' ? 'City coverage' : 'Local coverage'}
         </p>
-        <h1 className="content-text mt-3 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
+        <h1 className="content-text mt-4 text-[2.4rem] leading-[1.1] text-ink md:text-5xl">
           Pest control in {location.name}
         </h1>
         {location.intro ? (
@@ -122,7 +122,7 @@ export function LocationView({
             {pests.map((item, index) => (
               <li
                 key={item.id ?? `pest-${index}`}
-                className="content-text rounded-full border border-line px-4 py-2 text-sm"
+                className="content-text rounded-input border border-line px-4 py-2 text-sm"
               >
                 {item.pest}
               </li>
@@ -141,7 +141,7 @@ export function LocationView({
                   href={areaHref(String(citySlug), area)}
                   className="flex h-full flex-col gap-2 rounded-card border border-line bg-surface p-5 text-ink transition-colors hover:border-brand-primary focus-visible:outline-brand-primary"
                 >
-                  <span className="content-text text-lg font-semibold">{area.name}</span>
+                  <span className="content-text text-lg font-medium">{area.name}</span>
                   {area.intro ? (
                     <span className="content-text text-sm text-ink-muted">{area.intro}</span>
                   ) : null}
@@ -189,7 +189,7 @@ export function LocationView({
                 <li key={entry.id}>
                   <Link
                     href={href}
-                    className="inline-block rounded-full border border-line px-4 py-2 text-sm text-ink transition-colors hover:border-brand-primary"
+                    className="inline-block rounded-input border border-line px-4 py-2 text-sm text-ink transition-colors hover:border-brand-primary"
                   >
                     {entry.name}
                   </Link>
@@ -201,9 +201,9 @@ export function LocationView({
       ) : null}
 
       <Section>
-        <div className="relative overflow-hidden rounded-[2rem] bg-brand-deep px-6 py-12 text-brand-primary-contrast md:px-14">
+        <div className="relative overflow-hidden rounded-panel bg-brand-deep px-6 py-12 text-brand-primary-contrast md:px-14">
           <div className="max-w-2xl">
-            <h2 className="content-text text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="content-text text-3xl font-medium md:text-4xl">
               {messages.locationsPage.ctaTitle.replace('{place}', location.name)}
             </h2>
             <p className="content-text mt-3 text-brand-primary-contrast/80">

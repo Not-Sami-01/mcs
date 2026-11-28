@@ -30,9 +30,7 @@ export default async function HomePage() {
   if (!page) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col items-start gap-4 px-4 py-16 md:py-24">
-        <h1 className="text-3xl font-semibold tracking-tight text-ink md:text-4xl">
-          {messages.homePending.title}
-        </h1>
+        <h1 className="text-3xl font-medium text-ink md:text-4xl">{messages.homePending.title}</h1>
         <p className="text-ink-muted">{messages.homePending.body}</p>
       </div>
     );

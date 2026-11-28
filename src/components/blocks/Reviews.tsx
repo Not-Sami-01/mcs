@@ -56,7 +56,7 @@ export function Reviews({ block }: { block: BlockOf<'reviews'> }) {
               </blockquote>
 
               <figcaption className="mt-4 border-t border-line pt-3 text-xs text-ink-muted">
-                <span className="font-semibold text-ink">{review.reviewerName}</span>
+                <span className="font-medium text-ink">{review.reviewerName}</span>
                 {review.city ? ` · ${review.city}` : null}
                 {review.source
                   ? ` · ${messages.blocks.reviewsVia.replace(

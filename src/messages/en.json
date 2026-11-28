@@ -73,6 +73,7 @@
     "indexIntro": "Browse the products we use and recommend. Prices are in Pakistani rupees.",
     "indexEmpty": "Products are being prepared. Please check back soon.",
     "viewProduct": "View product",
+    "photoPending": "Photo to follow",
     "fromPrice": "From Rs {price}",
     "packSize": "Pack size",
     "discountPercent": "{value}% off",

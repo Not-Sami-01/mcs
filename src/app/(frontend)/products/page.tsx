@@ -23,10 +23,7 @@ export default async function ProductsIndexPage() {
   return (
     <Section>
       <div className="max-w-3xl">
-        <p className="text-xs font-semibold tracking-[0.14em] text-brand-primary uppercase">
-          Catalogue
-        </p>
-        <h1 className="mt-4 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
+        <h1 className="text-[2.4rem] leading-[1.1] text-ink md:text-5xl">
           {messages.productsPage.indexTitle}
         </h1>
         <p className="content-text mt-5 text-base leading-relaxed text-ink-muted md:text-lg">

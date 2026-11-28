@@ -12,18 +12,11 @@ import type { BlockOf } from './types';
 export function InspectionForm({ block }: { block: BlockOf<'inspectionForm'> }) {
   return (
     <Section tone="alt">
-      <div className="relative overflow-hidden rounded-[2rem] border border-line bg-surface p-7 md:p-12">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -end-16 -top-16 h-56 w-56 rounded-full bg-brand-accent/20 blur-2xl"
-        />
-        <div className="relative grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
+      <div className="relative overflow-hidden rounded-panel border border-line bg-surface p-7 md:p-12">
+        <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
           <div>
-            <span
-              aria-hidden="true"
-              className="mb-4 block h-1.5 w-10 rounded-full bg-brand-accent"
-            />
-            <h2 className="content-text text-3xl leading-[1.1] font-semibold tracking-tight text-ink md:text-4xl">
+            <span aria-hidden="true" className="mb-5 block h-2 w-2 bg-brand-accent" />
+            <h2 className="content-text text-3xl leading-[1.1] font-medium text-ink md:text-4xl">
               {block.headline}
             </h2>
             <p className="content-text mt-4 max-w-xl text-base leading-relaxed text-ink-muted">

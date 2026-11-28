@@ -30,9 +30,7 @@ export function BeforeAfter({ block }: { block: BlockOf<'beforeAfter'> }) {
                       className="h-full w-full object-cover"
                     />
                   </div>
-                  <p className="mt-2 text-xs font-semibold tracking-wide text-ink-muted uppercase">
-                    {side.label}
-                  </p>
+                  <p className="mt-2 text-xs font-medium text-ink-muted ">{side.label}</p>
                 </div>
               ))}
             </div>

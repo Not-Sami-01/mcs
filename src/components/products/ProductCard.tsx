@@ -1,3 +1,4 @@
+import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { priceFor } from '@/lib/pricing';
@@ -25,27 +26,27 @@ export function ProductCard({ product }: { product: Product }) {
     <li className="h-full">
       <Link
         href={`/products/${product.slug}`}
-        className="group flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-line bg-surface text-ink transition duration-200 hover:-translate-y-1 hover:border-brand-primary/40 hover:shadow-[var(--shadow-lift)] focus-visible:outline-brand-primary"
+        className="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface text-ink transition-colors hover:border-brand-primary"
       >
-        <div className="relative aspect-square overflow-hidden bg-surface-alt">
+        <div className="relative aspect-square overflow-hidden border-b border-line bg-surface-alt">
           {image ? (
             <SiteImage
               image={image}
               sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 300px"
-              className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.04]"
+              className="h-full w-full object-cover"
             />
           ) : (
-            <div className="grid h-full place-items-center bg-[radial-gradient(120%_120%_at_20%_0%,#14563d,var(--brand-deep))] text-3xl font-semibold tracking-tight text-brand-accent">
-              MCS
+            <div className="grid h-full place-items-center p-6 text-center text-xs text-ink-muted">
+              {messages.productsPage.photoPending}
             </div>
           )}
         </div>
 
-        <div className="flex flex-1 flex-col justify-between gap-4 p-5">
-          <h3 className="content-text text-lg font-semibold leading-snug">{product.title}</h3>
-          <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-1 flex-col p-5">
+          <h3 className="content-text text-lg leading-snug text-ink">{product.title}</h3>
+          <div className="mt-auto flex items-center justify-between gap-3 pt-4">
             {fromPrice !== null ? (
-              <span className="text-sm font-semibold text-brand-primary">
+              <span className="tabular text-sm text-brand-primary">
                 {messages.productsPage.fromPrice.replace(
                   '{price}',
                   fromPrice.toLocaleString('en-US'),
@@ -54,12 +55,11 @@ export function ProductCard({ product }: { product: Product }) {
             ) : (
               <span />
             )}
-            <span
+            <ArrowUpRight
               aria-hidden="true"
-              className="grid h-8 w-8 place-items-center rounded-full bg-surface-alt text-brand-primary transition group-hover:bg-brand-accent group-hover:text-brand-accent-ink"
-            >
-              →
-            </span>
+              className="h-4 w-4 text-ink-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              strokeWidth={1.5}
+            />
           </div>
         </div>
       </Link>

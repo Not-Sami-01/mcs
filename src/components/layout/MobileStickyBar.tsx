@@ -23,7 +23,7 @@ export function MobileStickyBar({
           <a
             href={phone.href}
             aria-label={messages.a11y.call}
-            className="flex min-h-14 flex-1 items-center justify-center gap-2 border-e border-line text-sm font-semibold text-ink"
+            className="flex min-h-14 flex-1 items-center justify-center gap-2 border-e border-line text-sm font-medium text-ink"
           >
             <PhoneIcon />
             {messages.cta.call}
@@ -34,7 +34,7 @@ export function MobileStickyBar({
           <a
             href={whatsapp.href}
             aria-label={messages.a11y.chatOnWhatsApp}
-            className="flex min-h-14 flex-1 items-center justify-center gap-2 border-e border-line bg-whatsapp text-sm font-semibold text-ink"
+            className="flex min-h-14 flex-1 items-center justify-center gap-2 border-e border-line bg-whatsapp text-sm font-medium text-ink"
           >
             <WhatsAppIcon />
             {messages.cta.whatsapp}
@@ -43,7 +43,7 @@ export function MobileStickyBar({
 
         <Link
           href="/free-inspection"
-          className="flex min-h-14 flex-1 items-center justify-center bg-brand-primary px-3 text-center text-sm font-semibold text-brand-primary-contrast"
+          className="flex min-h-14 flex-1 items-center justify-center bg-brand-primary px-3 text-center text-sm font-medium text-brand-primary-contrast"
         >
           {messages.cta.freeInspection}
         </Link>

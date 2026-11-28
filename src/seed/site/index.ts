@@ -1,5 +1,6 @@
 import { getPayload } from 'payload';
 import { Client } from 'pg';
+import sharp from 'sharp';
 
 import config from '../../payload.config';
 import { validateSeedEnvironment } from '../guard';
@@ -52,14 +53,19 @@ async function uploadPlaceholder(
   payload: Awaited<ReturnType<typeof getPayload>>,
   input: MediaInput,
 ): Promise<number | undefined> {
-  const url = `https://placehold.co/${input.width}x${input.height}/0f3d2e/e8f5ef/png?text=${encodeURIComponent(
-    input.text,
-  )}`;
-
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`placeholder returned ${response.status}`);
-    const buffer = Buffer.from(await response.arrayBuffer());
+    // A quiet limewash panel with the item name in small deep-green type. The
+    // old placeholder service drew a giant centred title that read as slop and
+    // needed the network to build the demo site.
+    const label = input.text.replace(/[<>&]/g, '').slice(0, 60);
+    const fontSize = Math.max(18, Math.round(input.width / 32));
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${input.width}" height="${input.height}">
+      <rect width="100%" height="100%" fill="#f2efe4"/>
+      <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="#ddd9cb" stroke-width="2"/>
+      <text x="${Math.round(input.width / 24)}" y="${input.height - Math.round(input.width / 24)}"
+        font-family="DejaVu Sans, sans-serif" font-size="${fontSize}" fill="#0d4a35">${label}</text>
+    </svg>`;
+    const buffer = await sharp(Buffer.from(svg)).png().toBuffer();
 
     const media = await payload.create({
       collection: 'media',

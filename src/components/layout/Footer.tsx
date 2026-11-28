@@ -14,7 +14,7 @@ export function Footer({ chrome }: { chrome: SiteChrome }) {
             <div className="flex items-center gap-3">
               <span
                 aria-hidden="true"
-                className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-accent text-brand-accent-ink"
+                className="grid h-10 w-10 place-items-center rounded-input bg-brand-accent text-brand-accent-ink"
               >
                 <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor">
                   <path
@@ -24,7 +24,7 @@ export function Footer({ chrome }: { chrome: SiteChrome }) {
                   />
                 </svg>
               </span>
-              <p className="text-base font-semibold tracking-tight">{chrome.companyName}</p>
+              <p className="text-base font-medium">{chrome.companyName}</p>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-brand-primary-contrast/70">
               {messages.footer.description}
@@ -55,9 +55,7 @@ export function Footer({ chrome }: { chrome: SiteChrome }) {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
             {chrome.footerColumns.map((column) => (
               <nav key={column.title} aria-label={`${messages.a11y.footerNav}: ${column.title}`}>
-                <h2 className="text-[11px] font-semibold tracking-[0.14em] text-brand-accent uppercase">
-                  {column.title}
-                </h2>
+                <h2 className="text-sm font-medium text-brand-accent">{column.title}</h2>
                 <ul className="mt-4 space-y-1">
                   {column.links.map((link) => (
                     <li key={`${link.href}-${link.label}`}>
@@ -75,24 +73,10 @@ export function Footer({ chrome }: { chrome: SiteChrome }) {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-brand-primary-contrast/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 border-t border-brand-primary-contrast/10 pt-6 text-xs text-brand-primary-contrast/60">
           <p>
             © {year} {chrome.companyName}. {messages.footer.rights}
           </p>
-          <nav aria-label={messages.a11y.footerNav}>
-            <ul className="flex flex-wrap gap-x-5 gap-y-2">
-              {chrome.legalLinks.map((link) => (
-                <li key={`${link.href}-${link.label}`}>
-                  <NavAnchor
-                    href={link.href}
-                    className="inline-flex min-h-9 items-center hover:text-brand-accent"
-                  >
-                    {link.label}
-                  </NavAnchor>
-                </li>
-              ))}
-            </ul>
-          </nav>
         </div>
       </div>
     </footer>

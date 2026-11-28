@@ -7,10 +7,10 @@ import { MenuIcon, PhoneIcon } from './icons';
 import { NavAnchor } from './NavAnchor';
 
 const actionPrimary =
-  'inline-flex min-h-11 items-center justify-center rounded-input bg-brand-primary px-4 text-sm font-semibold text-brand-primary-contrast';
+  'inline-flex min-h-11 items-center justify-center rounded-input bg-brand-primary px-4 text-sm font-medium text-brand-primary-contrast';
 
 const actionOutline =
-  'inline-flex min-h-11 items-center justify-center rounded-input border border-line px-4 text-sm font-semibold text-ink';
+  'inline-flex min-h-11 items-center justify-center rounded-input border border-line px-4 text-sm font-medium text-ink';
 
 /**
  * Native `<details>` disclosure: keyboard operable with no client JavaScript.
@@ -25,7 +25,7 @@ export function MobileMenu({
 }) {
   return (
     <details className="relative xl:hidden">
-      <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-input border border-line px-3 text-sm font-semibold text-ink">
+      <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-input border border-line px-3 text-sm font-medium text-ink">
         <MenuIcon />
         {messages.common.menu}
       </summary>

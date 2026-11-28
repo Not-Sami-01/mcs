@@ -1,3 +1,4 @@
+import { ArrowUpRight } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -23,10 +24,7 @@ export default async function LocationsIndexPage() {
   return (
     <Section>
       <div className="max-w-3xl">
-        <p className="text-xs font-semibold tracking-[0.14em] text-brand-primary uppercase">
-          Coverage
-        </p>
-        <h1 className="mt-4 text-4xl leading-[1.05] font-semibold tracking-[-0.03em] text-ink md:text-5xl">
+        <h1 className="text-[2.4rem] leading-[1.1] text-ink md:text-5xl">
           {messages.locationsPage.indexTitle}
         </h1>
         <p className="content-text mt-5 text-base leading-relaxed text-ink-muted md:text-lg">
@@ -42,21 +40,23 @@ export default async function LocationsIndexPage() {
             <li key={city.id} className="h-full">
               <Link
                 href={`/locations/${city.slug}`}
-                className="group flex h-full flex-col justify-between gap-6 rounded-[1.25rem] border border-line bg-surface p-6 text-ink transition duration-200 hover:-translate-y-1 hover:border-brand-primary/40 hover:shadow-[var(--shadow-lift)] focus-visible:outline-brand-primary"
+                className="group flex h-full flex-col justify-between gap-6 rounded-card border border-line bg-surface p-6 text-ink transition-colors hover:border-brand-primary"
               >
                 <div>
-                  <h2 className="content-text text-xl font-semibold">{city.name}</h2>
+                  <h2 className="content-text text-xl font-medium">{city.name}</h2>
                   {city.intro ? (
                     <p className="content-text mt-2 text-sm leading-relaxed text-ink-muted">
                       {city.intro}
                     </p>
                   ) : null}
                 </div>
-                <span className="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary">
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-primary">
                   {messages.blocks.learnMore}
-                  <span aria-hidden="true" className="transition group-hover:translate-x-1">
-                    →
-                  </span>
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    strokeWidth={1.5}
+                  />
                 </span>
               </Link>
             </li>

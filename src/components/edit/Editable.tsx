@@ -73,7 +73,7 @@ export function Editable({
       <div className={hidden ? 'opacity-50' : undefined}>{children}</div>
 
       {hidden ? (
-        <p className="pointer-events-none absolute inset-x-0 bottom-3 z-20 mx-auto w-fit rounded-full bg-ink px-3 py-1 text-xs font-semibold text-brand-primary-contrast">
+        <p className="pointer-events-none absolute inset-x-0 bottom-3 z-20 mx-auto w-fit rounded-full bg-ink px-3 py-1 text-xs font-medium text-brand-primary-contrast">
           {messages.edit.hiddenSection}
         </p>
       ) : null}
@@ -86,7 +86,7 @@ export function Editable({
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={editLabel}
-        className="absolute end-3 top-3 z-20 inline-flex min-h-11 items-center rounded-input border border-line bg-surface px-3 text-sm font-semibold text-ink opacity-0 shadow-sm transition-opacity hover:border-brand-primary hover:text-brand-primary focus:opacity-100 focus-visible:opacity-100 group-hover/edit:opacity-100 motion-reduce:transition-none"
+        className="absolute end-3 top-3 z-20 inline-flex min-h-11 items-center rounded-input border border-line bg-surface px-3 text-sm font-medium text-ink opacity-0 shadow-sm transition-opacity hover:border-brand-primary hover:text-brand-primary focus:opacity-100 focus-visible:opacity-100 group-hover/edit:opacity-100 motion-reduce:transition-none"
       >
         {messages.edit.edit}
       </button>
