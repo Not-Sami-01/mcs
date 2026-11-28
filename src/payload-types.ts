@@ -76,6 +76,7 @@ export interface Config {
     products: Product;
     posts: Post;
     reviews: Review;
+    leads: Lead;
     'price-history': PriceHistory;
     'audit-logs': AuditLog;
     'totp-rate-limits': TotpRateLimit;
@@ -96,6 +97,7 @@ export interface Config {
     products: ProductsSelect<false> | ProductsSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    leads: LeadsSelect<false> | LeadsSelect<true>;
     'price-history': PriceHistorySelect<false> | PriceHistorySelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'totp-rate-limits': TotpRateLimitsSelect<false> | TotpRateLimitsSelect<true>;
@@ -1579,6 +1581,119 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Enquiries from the website. Personal data: handle with care.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads".
+ */
+export interface Lead {
+  id: number;
+  type: 'contact' | 'quote' | 'inspection';
+  /**
+   * Max 60 characters.
+   */
+  name: string;
+  /**
+   * Max 40 characters.
+   */
+  phone: string;
+  /**
+   * Max 254 characters.
+   */
+  email?: string | null;
+  /**
+   * Max 60 characters.
+   */
+  city?: string | null;
+  /**
+   * Max 100 characters.
+   */
+  area?: string | null;
+  propertyType?: ('house' | 'apartment' | 'office' | 'shop' | 'warehouse' | 'farm' | 'other') | null;
+  /**
+   * Max 100 characters.
+   */
+  pestType?: string | null;
+  /**
+   * Max 40 characters.
+   */
+  preferredTime?: string | null;
+  /**
+   * Max 600 characters.
+   */
+  message?: string | null;
+  /**
+   * Products the visitor added to their quote.
+   */
+  items?:
+    | {
+        product: number | Product;
+        /**
+         * Max 100 characters.
+         */
+        packLabel?: string | null;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Page the visitor was on when the form was sent.
+   */
+  sourcePath?: string | null;
+  /**
+   * Where the visit came from, when the browser sent it.
+   */
+  referrer?: string | null;
+  utm?: {
+    /**
+     * Max 100 characters.
+     */
+    source?: string | null;
+    /**
+     * Max 100 characters.
+     */
+    medium?: string | null;
+    /**
+     * Max 100 characters.
+     */
+    campaign?: string | null;
+  };
+  leadStatus: 'new' | 'contacted' | 'quoted' | 'won' | 'lost' | 'spam';
+  /**
+   * Who is following this lead up.
+   */
+  assignedTo?: (number | null) | User;
+  notes?:
+    | {
+        author?: (number | null) | User;
+        /**
+         * Max 600 characters.
+         */
+        text: string;
+        createdAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  consent?: boolean | null;
+  consentAt?: string | null;
+  /**
+   * Salted hash for abuse checks. Never the raw address.
+   */
+  ipHash?: string | null;
+  /**
+   * Set from the retention setting when the lead arrives.
+   */
+  retainUntil?: string | null;
+  alertSentAt?: string | null;
+  /**
+   * Empty when the alert reached staff. Shown so a failed alert is not silent.
+   */
+  alertError?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
  * Read-only. Written automatically whenever a published price or discount changes.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1837,6 +1952,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'reviews';
         value: number | Review;
+      } | null)
+    | ({
+        relationTo: 'leads';
+        value: number | Lead;
       } | null)
     | ({
         relationTo: 'price-history';
@@ -2715,6 +2834,58 @@ export interface ReviewsSelect<T extends boolean = true> {
   reviewDate?: T;
   permissionConfirmed?: T;
   verified?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads_select".
+ */
+export interface LeadsSelect<T extends boolean = true> {
+  type?: T;
+  name?: T;
+  phone?: T;
+  email?: T;
+  city?: T;
+  area?: T;
+  propertyType?: T;
+  pestType?: T;
+  preferredTime?: T;
+  message?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        packLabel?: T;
+        quantity?: T;
+        id?: T;
+      };
+  sourcePath?: T;
+  referrer?: T;
+  utm?:
+    | T
+    | {
+        source?: T;
+        medium?: T;
+        campaign?: T;
+      };
+  leadStatus?: T;
+  assignedTo?: T;
+  notes?:
+    | T
+    | {
+        author?: T;
+        text?: T;
+        createdAt?: T;
+        id?: T;
+      };
+  consent?: T;
+  consentAt?: T;
+  ipHash?: T;
+  retainUntil?: T;
+  alertSentAt?: T;
+  alertError?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;

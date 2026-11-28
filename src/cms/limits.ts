@@ -97,6 +97,8 @@ export const COUNT_LIMITS = {
   sitePhones: { label: 'Site phones', min: 1, max: 4 },
   socialLinks: { label: 'Social links', min: 0, max: 8 },
   leadAlertRecipients: { label: 'Lead alert recipients', min: 0, max: 5 },
+  leadItems: { label: 'Lead items', min: 0, max: 20 },
+  leadNotes: { label: 'Lead notes', min: 0, max: 100 },
   seedSamplePages: { label: 'Seed sample pages', min: 1, max: 8 },
 } as const;
 

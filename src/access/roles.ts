@@ -63,6 +63,19 @@ export const writeNavigation: Access = ({ req }) => hasAnyRole(req.user, ['super
 export const writeSiteSettings: Access = ({ req }) =>
   hasAnyRole(req.user, ['super-admin', 'editor']);
 
+/**
+ * Leads are worked by Super Admin and Sales and Support only (docs/DATABASE.md
+ * §4). Reading and creating are the same pair; deleting is Super Admin only.
+ */
+export const readLeads: Access = ({ req }) =>
+  hasAnyRole(req.user, ['super-admin', 'sales-support']);
+
+export const createLeads: Access = readLeads;
+
+export const updateLeads: Access = readLeads;
+
+export const deleteLeads: Access = ({ req }) => hasRole(req.user, 'super-admin');
+
 /** Super Admin-only operational fields (recipients, retention and chat setup). */
 export const writeSensitiveSiteSettings: Access = ({ req }) => hasRole(req.user, 'super-admin');
 

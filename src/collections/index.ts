@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload';
 
 import { AuditLogs } from './AuditLogs';
 import { Categories } from './Categories';
+import { Leads } from './Leads';
 import { Locations } from './Locations';
 import { Media } from './Media';
 import { Pages } from './Pages';
@@ -26,6 +27,7 @@ export const COLLECTIONS: CollectionConfig[] = [
   Products,
   Posts,
   Reviews,
+  Leads,
   PriceHistory,
   AuditLogs,
 ];
