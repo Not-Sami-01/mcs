@@ -43,3 +43,6 @@ test-results/
 # Local seed/smoke output
 seed.log
 home.html
+
+# Temp
+temp/
