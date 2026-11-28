@@ -47,7 +47,10 @@
     "contactAddress": "Address",
     "contactHours": "Working hours",
     "learnMore": "Learn more",
-    "servicesGridLabel": "Services"
+    "servicesGridLabel": "Services",
+    "reviewsLabel": "Customer reviews",
+    "ratingOutOf": "Rated {rating} out of 5",
+    "reviewsVia": "via {source}"
   },
   "servicesPage": {
     "indexTitle": "Services",

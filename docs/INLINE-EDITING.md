@@ -52,6 +52,7 @@ Why this shape:
 - Public pages stay static and fast. No editor JavaScript, no extra request, no editing attributes in public HTML.
 - The proxy only checks that a cookie **exists**, which is a routing hint. All real checks happen in the edit route and in every Server Action.
 - A stale or forged cookie lands on the edit route, fails verification, and is redirected to the public page.
+- Because the proxy rewrites the **public URL**, Next can keep a prefetched edit payload (or a back/forward-cache snapshot) for it. `EditSessionGuard` re-checks `/api/users/me` on mount and when the tab becomes visible; once the session or edit role is gone it replaces the page with the public `?view=visitor` URL, so the editing bar cannot outlive a logout (added 2026-11-28).
 - Staff see draft content on the real design, which doubles as preview.
 
 **Fallback if the rewrite is fragile:** a visible "Edit this page" link to `/edit/<path>`. The edit route is the same either way.

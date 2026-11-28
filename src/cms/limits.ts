@@ -25,6 +25,8 @@ export const TEXT_LIMITS = {
   faqAnswer: 600,
   reviewText: 300,
   reviewerName: 60,
+  /** City shown next to a review ("Lahore"). */
+  reviewCity: 60,
   caption: 100,
   /**
    * Image alt text. Raised from the doc's original 125 to 160 so the media

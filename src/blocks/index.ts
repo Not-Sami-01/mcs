@@ -249,6 +249,31 @@ export const beforeAfter: Block = {
   ],
 };
 
+/**
+ * Verified customer reviews (docs/CONTENT.md §6). The block points at the
+ * `reviews` collection instead of storing copy, so a review is edited and
+ * verified in one place. `minRows` mirrors the catalogue minimum; the public
+ * renderer skips unverified selections and hides the section when none remain.
+ */
+export const reviews: Block = {
+  slug: 'reviews',
+  fields: [
+    textField({ name: 'headline', label: 'Headline', preset: 'headline', required: true }),
+    {
+      name: 'reviews',
+      label: 'Reviews',
+      type: 'relationship',
+      relationTo: 'reviews',
+      hasMany: true,
+      required: true,
+      ...rows('reviewsShown'),
+      admin: {
+        description: 'Only verified reviews appear on the site. Unverified picks are skipped.',
+      },
+    },
+  ],
+};
+
 export const certificates: Block = {
   slug: 'certificates',
   fields: [
@@ -367,6 +392,7 @@ export const BLOCKS: Block[] = [
   warrantyPromise,
   whoWeServe,
   beforeAfter,
+  reviews,
   certificates,
   inspectionForm,
   faq,
@@ -381,7 +407,6 @@ export const DEFERRED_BLOCK_SLUGS = [
   'pricingGuide',
   'areasServed',
   'featuredProducts',
-  'reviews',
   'latestPosts',
 ] as const;
 

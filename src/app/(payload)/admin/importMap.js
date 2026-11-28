@@ -21,7 +21,10 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { default as default_7be396d0766c6c490887ef074dd0ced4 } from '../../../components/admin/AdminIcon'
+import { default as default_27eed1898e8caadb2fd2266b54bb4509 } from '../../../components/admin/AdminLogo'
 import { default as default_64c8659e926b82f3d966b7c9740147af } from '../../../components/admin/TwoFactorLink'
+import { default as default_16b88e9b8c48e393fa86591406efd08f } from '../../../components/admin/Dashboard'
 import { VerifyTOTPView as VerifyTOTPView_8b072bd6697d9d1653840d990e56ff13 } from '@purposeinplay/payload-totp/client'
 import { SetupTOTPView as SetupTOTPView_8b072bd6697d9d1653840d990e56ff13 } from '@purposeinplay/payload-totp/client'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
@@ -52,7 +55,10 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/components/admin/AdminIcon#default": default_7be396d0766c6c490887ef074dd0ced4,
+  "/components/admin/AdminLogo#default": default_27eed1898e8caadb2fd2266b54bb4509,
   "/components/admin/TwoFactorLink#default": default_64c8659e926b82f3d966b7c9740147af,
+  "/components/admin/Dashboard#default": default_16b88e9b8c48e393fa86591406efd08f,
   "@purposeinplay/payload-totp/client#VerifyTOTPView": VerifyTOTPView_8b072bd6697d9d1653840d990e56ff13,
   "@purposeinplay/payload-totp/client#SetupTOTPView": SetupTOTPView_8b072bd6697d9d1653840d990e56ff13,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,

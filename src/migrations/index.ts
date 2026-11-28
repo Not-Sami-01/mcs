@@ -7,6 +7,7 @@ import * as migration_20261125_214628_cp51_services from './20261125_214628_cp51
 import * as migration_20261125_223245_cp52_locations from './20261125_223245_cp52_locations';
 import * as migration_20261125_233557_cp53_products from './20261125_233557_cp53_products';
 import * as migration_20261126_024404_cp55_posts from './20261126_024404_cp55_posts';
+import * as migration_20261128_014341_cp55_reviews from './20261128_014341_cp55_reviews';
 
 export const migrations = [
   {
@@ -52,6 +53,11 @@ export const migrations = [
   {
     up: migration_20261126_024404_cp55_posts.up,
     down: migration_20261126_024404_cp55_posts.down,
-    name: '20261126_024404_cp55_posts'
+    name: '20261126_024404_cp55_posts',
+  },
+  {
+    up: migration_20261128_014341_cp55_reviews.up,
+    down: migration_20261128_014341_cp55_reviews.down,
+    name: '20261128_014341_cp55_reviews'
   },
 ];

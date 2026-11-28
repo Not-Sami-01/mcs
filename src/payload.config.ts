@@ -65,6 +65,17 @@ export default buildConfig({
     components: {
       // Opt-in entry for two-factor setup; hidden once enrolled.
       afterNavLinks: ['/components/admin/TwoFactorLink'],
+      // Branded sign-in screen and nav mark (2026-11-28).
+      graphics: {
+        Icon: '/components/admin/AdminIcon',
+        Logo: '/components/admin/AdminLogo',
+      },
+      // Replaces Payload's collection grid with content stats and activity.
+      views: {
+        dashboard: {
+          Component: '/components/admin/Dashboard',
+        },
+      },
     },
   },
   collections: COLLECTIONS,

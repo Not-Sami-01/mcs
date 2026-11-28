@@ -75,6 +75,7 @@ export interface Config {
     locations: Location;
     products: Product;
     posts: Post;
+    reviews: Review;
     'price-history': PriceHistory;
     'audit-logs': AuditLog;
     'totp-rate-limits': TotpRateLimit;
@@ -94,6 +95,7 @@ export interface Config {
     locations: LocationsSelect<false> | LocationsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     'price-history': PriceHistorySelect<false> | PriceHistorySelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'totp-rate-limits': TotpRateLimitsSelect<false> | TotpRateLimitsSelect<true>;
@@ -615,6 +617,23 @@ export interface Page {
              * Max 80 characters.
              */
             headline: string;
+            /**
+             * Only verified reviews appear on the site. Unverified picks are skipped.
+             */
+            reviews: (number | Review)[];
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'reviews';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
             items?:
               | {
                   image: number | Media;
@@ -1068,6 +1087,23 @@ export interface Service {
              * Max 80 characters.
              */
             headline: string;
+            /**
+             * Only verified reviews appear on the site. Unverified picks are skipped.
+             */
+            reviews: (number | Review)[];
+            /**
+             * Visitors will not see this section. It stays in the draft.
+             */
+            hidden?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'reviews';
+          }
+        | {
+            /**
+             * Max 80 characters.
+             */
+            headline: string;
             items?:
               | {
                   image: number | Media;
@@ -1438,6 +1474,48 @@ export interface Product {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Only verified reviews appear on the public site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: number;
+  /**
+   * Max 60 characters.
+   */
+  reviewerName: string;
+  /**
+   * Max 60 characters.
+   */
+  city: string;
+  /**
+   * Max 300 characters.
+   */
+  text: string;
+  /**
+   * Whole stars only.
+   */
+  rating: number;
+  source: 'google' | 'facebook' | 'direct';
+  /**
+   * Link to the original review, when there is one.
+   */
+  sourceUrl?: string | null;
+  reviewDate: string;
+  /**
+   * Confirm the customer allowed this review to be shown (Q15).
+   */
+  permissionConfirmed?: boolean | null;
+  /**
+   * Only verified reviews render on the public site.
+   */
+  verified?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
@@ -1755,6 +1833,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'posts';
         value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'reviews';
+        value: number | Review;
       } | null)
     | ({
         relationTo: 'price-history';
@@ -2116,6 +2198,15 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        reviews?:
+          | T
+          | {
+              headline?: T;
+              reviews?: T;
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
         certificates?:
           | T
           | {
@@ -2371,6 +2462,15 @@ export interface ServicesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        reviews?:
+          | T
+          | {
+              headline?: T;
+              reviews?: T;
+              hidden?: T;
+              id?: T;
+              blockName?: T;
+            };
         certificates?:
           | T
           | {
@@ -2600,6 +2700,24 @@ export interface PostsSelect<T extends boolean = true> {
   createdAt?: T;
   deletedAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  reviewerName?: T;
+  city?: T;
+  text?: T;
+  rating?: T;
+  source?: T;
+  sourceUrl?: T;
+  reviewDate?: T;
+  permissionConfirmed?: T;
+  verified?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

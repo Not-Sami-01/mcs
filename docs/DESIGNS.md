@@ -125,7 +125,15 @@ Edit-mode styles live in their own CSS and are loaded only on the edit route. Th
 
 ## 7a. Admin panel (Payload)
 
-Use Payload's default UI. Customise only: logo, favicon, colour variables for brand accent, and field descriptions that explain limits. Do not fork Payload components without a decision recorded in `DECISIONS.md`.
+Branded on 2026-11-28 without forking Payload components. `src/app/(payload)/custom.scss` overrides Payload's layered CSS with the public-site tokens: deep green primary buttons, lime-tinted active nav, 12–20 px radii, soft green canvas and white panels, plus a branded login card. Dark mode has its own token block.
+
+| Piece       | Implementation                                                                                                                                                                                                                                                                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Brand marks | `src/components/admin/AdminIcon.tsx` (nav) and `AdminLogo.tsx` (login/reset), registered under `admin.components.graphics`.                                                                                                                                                                                                                                 |
+| Dashboard   | `src/components/admin/Dashboard.tsx`, registered at `admin.components.views.dashboard`. Shows six content counts with published/draft splits, the seven most recently updated pages/articles/services/products, role-aware quick actions and the newest audit entries (Super Admin only). All queries use the signed-in request, so access control applies. Stat and quick-action icons come from `lucide-react` (2026-11-28), not hand-drawn SVG. |
+| Login       | Payload's form, restyled by `.template-minimal` and `.login__form`; logo comes from the graphics config.                                                                                                                                                                                                                                                    |
+
+Do not fork Payload components without a decision recorded in `DECISIONS.md`; CSS overrides and registered components are the supported extension points.
 
 ---
 

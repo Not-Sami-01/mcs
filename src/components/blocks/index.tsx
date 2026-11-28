@@ -14,6 +14,7 @@ import { Hero } from './Hero';
 import { HowItWorks } from './HowItWorks';
 import { InspectionForm } from './InspectionForm';
 import { OurDifference } from './OurDifference';
+import { Reviews } from './Reviews';
 import { ServicesGrid } from './ServicesGrid';
 import { TextBlocks } from './TextBlocks';
 import { TrustStrip } from './TrustStrip';
@@ -124,6 +125,8 @@ function renderBlock(block: PageBlock, chrome: SiteChrome, services: Service[], 
       return <WhoWeServe key={key} block={block} chrome={chrome} />;
     case 'beforeAfter':
       return <BeforeAfter key={key} block={block} />;
+    case 'reviews':
+      return <Reviews key={key} block={block} />;
     case 'certificates':
       return <Certificates key={key} block={block} />;
     case 'inspectionForm':

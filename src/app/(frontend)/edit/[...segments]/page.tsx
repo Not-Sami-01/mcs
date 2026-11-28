@@ -5,6 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getCachedSiteChrome } from '@/cms/cache';
 import { HOME_PATH } from '@/cms/pages';
 import { PageView } from '@/components/PageView';
+import { EditSessionGuard } from '@/components/edit/EditSessionGuard';
 import { StaffBar } from '@/components/edit/StaffBar';
 import {
   GLOBAL_REGION_KEYS,
@@ -91,6 +92,7 @@ export default async function EditPage({ params }: { params: Promise<RouteParams
 
   return (
     <>
+      <EditSessionGuard visitorUrl={visitorUrl} />
       <StaffBar
         publicPath={publicPath}
         pageTitle={page.title}

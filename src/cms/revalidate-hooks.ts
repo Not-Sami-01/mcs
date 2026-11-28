@@ -69,6 +69,18 @@ export const revalidateProductsAfterDelete: CollectionAfterDeleteHook = async ()
   await revalidatePages();
 };
 
+/**
+ * A review change re-renders every page with a reviews block, so the `pages`
+ * tag is cleared (reviews are embedded in page documents).
+ */
+export const revalidateReviewsAfterChange: CollectionAfterChangeHook = async () => {
+  await revalidatePages();
+};
+
+export const revalidateReviewsAfterDelete: CollectionAfterDeleteHook = async () => {
+  await revalidatePages();
+};
+
 /** A Pest Library change clears the Pest Library tag (index and article pages). */
 export const revalidatePostsAfterChange: CollectionAfterChangeHook = async () => {
   await revalidatePosts();

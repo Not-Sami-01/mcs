@@ -79,6 +79,16 @@ export function canEditSensitiveSiteSettings(user: unknown): boolean {
 }
 
 /**
+ * Public reads verified reviews only (docs/DATABASE.md §2: "Only verified
+ * reviews can render"); any signed-in staff role reads everything, so an
+ * Editor can verify a review before it appears.
+ */
+export const readVerifiedReviews: Access = ({ req }) => {
+  if (req.user) return true;
+  return { verified: { equals: true } };
+};
+
+/**
  * Public reads published pages only; any signed-in staff role reads everything
  * (matrix R for Product Manager and Sales and Support). `categories` have no
  * drafts — they use `readPublic` and rely on trash filtering.

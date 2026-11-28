@@ -21,7 +21,7 @@
 | 2     | Admin security: invite-only, roles, 2FA, audit                  | 2           | COMPLETE    |
 | 3     | Public site shell and blocks                                    | 2           | IN PROGRESS |
 | 4     | Inline editing (click-to-edit content box)                      | 3           | NOT STARTED |
-| 5     | Services, locations, products, blog, reviews                    | 3–4         | NOT STARTED |
+| 5     | Services, locations, products, blog, reviews                    | 3–4         | COMPLETE    |
 | 6     | Leads, forms, WhatsApp, live chat, tracking                     | 4           | NOT STARTED |
 | 7     | SEO, redirects, analytics                                       | 5           | NOT STARTED |
 | 8     | Hardening: tests, accessibility, performance, security, backups | 5           | NOT STARTED |
@@ -134,6 +134,7 @@
 
 - [x] `audit-logs` collection written by hooks (login, failed login, 2FA events, user changes, publish, delete, price change, export) (2026-11-24, completed CP-5.4 2026-11-26; create-only collection, Super Admin read, salted IP hash, no personal data. Login, failed login, 2FA setup/verify/recovery/re-enrol/lockout, user create/update/delete, publish/unpublish, delete, `price_change` (products and CSV saves) and `export` (product CSV) are all wired and tested. Failed-login detection runs on REST/GraphQL `afterError`; Local API login errors do not fire that hook)
 - [x] Access test matrix generated from `docs/DATABASE.md` roles table: every role against every collection and operation (2026-11-24; `src/access/matrix.test.ts` parses §4 and covers all implemented collections, globals and anonymous reads)
+- [x] Admin experience polish — **added after the plan was written** (2026-11-28; branded login/nav mark, green admin theme in `custom.scss`, and a custom dashboard with content counts, draft totals, recent edits, quick actions and the latest audit entries). Registered through `admin.components.graphics` and `admin.components.views.dashboard`; no Payload components forked
 - **Exit:** role tests pass; audit entries appear for the listed events (2026-11-24; 116/116 tests, audit integration 4/4, matrix 13/13; price/export deferred as noted)
 - **Commit:** `checkpoint(CP-2.3): audit log and role access tests`
 
@@ -234,9 +235,10 @@
 
 ### CP-5.5 — Blog (Pest Library) and reviews
 
-- [~] `posts` with restricted rich text, character cap, categories; `reviews` with source and verification (2026-11-26: `posts` collection, published queries/cache tag, migration and 6 seeded articles done. The body is the shared Lexical editor capped in the field description, not yet by a hard character validator; `reviews` is **not started**)
+- [x] `posts` with restricted rich text, character cap, categories (2026-11-26: `posts` collection, published queries/cache tag, migration and 6 seeded articles; the body validator now descends into the Lexical root, so the `postBody` cap is enforced on every save — fixed 2026-11-28)
 - [x] Pest Library index and post pages (2026-11-26: `/pest-library` static list, `/pest-library/[slug]` SSG with metadata, related services/locations and CTA)
-- **Commit:** `checkpoint(CP-5.5): pest library and reviews` (pending reviews)
+- [x] `reviews` with source and verification (2026-11-28: collection with reviewer, city, text, 1–5 rating, source, date, permission flag and `verified`; anonymous reads return verified reviews only; `reviews` block selects 3–9 verified reviews and re-validates the flag at render time)
+- **Commit:** `checkpoint(CP-5.5): pest library and reviews`
 
 ---
 

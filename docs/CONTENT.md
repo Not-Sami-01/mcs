@@ -94,6 +94,7 @@ Canonical values live in `src/cms/limits.ts`. They are starting points. Tune the
 | `faqAnswer`       |    600 |                                                 |
 | `reviewText`      |    300 |                                                 |
 | `reviewerName`    |     60 |                                                 |
+| `reviewCity`      |     60 | City shown next to a review                     |
 | `caption`         |    100 | Image captions                                  |
 | `altText`         |    160 | Required on every image                         |
 | `menuLabel`       |     24 |                                                 |

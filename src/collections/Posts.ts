@@ -7,14 +7,20 @@ import { TEXT_LIMITS } from '../cms/limits';
 import { revalidatePostsAfterChange, revalidatePostsAfterDelete } from '../cms/revalidate-hooks';
 import { validateSlug } from '../cms/slugs';
 
-/** Plain-text length of a Lexical document, for the `postBody` cap. */
-function richTextLength(node: unknown): number {
+/**
+ * Plain-text length of a Lexical document, for the `postBody` cap.
+ *
+ * The editor stores `{ root: { children: [...] } }`; the length must descend
+ * into `root`, otherwise every body looks empty (and the `required` field is
+ * rejected with "Write the article body.").
+ */
+export function richTextLength(node: unknown): number {
   if (!node || typeof node !== 'object') return 0;
-  const record = node as { text?: unknown; children?: unknown };
+  const record = node as { text?: unknown; children?: unknown; root?: unknown };
   const own = typeof record.text === 'string' ? record.text.length : 0;
   const nested = Array.isArray(record.children)
     ? record.children.reduce((total: number, child) => total + richTextLength(child), 0)
-    : 0;
+    : richTextLength(record.root);
   return own + nested;
 }
 

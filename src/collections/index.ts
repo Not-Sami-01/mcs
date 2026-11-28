@@ -8,6 +8,7 @@ import { Pages } from './Pages';
 import { Posts } from './Posts';
 import { PriceHistory } from './PriceHistory';
 import { Products } from './Products';
+import { Reviews } from './Reviews';
 import { Services } from './Services';
 import { Users } from './Users';
 
@@ -24,6 +25,7 @@ export const COLLECTIONS: CollectionConfig[] = [
   Locations,
   Products,
   Posts,
+  Reviews,
   PriceHistory,
   AuditLogs,
 ];
